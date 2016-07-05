@@ -6,6 +6,7 @@
 import math
 
 class Path():
+
     def __init__(self, route):
         self.route = route
 
@@ -22,11 +23,13 @@ class Path():
                 distance += ((c.x-prevCustomer.x)**2 + (c.y-prevCustomer.y)**2)**.5
                 prevCustomer = c
 
-    # returns whether the truck makes it on time to every customer
+    # returns whether the truck makes it on time to every customer by returning
+    # an array of the customers missed. If the path is valid, an empty array will be returned
     def is_valid(self):
         prevCustomer = None
         time = 0
         isFirstTime = True
+        missedCustomers = []
 
         for c in self.route:
             if isFirstTime:
@@ -39,7 +42,8 @@ class Path():
 
                 # if truck arrives late, return false
                 if time > c.close_time:
-                    return False
+                    missedCustomers.append(c)
+
                 time += c.service_time
                 isFirstTime = False
             else:
@@ -51,11 +55,12 @@ class Path():
 
                 # if truck arrives late, return false
                 if time > c.close_time:
-                    return False
+                    missedCustomers.append(c)
+
                 time += c.service_time
                 prevCustomer = c
 
-        return True
+        return missedCustomers
 
     # gets the customer the truck was last at
     def get_last_customer_visited(self, current_time):
