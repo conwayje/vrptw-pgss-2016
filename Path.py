@@ -13,26 +13,26 @@ class Path():
     # returns the total distance
     def get_distance(self):
         distance = 0
-        prevCustomer = None
-        isFirstTime = True
+        prev_customer = None
+        is_first_time = True
         for c in self.route:
-            if isFirstTime:
-                prevCustomer = c
-                isFirstTime = False
+            if is_first_time:
+                prev_customer = c
+                is_first_time = False
             else:
-                distance += ((c.x-prevCustomer.x)**2 + (c.y-prevCustomer.y)**2)**.5
-                prevCustomer = c
+                distance += ((c.x-prev_customer.x)**2 + (c.y-prev_customer.y)**2)**.5
+                prev_customer = c
 
     # returns whether the truck makes it on time to every customer by returning
     # an array of the customers missed. If the path is valid, an empty array will be returned
     def is_valid(self):
-        prevCustomer = None
+        prev_customer = None
         time = 0
-        isFirstTime = True
+        is_first_time = True
         missedCustomers = []
 
         for c in self.route:
-            if isFirstTime:
+            if is_first_time:
                 # truck leaves from (0, 0)
                 time = math.hypot(c.x, c.y)
 
@@ -45,9 +45,9 @@ class Path():
                     missedCustomers.append(c)
 
                 time += c.service_time
-                isFirstTime = False
+                is_first_time = False
             else:
-                time += ((c.x-prevCustomer.x)**2 + (c.y-prevCustomer.y)**2)**.5
+                time += ((c.x-prev_customer.x)**2 + (c.y-prev_customer.y)**2)**.5
 
                 # if truck arrives before customer is open, assume truck waitds
                 if time < c.open_time:
@@ -58,18 +58,18 @@ class Path():
                     missedCustomers.append(c)
 
                 time += c.service_time
-                prevCustomer = c
+                prev_customer = c
 
         return missedCustomers
 
     # gets the customer the truck was last at
     def get_last_customer_visited(self, current_time):
-        prevCustomer = None
-        isFirstTime = True
+        prev_customer = None
+        is_first_time = True
         time = 0
 
         for c in self.route:
-            if isFirstTime:
+            if is_first_time:
 
                 # truck leaves from (0, 0)
                 time = math.hypot(c.x, c.y)
@@ -84,12 +84,12 @@ class Path():
                 if(time > current_time):
                     return c
 
-                isFirstTime = False
+                is_first_time = False
             else:
-                time += ((c.x - prevCustomer.x) ** 2 + (c.y - prevCustomer.y) ** 2) ** .5
+                time += ((c.x - prev_customer.x) ** 2 + (c.y - prev_customer.y) ** 2) ** .5
 
                 if(time > current_time):
-                    return prevCustomer
+                    return prev_customer
 
                 # if truck arrives before customer is open, assume truck waitds
                 if time < c.open_time:
@@ -99,4 +99,23 @@ class Path():
                 if(time > current_time):
                     return c
 
-                prevCustomer = c
+                prev_customer = c
+
+    # returns whether the path intersects itself
+    def intersects_self(self):
+        intersects = False
+        points = [(0, 0)]
+        for c in self.route:
+            points.append((c.x, c.y))
+
+        for i in range(1, len(points)):
+
+            for j in range(i+1, len(self.route)):
+                if(lines_intersect(points[i-1], points[i], points[j], points[j-1])):
+                    intersects = True
+
+        return intersects
+
+    def lines_intersect(point_1, point_2, point_3, point_4):
+        return False
+
