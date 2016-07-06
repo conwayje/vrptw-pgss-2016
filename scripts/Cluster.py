@@ -15,7 +15,7 @@ class Cluster():
         return (total_x/count, total_y/count)
 
     def getSolution(self):
-        pass # will return a path
+        pass # will return a path, probably brute forced here, as long as len(customers) < a
 
     @staticmethod
     def create_clusters(customers):

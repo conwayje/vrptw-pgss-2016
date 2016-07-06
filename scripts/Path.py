@@ -116,6 +116,17 @@ class Path():
 
         return intersects
 
+    # Will probably be used for inserting in completed solutions for clusters
+    def append(self, toAppend):
+        self.route.append(toAppend.route)
+
+    # Will probably be used for inserting in completed solutions for clusters
+    def insert(self, toAppend, index):
+        for c in toAppend.route:
+            self.insert(index, c)
+            index += 1
+
+
     # Given two lines AB and CD, determines if they intersect
     # If
     # source http://bryceboe.com/2006/10/23/line-segment-intersection-algorithm/
