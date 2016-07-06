@@ -54,6 +54,8 @@ def plot_for_truck(k):
 
   colors = ["b","g","r","c","m","k"]
 
+  ipdb.set_trace()
+
   plt.plot(x2, y2, c=colors[k], linewidth=3)
 
   # plt.show()
