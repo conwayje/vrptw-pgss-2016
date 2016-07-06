@@ -101,6 +101,11 @@ class Path():
 
                 prev_customer = c
 
+    def lines_intersect(point_1, point_2, point_3, point_4):
+
+
+        return False
+
     # returns whether the path intersects itself
     def intersects_self(self):
         intersects = False
@@ -111,11 +116,7 @@ class Path():
         for i in range(1, len(points)):
 
             for j in range(i+1, len(self.route)):
-                if(lines_intersect(points[i-1], points[i], points[j], points[j-1])):
+                if(Path.lines_intersect(points[i-1], points[i], points[j], points[j-1])):
                     intersects = True
 
         return intersects
-
-    def lines_intersect(point_1, point_2, point_3, point_4):
-        return False
-
