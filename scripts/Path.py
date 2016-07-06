@@ -101,9 +101,23 @@ class Path():
 
                 prev_customer = c
 
+    # returns whether the path intersects itself
+    def intersects_self(self):
+        intersects = False
+        points = [(0, 0)]
+        for c in self.route:
+            points.append((c.x, c.y))
+
+        for i in range(1, len(points)):
+
+            for j in range(i + 1, len(self.route)):
+                if (Path.lines_intersect(points[i - 1], points[i], points[j], points[j - 1])):
+                    intersects = True
+
+        return intersects
 
     # Given two lines AB and CD, determines if they intersect
-    # no idea how it works, will researach later
+    # If
     # source http://bryceboe.com/2006/10/23/line-segment-intersection-algorithm/
     @staticmethod
     def lines_intersect(A, B, C, D):
@@ -117,19 +131,4 @@ class Path():
         (Cx, Cy) = C
         return (Cy - Ay) * (Bx - Ax) > (By - Ay) * (Cx - Ax)
 
-    # returns whether the path intersects itself
-    def intersects_self(self):
-        intersects = False
-        points = [(0, 0)]
-        for c in self.route:
-            points.append((c.x, c.y))
 
-        for i in range(1, len(points)):
-
-            for j in range(i+1, len(self.route)):
-                if(Path.lines_intersect(points[i-1], points[i], points[j], points[j-1])):
-                    intersects = True
-
-        return intersects
-
-print Path.lines_intersect((0, 0), (1, 1), (1, 0), (0, 1))
