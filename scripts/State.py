@@ -1,10 +1,13 @@
 class State():
-    def __init__(self, paths, parent):
-        self.paths = paths
+
+    def __init__(self, truck1, truck2, truck3, parent = None):
+        self.truck1 = truck1
+        self.truck2 = truck2
+        self.truck3 = truck3
         self.parent = parent
 
-    def get_children(self):
-        pass # not my job
+    def get_distance(self):
+        return self.truck1.path.get_distance() + self.truck2.path.get_distance() + self.truck3.path.get_distance()
 
-    def score(self):
-        pass # to be implemented
+    def get_children(self):
+        pass
