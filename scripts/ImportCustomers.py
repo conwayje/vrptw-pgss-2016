@@ -8,8 +8,8 @@ path = '../standard_instances/'
 customers = []
     
 def import_customers(filename):
-    f = open(path + "C201.txt", 'r')
-    with open(path + "C201.txt") as f:
+    f = open(path + filename, 'r')
+    with open(path + filename) as f:
         for i in xrange(6):
             f.next()
         for line in f:
@@ -22,4 +22,5 @@ def import_customers(filename):
     #print customers  
     return customers   
 
-#Visual.plot_customers(Depot(0,0), import_customers("C201.txt"))
+# ex: import and then show the customers for file C201.txt [living in directory specified by var 'path']
+# Visual.plot_customers(Depot(0,0), import_customers("C201.txt"))
