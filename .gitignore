@@ -1,0 +1,8 @@
+# ignore DS_store bullshit
+**/*.DS_Store
+
+# ignore IDE config files
+.idea
+
+# ignore pyc files
+**/*.pyc
