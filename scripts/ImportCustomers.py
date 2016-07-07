@@ -1,7 +1,9 @@
 import numpy as np
 from Customer import Customer
+from Visual import Visual
+from Depot import Depot
 
-path = 'standard_instances/'
+path = '../standard_instances/'
 
 customers = []
     
@@ -20,4 +22,4 @@ def import_customers(filename):
     #print customers  
     return customers   
 
-import_customers("C201.txt")
+#Visual.plot_customers(Depot(0,0), import_customers("C201.txt"))
