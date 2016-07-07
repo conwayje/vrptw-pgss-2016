@@ -22,7 +22,11 @@ class Path():
             else:
                 distance += ((c.x-prev_customer.x)**2 + (c.y-prev_customer.y)**2)**.5
                 prev_customer = c
+
+        (prev_customer.x**2 + prev_customer.y**2)**.5
+
         return distance
+
 
     # returns whether the truck makes it on time to every customer by returning
     # an array of the customers missed. If the path is valid, an empty array will be returned
@@ -36,30 +40,22 @@ class Path():
             if is_first_time:
                 # truck leaves from (0, 0)
                 time = math.hypot(c.x, c.y)
+                prev_customer = c
 
-                # if truck arrives before customer is open, assume truck waits
-                if time < c.open_time:
-                    time = c.open_time
-
-                # if truck arrives late, return false
-                if time > c.close_time:
-                    missedCustomers.append(c)
-
-                time += c.service_time
                 is_first_time = False
             else:
                 time += ((c.x-prev_customer.x)**2 + (c.y-prev_customer.y)**2)**.5
-
-                # if truck arrives before customer is open, assume truck waitds
-                if time < c.open_time:
-                    time = c.open_time
-
-                # if truck arrives late, return false
-                if time > c.close_time:
-                    missedCustomers.append(c)
-
-                time += c.service_time
                 prev_customer = c
+
+            # if truck arrives before customer is open, assume truck waitds
+            if time < c.open_time:
+                time = c.open_time
+
+            # if truck arrives late, add to missedCustomers
+            if time > c.close_time:
+                missedCustomers.append(c)
+
+            time += c.service_time
 
         return missedCustomers
 
@@ -85,6 +81,7 @@ class Path():
                 if(time > current_time):
                     return c
 
+                prev_customer = c
                 is_first_time = False
             else:
                 time += ((c.x - prev_customer.x) ** 2 + (c.y - prev_customer.y) ** 2) ** .5
