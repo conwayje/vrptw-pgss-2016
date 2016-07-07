@@ -1,3 +1,5 @@
+from Path import Path
+
 class Truck():
     #class for Truck
     def __init__(self, number, x, y, cargo = 700, path = None, distance = None):
