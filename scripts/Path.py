@@ -8,7 +8,7 @@ import math
 class Path():
 
     def __init__(self, route):
-        self.route = route
+        self.route = route #list of customers
 
     # returns the total distance
     def get_distance(self):
@@ -22,6 +22,7 @@ class Path():
             else:
                 distance += ((c.x-prev_customer.x)**2 + (c.y-prev_customer.y)**2)**.5
                 prev_customer = c
+        return distance
 
     # returns whether the truck makes it on time to every customer by returning
     # an array of the customers missed. If the path is valid, an empty array will be returned

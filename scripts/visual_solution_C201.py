@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-import ipdb
+# import ipdb
 
 solution_file = "../standard_instances/C201_wr_solution.txt"
 
