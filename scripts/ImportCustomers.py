@@ -22,3 +22,4 @@ def import_customers(filename):
     return customers   
 
 #Visual.plot_customers(Depot(0,0), import_customers("C201.txt"))
+
