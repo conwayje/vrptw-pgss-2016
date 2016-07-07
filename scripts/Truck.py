@@ -5,7 +5,7 @@ class Truck():
         self.x = x #x location
         self.y = y #y location
         self.cargo = cargo #amount of cargo currently in truck
-        self.path = path #array of customers previously visited
+        self.path = path #path object
         self.distance = distance #total distance traveled
         
     def __str__(self):
