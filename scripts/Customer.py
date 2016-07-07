@@ -14,7 +14,8 @@ class Customer():
         self.cluster = cluster
 
     def __str__(self):
-        return "<Customer {0}: x = {1}, y = {2}, open_time = {3}, close_time = {4}, service_time = {5}, demand = {6}>".format(self.number, self.x, self.y, self.open_time, self.close_time, self.service_time, self.demand)
+        #return "<Customer {0}: x = {1}, y = {2}, open_time = {3}, close_time = {4}, service_time = {5}, demand = {6}>".format(self.number, self.x, self.y, self.open_time, self.close_time, self.service_time, self.demand)
+        return "<Customer {0}: x = {1}, y = {2}>".format(self.number, self.x, self.y)
 
     def distance_to_customer(self, customer):
         return ((customer.y - self.y)**2 + (customer.x - self.x)**2)**0.5

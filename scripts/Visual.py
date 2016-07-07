@@ -19,6 +19,9 @@ class Visual():
         plt.scatter(x, y, color = color, marker = marker)
         if connect:
             plt.plot(x, y, color = color, linewidth = linewidth)
+
+    @staticmethod
+    def show():
         plt.show()
 
     @staticmethod
