@@ -110,12 +110,36 @@ class Path():
 
         for i in range(1, len(points)):
 
-            for j in range(i+1, len(self.route)):
-                if(lines_intersect(points[i-1], points[i], points[j], points[j-1])):
+            for j in range(i + 1, len(self.route)):
+                if (Path.lines_intersect(points[i - 1], points[i], points[j], points[j - 1])):
                     intersects = True
 
         return intersects
 
-    def lines_intersect(point_1, point_2, point_3, point_4):
-        return False
+    # Will probably be used for inserting in completed solutions for clusters
+    def append(self, toAppend):
+        self.route.append(toAppend.route)
+
+    # Will probably be used for inserting in completed solutions for clusters
+    def insert(self, toAppend, index):
+        for c in toAppend.route:
+            self.insert(index, c)
+            index += 1
+
+
+    # Given two lines AB and CD, determines if they intersect
+    # If
+    # source http://bryceboe.com/2006/10/23/line-segment-intersection-algorithm/
+    @staticmethod
+    def lines_intersect(A, B, C, D):
+        return Path.ccw(A,C,D) != Path.ccw(B,C,D) and Path.ccw(A,B,C) != Path.ccw(A,B,D)
+
+    # helper method for lines_intersect()
+    @staticmethod
+    def ccw(A, B, C):
+        (Ax, Ay) = A
+        (Bx, By) = B
+        (Cx, Cy) = C
+        return (Cy - Ay) * (Bx - Ax) > (By - Ay) * (Cx - Ax)
+
 
