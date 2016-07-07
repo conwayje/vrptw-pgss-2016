@@ -23,7 +23,7 @@ class Path():
                 distance += ((c.x-prev_customer.x)**2 + (c.y-prev_customer.y)**2)**.5
                 prev_customer = c
 
-        (prev_customer.x**2 + prev_customer.y**2)**.5
+        distance += (prev_customer.x**2 + prev_customer.y**2)**.5
 
         return distance
 
