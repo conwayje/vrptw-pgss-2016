@@ -17,6 +17,7 @@ class Path():
         is_first_time = True
         for c in self.route:
             if is_first_time:
+                distance += ((c.x)**2 + (c.y)**2)**.5
                 prev_customer = c
                 is_first_time = False
             else:
