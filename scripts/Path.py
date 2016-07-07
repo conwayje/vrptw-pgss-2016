@@ -143,4 +143,6 @@ class Path():
         (Cx, Cy) = C
         return (Cy - Ay) * (Bx - Ax) > (By - Ay) * (Cx - Ax)
 
-
+    #FIXME
+    def __str__(self):
+        return "<Path: {0}>".format(self.route)
