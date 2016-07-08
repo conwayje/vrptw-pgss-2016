@@ -25,17 +25,26 @@ class State():
 
     #TODO
     def get_children(self):
-        children = []
+        children = [] # list of states
         paths = [self.truck1.path, self.truck2.path, self.truck2.path]
 
+        i = 0
+        # first check if swaps can make the paths valid if they weren't
         for path in paths:
             tempPath = copy.deepcopy(path)
             missed = tempPath.is_valid()
+
             for m in missed:
                 x = m.x
                 y = m.y
-                 
+
+                for cust in path.route:
+                    if cust != m:
+                       tempPath.route[tempPath.index(m)]
+
+
 
 
     def __str__(self):
         return "<State: Truck 1: {0}\nTruck2: {1}\nTruck3:{2}>".format(self.truck1.route, self.truck2.route, self.truck3.route)
+
