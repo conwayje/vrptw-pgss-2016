@@ -45,6 +45,6 @@ class State():
 
 
 
-    def __str__(self):
+    def __repr__(self):
         return "<State: Truck 1: {0}\nTruck2: {1}\nTruck3:{2}>".format(self.truck1.route, self.truck2.route, self.truck3.route)
 

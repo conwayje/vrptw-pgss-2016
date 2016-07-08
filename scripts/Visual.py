@@ -30,4 +30,4 @@ class Visual():
 
     @staticmethod
     def plot_path(path, color = 'b', marker = 'o', linewidth = 2.0):
-      Visual.plot_customers(path.route[0], path.route, connect= True, color = color, marker = marker, linewidth= linewidth)
+      Visual.plot_customers(Depot(0,0), path.route, connect= True, color = color, marker = marker, linewidth= linewidth)

@@ -10,8 +10,8 @@ class Truck():
         self.path = path #path object
         self.distance = distance #total distance traveled
         
-    def __str__(self):
-        return "<Truck {0}: x = {1}, y = {2}, cargo = {3}, path = {4}, distance = {5}>".format(self.number, self.x, self.y, self.cargo, self.path, self.distance)
+    def __repr__(self):
+        return "<Truck {0}: ({1}, {2}), cargo = {3}, path = {4}, distance = {5}>".format(self.number, self.x, self.y, self.cargo, self.path, self.distance)
         
     def distance_to_customer(self, cust): #distance to a given customer
         return ((cust.y - self.y)**2 + (cust.x - self.x)**2)**0.5
