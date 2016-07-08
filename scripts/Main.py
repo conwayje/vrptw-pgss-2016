@@ -29,13 +29,23 @@ def initial_state():
     route1 = []
     route2 = []
     route3 = []
-    for customer in customers:
+    
+    customers_by_distance = sorted(customers, key=lambda customer: customer.distance())
+    #customers_by_distance = customers.closest_customers()
+    print customers_by_distance
+    
+    for customer in customers_by_distance:
         if customer.x < 0 and customer.y > -15:
             route1.append(customer)
         elif customer.x >= 0 and customer.y > -15:
             route2.append(customer)
         else:
             route3.append(customer)
+            
+    for customer in route1:
+        temp1.append(customer)
+        temp2 = route1.sort(route1, key = lambda customer: customer.distance_to_customer(customer))
+        
     truck1.path = Path(route1)
     truck2.path = Path(route2)
     truck3.path = Path(route3)
