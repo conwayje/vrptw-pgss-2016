@@ -28,6 +28,32 @@ class Path():
 
         return distance
 
+    def get__arrival_time_of_customer(self, cust):
+        prev_customer = None
+        time = 0
+        is_first_time = True
+
+        for c in self.route:
+            if is_first_time:
+                # truck leaves from (0, 0)
+                time = math.hypot(c.x, c.y)
+                prev_customer = c
+
+                is_first_time = False
+            else:
+                time += ((c.x-prev_customer.x)**2 + (c.y-prev_customer.y)**2)**.5
+                prev_customer = c
+
+
+            # if truck arrives before customer is open, assume truck waitds
+            if time < c.open_time:
+                time = c.open_time
+
+            if (c == cust):
+                return time
+
+            time += c.service_time
+        return -1
 
     # returns whether the truck makes it on time to every customer by returning
     # an array of the customers missed. If the path is valid, an empty array will be returned

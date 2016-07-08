@@ -18,7 +18,7 @@ class Visual():
             x.append(customer.x)
             y.append(customer.y)
             if label:
-                Visual.subplot.text(customer.x, customer.y, str(customer.number))
+                Visual.subplot.text(customer.x, customer.y, str(customer.number), weight='bold', size='smaller')
         plt.scatter(depot.x, depot.y, color = 'r')
         plt.scatter(x, y, color = color, marker = marker)
         if connect:
