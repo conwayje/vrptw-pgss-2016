@@ -40,9 +40,9 @@ def initial_state():
         else:
             route3.append(customer)
             
-    for customer in route1:
-        temp1.append(customer)
-        temp2 = route1.sort(route1, key = lambda customer: customer.distance_to_customer(customer))
+    #for customer in route1:
+    #    temp1.append(customer)
+    #    temp2 = route1.sort(route1, key = lambda customer: customer.distance_to_customer(customer))
         
     truck1.path = Path(route1)
     truck2.path = Path(route2)
