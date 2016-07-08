@@ -8,13 +8,17 @@ from Path import Path
 
 class Visual():
 
+    subplot = plt.figure().add_subplot(111)
+
     @staticmethod
-    def plot_customers(depot, customers, connect = False, color = 'b', marker = 'o', linewidth = 2.0):
+    def plot_customers(depot, customers, label = True, connect = False, color = 'b', marker = 'o', linewidth = 2.0):
         x = []
         y = []
         for customer in customers:
             x.append(customer.x)
             y.append(customer.y)
+            if label:
+                Visual.subplot.text(customer.x, customer.y, str(customer.number))
         plt.scatter(depot.x, depot.y, color = 'r')
         plt.scatter(x, y, color = color, marker = marker)
         if connect:
