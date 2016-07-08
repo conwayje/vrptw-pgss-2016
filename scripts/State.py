@@ -1,5 +1,6 @@
 from Visual import Visual
 from Truck import Truck
+import copy
 
 class State():
 
@@ -20,11 +21,21 @@ class State():
 
     #TODO
     def get_score(self):
-        return get_distance()
+        return self.get_distance()
 
     #TODO
     def get_children(self):
-        pass
+        children = []
+        paths = [self.truck1.path, self.truck2.path, self.truck2.path]
+
+        for path in paths:
+            tempPath = copy.deepcopy(path)
+            missed = tempPath.is_valid()
+            for m in missed:
+                x = m.x
+                y = m.y
+                 
+
 
     def __str__(self):
         return "<State: Truck 1: {0}\nTruck2: {1}\nTruck3:{2}>".format(self.truck1.route, self.truck2.route, self.truck3.route)
