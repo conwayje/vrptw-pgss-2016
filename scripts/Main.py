@@ -20,9 +20,7 @@ def init():
     truck1 = Truck(1, 0, 0, 700)
     truck2 = Truck(2,0,0,700)
     truck3 = Truck(3,0,0,700)
-    Visual.plot_customers(depot, customers)
-    
-    # Visual.plot_customers(depot, customers)
+    #Visual.plot_customers(depot, customers)
 
 def initial_state():
     global customers, truck1, truck2, truck3
