@@ -9,8 +9,12 @@ class State():
         self.truck2 = truck2
         self.truck3 = truck3
         self.parent = parent
+        # @TODO -- should we also maintain children...?
+        # @TODO -- similar to Path, might want to store distance so that we don't have to
+        # do repetitive/useless/wasted calculations several times.  just access a value instead
 
     def get_distance(self):
+        # @TODO -- if we do store distance, might want to set it here?
         return self.truck1.path.get_distance() + self.truck2.path.get_distance() + self.truck3.path.get_distance()
 
     def plot(self):
@@ -19,11 +23,11 @@ class State():
         Visual.plot_path(self.truck3.path, color='m')
         Visual.show()
 
-    #TODO
+    # @TODO -- point to heuristic score
     def get_score(self):
         return self.get_distance()
 
-    #TODO
+    # @TODO -- still lots to do here, of course ;)
     def get_children(self):
         children = [] # list of states
         paths = [self.truck1.path, self.truck2.path, self.truck2.path]

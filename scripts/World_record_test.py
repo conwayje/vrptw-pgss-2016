@@ -45,7 +45,7 @@ route1 = str.split(stringroute1)
 route2 = str.split(stringroute2)
 route3 = str.split(stringroute3)
 
- 
+
 for i in route1:
 	path1.route.append(cust[int(i)-1])
 

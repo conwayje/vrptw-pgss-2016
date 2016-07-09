@@ -12,6 +12,7 @@ class Cluster():
         total_x = 0
         total_y = 0
         count = 0
+
         for c in self.customers:
             total_x += c.x
             total_y += c.y
@@ -35,19 +36,12 @@ class Cluster():
         return best_path
 
 
-    # old method to get perms, but python already has one
-    # @staticmethod
-    # def generate_perms(customers):
-    #     perms = []
-    #     if len(customers) == 1:
-    #         return customers
+    # @TODO -- this might also need the problem definition name [rc208, c201, or whatever]
+    # in order to properly decide which customers are clustered.  also ask @suvir if you
+    # need help visualizing.
     #
-    #     for c in customers:
-    #         temp = customers
-    #         temp.remove(c)
-    #         perms.append(Cluster.generate_perms(temp))
-    #     return perms
-
+    # personal request:  keep clusters small so that [cluster].get_solution() is useful more often
+    # than not =)
     @staticmethod
     def create_clusters(customers):
         pass
