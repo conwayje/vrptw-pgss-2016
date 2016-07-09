@@ -1,17 +1,18 @@
-# SolutionReader.py
+"""	Returns a State for a supplied solution
+"""
 
 from ImportCustomers import import_customers
 from Depot import Depot
 from Path import Path
 from Truck import Truck
 from State import State
+import argparse
 
 path = '../standard_instances/'
-customers = []
 
-
-def import_solution(solutionFile, customers):
-    with open(path + solutionFile) as f:
+def import_solution(filename):
+    with open(path + filename) as f:
+        customers = import_customers(f.replace("_wr_solution", ""))
         lines = f.readlines()
         ids1 = lines[5].split()[3:]
         ids2 = lines[6].split()[3:]
@@ -31,3 +32,10 @@ def import_solution(solutionFile, customers):
     return State(Truck(1, 0, 0, path=path1),
                  Truck(2, 0, 0, path=path2),
                  Truck(3, 0, 0, path=path3), parent=None)
+
+parser = argparse.ArgumentParser()
+parser.add_argument("filename")
+args = parser.parse_args()
+filename = args.filename
+
+import_solution(filename)

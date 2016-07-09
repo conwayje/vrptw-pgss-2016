@@ -1,6 +1,5 @@
 """ Class for plotting customer locations and paths.
 """
-import numpy as np
 import matplotlib.pyplot as plt
 from Customer import Customer
 from Depot import Depot
