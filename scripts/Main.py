@@ -6,6 +6,10 @@ from Visual import Visual
 from Path import Path
 from State import State
 from ImportCustomers import import_customers
+from ImportSolution import import_solution
+
+# Filenames:    C201.txt, C201_wr_solution.txt
+# 				RC208.txt, RC208_wr_solution.txt
 
 truck1 = None
 truck2 = None
@@ -15,7 +19,6 @@ customers = None
 def init():
     global customers, depot, truck1, truck2, truck3
     customers = import_customers("C201.txt")
-    #cusomers = import_customers("RC208.txt")
     depot = Depot()
     truck1 = Truck(1, 0, 0, 700)
     truck2 = Truck(2,0,0,700)
@@ -27,7 +30,7 @@ def initial_state():
     route1 = []
     route2 = []
     route3 = []
-    
+
     customers_by_distance = sorted(customers, key=lambda customer: customer.distance())
     #customers_by_distance = customers.closest_customers()
     print customers_by_distance
@@ -52,6 +55,8 @@ def initial_state():
     print truck1.path.is_valid()
     print truck2.path.is_valid()
     print truck3.path.is_valid()
+
+    state = import_solution("C201_wr_solution.txt", customers)
     state.plot()
     return state
 

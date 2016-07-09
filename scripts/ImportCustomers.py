@@ -18,8 +18,8 @@ def import_customers(filename):
             temp = Customer(int(custList[0])-1, float(custList[1]) - 40, float(custList[2]) - 50, float(custList[4]), float(custList[5]), float(custList[6]), float(custList[3]))
             
             customers.append(temp)
-            
+
     return customers   
 
-Visual.plot_customers(Depot(0,0), import_customers("C201.txt"))
-Visual.show()
+# Visual.plot_customers(Depot(0,0), import_customers("C201.txt"))
+# Visual.show()

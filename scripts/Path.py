@@ -167,5 +167,19 @@ class Path():
         (Cx, Cy) = C
         return (Cy - Ay) * (Bx - Ax) > (By - Ay) * (Cx - Ax)
 
+    def distance_to_previous(self, customer):
+        index = self.route.index(customer) - 1
+        if index >= 0:
+            return self.route[index]
+        else:
+            return None
+
+    def distance_to_next(self, customer):
+        index = self.route.index(customer) + 1
+        if index < len(self.route):
+            return self.route[index]
+        else:
+            return None
+
     def __repr__(self):
         return "<Path: {0}>".format(self.route)
