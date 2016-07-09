@@ -3,7 +3,7 @@ from Visual import Visual
 from Depot import Depot
 
 path = '../standard_instances/'
-
+22
 customers = []
 
 def import_customers(filename):
