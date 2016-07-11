@@ -70,13 +70,57 @@ def initial_state():
     return state
 
 init()
-i_state = initial_state()
+# i_state = initial_state()
+
+solution_file = "../standard_instances/Jahnik"
+
+f = file(solution_file, "r")
+solution_lines = f.readlines()
+f.close()
+
+truck_1_path = solution_lines[0].strip()
+truck_2_path = solution_lines[1].strip()
+truck_3_path = solution_lines[2].strip()
+
+
+route1 = []
+route2 = []
+route3 = []
+
+for i in truck_1_path.split(' '):
+    print i,
+    route1.append(customers[int(i)-1])
+
+print "\n"
+for i in truck_2_path.split(' '):
+    print i,
+    route2.append(customers[int(i)-1])
+
+print "\n"
+for i in truck_3_path.split(' '):
+    print i,
+    route3.append(customers[int(i)-1])
+
+
+
+i_state = State(Truck(1, 0, 0, 700, Path(route1)), Truck(2, 0, 0, 700, Path(route2)) ,Truck(3, 0, 0, 700, Path(route3)))
+
+
+i_state.plot()
+
+# paths = [i_state.truck1.path, i_state.truck2.path, i_state.truck3.path]
+# for path in paths:
+#     for cust in path.route:
+#         print path.route.index(cust), cust, path.get_arrival_time_of_customer(cust)
+
 
 paths = [i_state.truck1.path, i_state.truck2.path, i_state.truck3.path]
-for path in paths:
-    print path.calculate_distance(), len(path.route), len(path.is_valid())
-    print path
-
-
+# for path in paths:
+#     for cust in path.route:
+#         print path.route.index(cust), cust, path.get_arrival_time_of_customer(cust)
 
 doAStar(i_state)
+
+
+
+

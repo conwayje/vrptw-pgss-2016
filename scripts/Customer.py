@@ -19,7 +19,7 @@ class Customer():
 
     def distance_to_customer(self, customer): #gets distance from one customer to another
         return ((customer.y - self.y)**2 + (customer.x - self.x)**2)**0.5
-        
+
     def distance(self): #gets the customer's distance from depot
         return (self.y**2 + self.x**2)**0.5
         
