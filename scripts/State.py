@@ -63,6 +63,9 @@ class State():
 
 
     def redistribute_more_evenly(self, children, paths):
+        """ For ex, with 100 customers and 3 trucks, we expect 33 per truck.  Siphon off the
+            surplus for any 'overloaded' paths and then add some surplus randomly into 'underloaded'
+            paths """
         expected = sum( [ len(element.route) for element in self.paths] ) / len( self.paths )
         overserved_paths = []
         underserved_paths = []
