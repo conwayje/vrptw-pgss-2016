@@ -50,7 +50,7 @@ class State():
         paths = [self.truck1.path, self.truck2.path, self.truck3.path]
 
 
-        for child_paths in State.get_fixed_children(paths, 100):
+        for child_paths in self.path_swap(paths):
             children.append(
             State(Truck(1, 0, 0, 700, child_paths[0]), Truck(2, 0, 0, 700, child_paths[1]) ,Truck(3, 0, 0, 700, child_paths[2])))
 
@@ -58,9 +58,8 @@ class State():
 
 
 
-    @staticmethod
     # check if swaps can make the paths valid if they weren't, tolerance controls added distance
-    def get_fixed_children(paths, tolerance):
+    def get_fixed_children(paths, customers, tolerance):
         children = [] #list of states
 
         # @TODO -- this is clever, but it takes
@@ -138,6 +137,37 @@ class State():
 
             children.append( new_paths )
 
+        return children
+
+    def path_swap(self, paths):
+        children = []
+        for i in range( 15 ):
+            new_paths = [copy.deepcopy(element) for element in paths]
+            # get two unique random paths
+            path_a_index = randint(0, 2)
+            path_b_index = (path_a_index + randint(1, 2)) % 3
+            path_a = new_paths[path_a_index]
+            path_b = new_paths[path_b_index]
+            # select two customers
+            customer_a = randint(0, len(path_a.route) - 1)
+            customer_b = randint(0, len(path_b.route) - 1)
+            path_a.route[customer_a], path_b.route[customer_b] = path_b.route[customer_b], path_a.route[customer_a]
+            children.append(new_paths)
+        return children
+
+    def distance_swap(self, paths):
+        children = []
+        for i in range( 15 ):
+            new_paths = [copy.deepcopy(element) for element in paths]
+            # get two unique random paths
+            path_index = randint(0, 2)
+            path = new_paths[path_index]
+            # select two customers
+            customer_a = randint(0, len(path.route) - 1)
+            customer_b = randint(customer_a, len(path.route) - 1)
+            if path.route[customer_a].distance() > path.route[customer_b].distance():
+                path.route[customer_a], path.route[customer_b] = path.route[customer_b], path.route[customer_a]
+            children.append(new_paths)
         return children
 
     def is_world_record(self):
