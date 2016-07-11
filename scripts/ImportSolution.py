@@ -6,6 +6,7 @@ from Depot import Depot
 from Path import Path
 from Truck import Truck
 from State import State
+from Visual import Visual
 import argparse
 
 path = '../standard_instances/'
@@ -38,4 +39,4 @@ parser.add_argument("filename")
 args = parser.parse_args()
 filename = args.filename
 
-import_solution(filename)
+import_solution(filename).plot()
