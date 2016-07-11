@@ -61,7 +61,26 @@ class State():
             children.append(
             State(Truck(1, 0, 0, 700, child_paths[0]), Truck(2, 0, 0, 700, child_paths[1]) ,Truck(3, 0, 0, 700, child_paths[2])))
 
-        #children = self.shuffle_in_fives( children, paths )
+
+        return children
+
+    @staticmethod
+    def medium_move(paths):
+        route1 = paths[0].route
+        route2 = paths[1].route
+        route3 = paths[2].route
+        length1 = len(route1)
+        length2 = len(route2)
+        length3 = len(route3)
+        for i in range(0,4):
+            rand1 = randint(0,length1-1)
+            rand2 = randint(0,length2-1)
+            rand3 = randint(0,length3-1)
+            temp = route1[rand1]
+            route1[rand1] = route2[rand2]
+            route2[rand2] = route3[rand3]
+            route3[rand3] = temp
+        return [Path(route1), Path(route2), Path(route3)]
 
         return children
 
