@@ -56,6 +56,7 @@ class State():
         children_paths = State.shuffle_in_fives( paths, children_paths )
         children_paths = State.get_fixed_children( paths, children_paths, 100 )
 
+        for child_paths in children_paths:
         # child_paths should be a list containing three paths per entry (as a list)
         for child_paths in children_paths:
             children.append(
@@ -237,6 +238,36 @@ class State():
 
             children.append( new_paths )
 
+        return children
+
+    @staticmethod
+    def path_swap(paths, children):
+        for i in range( 15 ):
+            new_paths = [copy.deepcopy(element) for element in paths]
+            # get two unique random paths
+            path_a_index = randint(0, 2)
+            path_b_index = (path_a_index + randint(1, 2)) % 3
+            path_a = new_paths[path_a_index]
+            path_b = new_paths[path_b_index]
+            # select two customers
+            customer_a = randint(0, len(path_a.route) - 1)
+            customer_b = randint(0, len(path_b.route) - 1)
+            path_a.route[customer_a], path_b.route[customer_b] = path_b.route[customer_b], path_a.route[customer_a]
+            children.append(new_paths)
+        return children
+
+    @staticmethod
+    def distance_swap(paths, children):
+        for i in range( 15 ):
+            new_paths = [copy.deepcopy(element) for element in paths]
+            path_index = randint(0, 2)
+            path = new_paths[path_index]
+            # gets two random customers, if the first is farther then the secondthen swap
+            customer_a = randint(0, len(path.route) - 1)
+            customer_b = randint(customer_a, len(path.route) - 1)
+            if path.route[customer_a].distance() > path.route[customer_b].distance():
+                path.route[customer_a], path.route[customer_b] = path.route[customer_b], path.route[customer_a]
+            children.append(new_paths)
         return children
 
     def is_world_record(self):
