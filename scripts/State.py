@@ -3,7 +3,7 @@ from Truck import Truck
 import copy
 import math
 from Path import Path
-from random import randint
+from random import randint, randrange, choice
 import ipdb
 import random
 
@@ -13,6 +13,7 @@ class State():
         self.truck1 = truck1
         self.truck2 = truck2
         self.truck3 = truck3
+        self.paths = [truck1.path, truck2.path, truck3.path]
         self.distance = None
         self.parent = parent
         #  @TODO -- should we also maintain children...?
@@ -55,13 +56,10 @@ class State():
         children_paths = State.shuffle_in_fives( paths, children_paths )
         children_paths = State.get_fixed_children( paths, children_paths, 100 )
 
-        #ipdb.set_trace()
-
+        # child_paths should be a list containing three paths per entry (as a list)
         for child_paths in children_paths:
-            # ipdb.set_trace()
             children.append(
             State(Truck(1, 0, 0, 700, child_paths[0]), Truck(2, 0, 0, 700, child_paths[1]) ,Truck(3, 0, 0, 700, child_paths[2])))
-
 
         return children
 
@@ -85,6 +83,7 @@ class State():
         return children
 
     @staticmethod
+<<<<<<< HEAD
     def cycle_three_four_times(paths, children):
         for i in range(15):
             route1 = paths[0].route
@@ -103,6 +102,39 @@ class State():
                 route3[rand3] = temp
             new_paths = [Path(route1), Path(route2), Path(route3)]
             children.append(new_paths)
+
+
+    def redistribute_more_evenly(self, children, paths):
+        """ For ex, with 100 customers and 3 trucks, we expect 33 per truck.  Siphon off the
+            surplus for any 'overloaded' paths and then add some surplus randomly into 'underloaded'
+            paths """
+        expected = sum( [ len(element.route) for element in self.paths] ) / len( self.paths )
+        overserved_paths = []
+        underserved_paths = []
+        surplus = 0
+
+        for path in paths:
+            if len( path.route ) > expected:
+                overserved_paths.append( path )
+                surplus += len( path.route ) - expected
+            else:
+                underserved_paths.append( path )
+
+        # create 5 different moves
+        for k in range(5):
+            # create copies of the paths
+            copy_overserved = [ copy.deepcopy(path.route) for path in overserved_paths ]
+            copy_underserved = [ copy.deepcopy(path.route) for path in underserved_paths ]
+            # move a total of [surplus] things from overserved routes to underserved routes
+            for i in range(surplus):
+                overserved_path = choice( copy_overserved )
+                underserved_path = choice( copy_underserved )
+                customer_to_move = overserved_path.pop( randrange( len ( overserved_path ) ) )
+                underserved_path.insert( randrange( len( underserved_path ) ), customer_to_move )
+
+            children += [ [ Path( element ) for element in copy_underserved ] + [ Path( element ) for element in copy_overserved ] ]
+
+>>>>>>> a19549c4bd8af215bf0b05a3235fd491a6c4d868
         return children
 
     @staticmethod
