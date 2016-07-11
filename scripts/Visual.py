@@ -1,6 +1,5 @@
 """ Class for plotting customer locations and paths.
 """
-import numpy as np
 import matplotlib.pyplot as plt
 from Customer import Customer
 from Depot import Depot
@@ -18,7 +17,7 @@ class Visual():
             x.append(customer.x)
             y.append(customer.y)
             if label:
-                Visual.subplot.text(customer.x, customer.y, str(customer.number))
+                Visual.subplot.text(customer.x, customer.y, str(customer.number), weight='bold', size='smaller')
         plt.scatter(depot.x, depot.y, color = 'r')
         plt.scatter(x, y, color = color, marker = marker)
         if connect:
@@ -30,4 +29,4 @@ class Visual():
 
     @staticmethod
     def plot_path(path, color = 'b', marker = 'o', linewidth = 2.0):
-      Visual.plot_customers(path.route[0], path.route, connect= True, color = color, marker = marker, linewidth= linewidth)
+      Visual.plot_customers(Depot(0,0), path.route, connect= True, color = color, marker = marker, linewidth= linewidth)

@@ -13,6 +13,7 @@ class Cluster():
         total_x = 0
         total_y = 0
         count = 0
+
         for c in self.customers:
             total_x += c.x
             total_y += c.y
@@ -28,7 +29,7 @@ class Cluster():
         best_path = Path(self.customers)
         for cs in itertools.permutations(self.customers):
             p = Path(cs)
-            dist = p.get_distance()
+            dist = p.calculate_distance()
             if(min == -1 or dist < min):
                 min = dist
                 best_path = p
@@ -38,7 +39,6 @@ class Cluster():
 
     def get_data (self):
         sum_cargo = customers(self.demand)
-
         # farthest customer from the center, compares each customer x and y to the center...
         # replaces radius every time a bigger one is found
         center_x = total_x/count
@@ -69,13 +69,12 @@ class Cluster():
     #     perms = []
     #     if len(customers) == 1:
     #         return customers
+    # @TODO -- this might also need the problem definition name [rc208, c201, or whatever]
+    # in order to properly decide which customers are clustered.  also ask @suvir if you
+    # need help visualizing.
     #
-    #     for c in customers:
-    #         temp = customers
-    #         temp.remove(c)
-    #         perms.append(Cluster.generate_perms(temp))
-    #     return perms
-
+    # personal request:  keep clusters small so that [cluster].get_solution() is useful more often
+    # than not =)
     @staticmethod
     def create_clusters(customers):
         pass

@@ -10,42 +10,44 @@ class Path():
     def __init__(self, route):
         self.route = route #list of customers
 
+        if route != []:
+            self.distance = self.calculate_distance()
+
     # returns the total distance
-    def get_distance(self):
-        distance = 0
-        prev_customer = None
-        is_first_time = True
-        for c in self.route:
-            if is_first_time:
-                distance += ((c.x)**2 + (c.y)**2)**.5
-                prev_customer = c
-                is_first_time = False
-            else:
-                distance += ((c.x-prev_customer.x)**2 + (c.y-prev_customer.y)**2)**.5
-                prev_customer = c
-        
+    def calculate_distance(self):
+
+        prev_customer = self.route[0]
+        distance = ((prev_customer.x) ** 2 + (prev_customer.y) ** 2) ** .5
+
+        for c in self.route[1:]:
+            distance += ((c.x-prev_customer.x)**2 + (c.y-prev_customer.y)**2)**.5
+            prev_customer = c
+
         distance += (prev_customer.x**2 + prev_customer.y**2)**.5
 
+        self.distance = distance
         return distance
 
-    def get__arrival_time_of_customer(self, cust):
-        prev_customer = None
-        time = 0
-        is_first_time = True
+    def get_arrival_time_of_customer(self, cust):
+        """Returns the time at which the truck on this path arrives at this customer
+        given the order of customers prior to the given customer and their windows"""
 
-        for c in self.route:
-            if is_first_time:
-                # truck leaves from (0, 0)
-                time = math.hypot(c.x, c.y)
-                prev_customer = c
+        prev_customer = self.route[0]
+        time = math.hypot(prev_customer.x, prev_customer.y)
 
-                is_first_time = False
-            else:
-                time += ((c.x-prev_customer.x)**2 + (c.y-prev_customer.y)**2)**.5
-                prev_customer = c
+        if time < prev_customer.open_time:
+            time = prev_customer.open_time
+
+        if (prev_customer == cust):
+            return time
+
+        for c in self.route[1:]:
+
+            time += ((c.x-prev_customer.x)**2 + (c.y-prev_customer.y)**2)**.5
+            prev_customer = c
 
 
-            # if truck arrives before customer is open, assume truck waitds
+            # if truck arrives before customer is open, assume truck waits
             if time < c.open_time:
                 time = c.open_time
 
@@ -53,26 +55,36 @@ class Path():
                 return time
 
             time += c.service_time
+
         return -1
 
-    # returns whether the truck makes it on time to every customer by returning
-    # an array of the customers missed. If the path is valid, an empty array will be returned
     def is_valid(self):
-        prev_customer = None
-        time = 0
-        is_first_time = True
+        # @TODO -- just a note: comments before a function aren't "part of python" in any really meaningful ways.
+        # if you do it like this -- called a docstring -- then you can actually access this information while you're
+        # using a python interpreter and such, which can be very convenient.
+        #
+        # you don't need to do anything here; just a note for the future
+        """returns whether the truck makes it on time to every customer by returning
+        an array of the customers missed. If the path is valid, an empty array will be returned"""
+
+        prev_customer = self.route[0]
+        time = math.hypot(prev_customer.x, prev_customer.y)
+
         missedCustomers = []
 
-        for c in self.route:
-            if is_first_time:
-                # truck leaves from (0, 0)
-                time = math.hypot(c.x, c.y)
-                prev_customer = c
+        # if truck arrives before customer is open, assume truck waitds
+        if time < prev_customer.open_time:
+            time = prev_customer.open_time
 
-                is_first_time = False
-            else:
-                time += ((c.x-prev_customer.x)**2 + (c.y-prev_customer.y)**2)**.5
-                prev_customer = c
+        # if truck arrives late, add to missedCustomers
+        if time > prev_customer.close_time:
+            missedCustomers.append(prev_customer)
+
+        time += prev_customer.service_time
+
+        for c in self.route[1:]:
+            time += ((c.x-prev_customer.x)**2 + (c.y-prev_customer.y)**2)**.5
+            prev_customer = c
 
             # if truck arrives before customer is open, assume truck waitds
             if time < c.open_time:
@@ -84,57 +96,57 @@ class Path():
 
             time += c.service_time
 
+        # @TODO -- the name is_valid makes me expect this would return at least a boolean value
+        # [and perhaps something else in addition]
+        # maybe we should return True/False, missedCustomers instead?
         return missedCustomers
 
     # gets the customer the truck was last at
     def get_last_customer_visited(self, current_time):
-        prev_customer = None
-        is_first_time = True
-        time = 0
+        prev_customer = self.route[0]
 
-        for c in self.route:
-            if is_first_time:
+        time = math.hypot(prev_customer.x, prev_customer.y)
+        if (time > current_time):
+            return None
 
-                # truck leaves from (0, 0)
-                time = math.hypot(c.x, c.y)
-                if(time > current_time):
-                    return None
+        # if truck arrives before customer is open, assume truck waits
+        if time < prev_customer.open_time:
+            time = prev_customer.open_time
+        time += prev_customer.service_time
 
-                # if truck arrives before customer is open, assume truck waits
-                if time < c.open_time:
-                    time = c.open_time
-                time += c.service_time
+        if (time > current_time):
+            return prev_customer
 
-                if(time > current_time):
-                    return c
+        for c in self.route[1:]:
+            # @TODO -- again, suspicious about the first time thing here.  you can really see why now;
+            # it's forcing the duplication of a lot of code.
 
-                prev_customer = c
-                is_first_time = False
-            else:
-                time += ((c.x - prev_customer.x) ** 2 + (c.y - prev_customer.y) ** 2) ** .5
+            time += ((c.x - prev_customer.x) ** 2 + (c.y - prev_customer.y) ** 2) ** .5
 
-                if(time > current_time):
-                    return prev_customer
+            if(time > current_time):
+                return prev_customer
 
-                # if truck arrives before customer is open, assume truck waitds
-                if time < c.open_time:
-                    time = c.open_time
-                time += c.service_time
+            # if truck arrives before customer is open, assume truck waitds
+            if time < c.open_time:
+                time = c.open_time
+            time += c.service_time
 
-                if(time > current_time):
-                    return c
+            if(time > current_time):
+                return c
 
-                prev_customer = c
+            prev_customer = c
+        return None
 
     # returns whether the path intersects itself
     def intersects_self(self):
+        # @TODO -- i know we stole this from stackoverflow, but have we tested it?
+        # let's make sure we do that [and then delete this comment]
         intersects = False
         points = [(0, 0)]
         for c in self.route:
             points.append((c.x, c.y))
 
         for i in range(1, len(points)):
-
             for j in range(i + 1, len(self.route)):
                 if (Path.lines_intersect(points[i - 1], points[i], points[j], points[j - 1])):
                     intersects = True
@@ -162,11 +174,30 @@ class Path():
     # helper method for lines_intersect()
     @staticmethod
     def ccw(A, B, C):
+        # @TODO -- there's a liiiiittle bit too much magic happening here.  so what is
+        # "A" exactly, and what does the assignment do?
+        #
+        # might want to add a docstring describing the structure of the arguments; it's not
+        # immediately obvious what it's expecting
         (Ax, Ay) = A
         (Bx, By) = B
         (Cx, Cy) = C
         return (Cy - Ay) * (Bx - Ax) > (By - Ay) * (Cx - Ax)
 
-    #FIXME
-    def __str__(self):
+    def distance_to_previous(self, customer):
+        index = self.route.index(customer) - 1
+        if index >= 0:
+            return self.route[index].distance_to_customer(customer)
+        else:
+            return customer.distance()
+
+    def distance_to_next(self, customer):
+        index = self.route.index(customer) + 1
+        if index < len(self.route):
+            return self.route[index].distance_to_customer(customer)
+        else:
+            return customer.distance()
+
+
+    def __repr__(self):
         return "<Path: {0}>".format(self.route)
