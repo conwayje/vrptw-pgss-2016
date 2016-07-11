@@ -1,13 +1,8 @@
 from Path import Path
 
 class Truck():
-    #class for Truck
-    # @TODO -- note that cargo amount is 700 for one instance and 1000 for the other.
-    # is this taken into account wherever Truck() objects are created?
-    #
-    # actually, it feels a little suspect to have a default on that either way.  i think that should
-    # probably be a required argument to protect our future selves from our current selves
-    def __init__(self, number, x, y, cargo = 700, path = None, distance = None):
+
+    def __init__(self, number, x, y, cargo, path = None, distance = None):
         self.number = number #truck id/number
         self.x = x #x location
         self.y = y #y location
