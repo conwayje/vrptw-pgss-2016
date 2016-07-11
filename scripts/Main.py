@@ -6,7 +6,7 @@ from Visual import Visual
 from Path import Path
 from State import State
 from ImportCustomers import import_customers
-# from ImportSolution import import_solution
+#from ImportSolution import import_solution
 
 # Filenames:    C201.txt, C201_wr_solution.txt
 # 				RC208.txt, RC208_wr_solution.txt
@@ -15,9 +15,9 @@ truck1 = None
 truck2 = None
 truck3 = None
 customers = None
+depot = Depot()
 
 def init():
-    # @TODO -- depot is the only one among the 5 here which is not declared above.  do we want it that way?
     global customers, depot, truck1, truck2, truck3
 
     # @TODO -- let's replace this with argument parsing >.>
@@ -55,10 +55,6 @@ def initial_state():
             route2.append(customer)
         else:
             route3.append(customer)
-
-    #for customer in route1:
-    #    temp1.append(customer)
-    #    temp2 = route1.sort(route1, key = lambda customer: customer.distance_to_customer(customer))
 
     truck1.path = Path(route1)
     truck2.path = Path(route2)
