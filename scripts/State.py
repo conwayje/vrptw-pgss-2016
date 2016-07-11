@@ -5,6 +5,7 @@ import math
 from Path import Path
 from random import randint
 import ipdb
+import random
 
 class State():
 
@@ -47,21 +48,48 @@ class State():
     # @TODO -- still lots to do here, of course ;)
     def get_children(self):
         children = [] # list of states
+        children_paths = []
         paths = [self.truck1.path, self.truck2.path, self.truck3.path]
 
+        children_paths = State.shuffle_in_fives( paths, children_paths )
+        children_paths = State.get_fixed_children( paths, children_paths, 100 )
+        
+        #ipdb.set_trace()
 
-        for child_paths in State.get_fixed_children(paths, 100):
+        for child_paths in children_paths:
+            # ipdb.set_trace()
             children.append(
             State(Truck(1, 0, 0, 700, child_paths[0]), Truck(2, 0, 0, 700, child_paths[1]) ,Truck(3, 0, 0, 700, child_paths[2])))
 
+        #children = self.shuffle_in_fives( children, paths )
+
         return children
 
-
-
     @staticmethod
+    def shuffle_in_fives(paths, children):
+        for i in range(7):
+            new_paths = []
+            for path in paths:
+                route = []
+                for i in range(0, len(path.route), 4):
+                    custs = path.route[i:i+4]
+                    random.shuffle(custs, random.random)
+                    for cust in custs:
+                        route.append(cust)
+                new_path = Path(route)
+                    
+                new_paths.append(new_path)
+                
+            children.append(new_paths)
+              
+        #ipdb.set_trace()
+                
+        return children
+            
+
     # check if swaps can make the paths valid if they weren't, tolerance controls added distance
-    def get_fixed_children(paths, tolerance):
-        children = [] #list of states
+    @staticmethod
+    def get_fixed_children(paths, children, tolerance):
 
         # @TODO -- this is clever, but it takes
         # waaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaay too long.

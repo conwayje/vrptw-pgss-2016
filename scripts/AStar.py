@@ -22,7 +22,7 @@ def doAStar(initial_state):
         # print len(children)
         for c in children:
             heappush(queue, ( c.get_score(), c) )
-
+    
     return state
 
 
