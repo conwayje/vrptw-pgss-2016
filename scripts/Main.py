@@ -6,7 +6,7 @@ from Visual import Visual
 from Path import Path
 from State import State
 from ImportCustomers import import_customers
-from ImportSolution import import_solution
+# from ImportSolution import import_solution
 
 # Filenames:    C201.txt, C201_wr_solution.txt
 # 				RC208.txt, RC208_wr_solution.txt
