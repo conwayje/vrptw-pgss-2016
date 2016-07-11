@@ -15,7 +15,7 @@ class Customer():
 
     def __repr__(self):
         #return "<Customer {0}: ({1}, {2}), open_time = {3}, close_time = {4}, service_time = {5}, demand = {6}>".format(self.number, self.x, self.y, self.open_time, self.close_time, self.service_time, self.demand)
-        return "<Customer {0}: ({1}, {2})".format(self.number, self.x, self.y)
+        return "<Customer {0}: ({1}, {2}), [{3}, {4}]".format(self.number, self.x, self.y, self.open_time, self.close_time)
 
     def distance_to_customer(self, customer): #gets distance from one customer to another
         return ((customer.y - self.y)**2 + (customer.x - self.x)**2)**0.5

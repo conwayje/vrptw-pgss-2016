@@ -15,8 +15,11 @@ def doAStar(initial_state):
             world_record_not_broken = False
             break
 
-        for c in state.get_chidren():
-            heappush(queue, ( c.score(), c) )
+        print state.get_score(), state
+        children =state.get_children()
+        print len(children)
+        for c in children:
+            heappush(queue, ( c.get_score(), c) )
 
     return state
 

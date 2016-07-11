@@ -5,6 +5,7 @@ from Cluster import Cluster
 from Visual import Visual
 from Path import Path
 from State import State
+from AStar import doAStar
 from ImportCustomers import import_customers
 #from ImportSolution import import_solution
 
@@ -62,16 +63,22 @@ def initial_state():
 
     state = State(truck1, truck2, truck3)
 
-    print truck1.path.is_valid()
-    print truck2.path.is_valid()
-    print truck3.path.is_valid()
 
     #state = import_solution("C201_wr_solution.txt")
-    state.plot()
+    # state.plot()
 
     return state
 
 init()
-initial_state()
+i_state = initial_state()
+
+paths = [i_state.truck1.path, i_state.truck2.path, i_state.truck3.path]
+for path in paths:
+    print path.calculate_distance(), len(path.route), len(path.is_valid())
+    print path
+
+
+
+doAStar(i_state)
 
 # @TODO -- enter A* from here...?

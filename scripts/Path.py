@@ -33,19 +33,19 @@ class Path():
         given the order of customers prior to the given customer and their windows"""
 
         prev_customer = self.route[0]
-        time = math.hypot(prev_customer.x, prev_customer.y)
+        time = (prev_customer.x ** 2 + prev_customer.y**2)**.5
 
         if time < prev_customer.open_time:
             time = prev_customer.open_time
 
-        if (prev_customer == cust):
+
+        if prev_customer == cust:
             return time
 
         for c in self.route[1:]:
 
             time += ((c.x-prev_customer.x)**2 + (c.y-prev_customer.y)**2)**.5
             prev_customer = c
-
 
             # if truck arrives before customer is open, assume truck waits
             if time < c.open_time:
@@ -55,6 +55,7 @@ class Path():
                 return time
 
             time += c.service_time
+
 
         return -1
 
@@ -88,6 +89,7 @@ class Path():
 
             # if truck arrives before customer is open, assume truck waitds
             if time < c.open_time:
+                #
                 time = c.open_time
 
             # if truck arrives late, add to missedCustomers
@@ -95,7 +97,6 @@ class Path():
                 missedCustomers.append(c)
 
             time += c.service_time
-
         # @TODO -- the name is_valid makes me expect this would return at least a boolean value
         # [and perhaps something else in addition]
         # maybe we should return True/False, missedCustomers instead?
