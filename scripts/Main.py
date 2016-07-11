@@ -80,5 +80,3 @@ for path in paths:
 
 
 doAStar(i_state)
-
-# @TODO -- enter A* from here...?
