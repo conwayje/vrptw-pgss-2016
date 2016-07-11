@@ -56,7 +56,23 @@ class State():
 
         return children
 
-
+    def medium_move(paths):
+        path1 = paths[0].route
+        path2 = paths[1].route
+        path3 = paths[2].route
+        length1 = len(path1)
+        length2 = len(path2)
+        length3 = len(path3)
+        for i in range(0,4):
+            rand1 = random.randint(0,length1-1)
+            rand2 = random.randint(0,length2-1)
+            rand3 = random.randint(0,length3-1)
+            temp = path1[rand1]
+            path1[rand1] = path2[rand2]
+            path2[rand2] = path3[rand3]
+            path3[rand3] = temp
+        return [path1, path2, path3]
+        
 
     @staticmethod
     # check if swaps can make the paths valid if they weren't, tolerance controls added distance
