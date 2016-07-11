@@ -49,16 +49,16 @@ class State():
     # @TODO -- still lots to do here, of course ;)
     def get_children(self):
         children = [] # list of states
-        kids = [] # list of path-lists
-        paths = self.paths
-
-        kids = State.get_fixed_children( paths, kids, 100)
-        kids = self.redistribute_more_evenly( kids, paths )
-        kids = State.shuffle_in_fives( paths, kids )
+        children_paths = []
+        paths = [self.truck1.path, self.truck2.path, self.truck3.path]
+        
+        #children_paths = State.cycle_three_four_times(paths, children_paths)
+        children_paths = State.shuffle_in_fives( paths, children_paths )
+        children_paths = State.get_fixed_children( paths, children_paths, 100 )
 
         for child_paths in children_paths:
         # child_paths should be a list containing three paths per entry (as a list)
-        for child_paths in kids:
+        for child_paths in children_paths:
             children.append(
             State(Truck(1, 0, 0, 700, child_paths[0]), Truck(2, 0, 0, 700, child_paths[1]) ,Truck(3, 0, 0, 700, child_paths[2])))
 
@@ -84,22 +84,26 @@ class State():
         return children
 
     @staticmethod
-    def cycle_three_four_times(paths):
-        route1 = paths[0].route
-        route2 = paths[1].route
-        route3 = paths[2].route
-        length1 = len(route1)
-        length2 = len(route2)
-        length3 = len(route3)
-        for i in range(0,4):
-            rand1 = randint(0,length1-1)
-            rand2 = randint(0,length2-1)
-            rand3 = randint(0,length3-1)
-            temp = route1[rand1]
-            route1[rand1] = route2[rand2]
-            route2[rand2] = route3[rand3]
-            route3[rand3] = temp
-        return [Path(route1), Path(route2), Path(route3)]
+<<<<<<< HEAD
+    def cycle_three_four_times(paths, children):
+        for i in range(15):
+            route1 = paths[0].route
+            route2 = paths[1].route
+            route3 = paths[2].route
+            length1 = len(route1)
+            length2 = len(route2)
+            length3 = len(route3)
+            for i in range(0,4):
+                rand1 = randint(0,length1-1)
+                rand2 = randint(0,length2-1)
+                rand3 = randint(0,length3-1)
+                temp = route1[rand1]
+                route1[rand1] = route2[rand2]
+                route2[rand2] = route3[rand3]
+                route3[rand3] = temp
+            new_paths = [Path(route1), Path(route2), Path(route3)]
+            children.append(new_paths)
+
 
     def redistribute_more_evenly(self, children, paths):
         """ For ex, with 100 customers and 3 trucks, we expect 33 per truck.  Siphon off the
@@ -131,6 +135,7 @@ class State():
 
             children += [ [ Path( element ) for element in copy_underserved ] + [ Path( element ) for element in copy_overserved ] ]
 
+>>>>>>> a19549c4bd8af215bf0b05a3235fd491a6c4d868
         return children
 
     @staticmethod
