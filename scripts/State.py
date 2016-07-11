@@ -84,7 +84,6 @@ class State():
         return children
 
     @staticmethod
-<<<<<<< HEAD
     def cycle_three_four_times(paths, children):
         for i in range(15):
             route1 = paths[0].route
@@ -135,7 +134,6 @@ class State():
 
             children += [ [ Path( element ) for element in copy_underserved ] + [ Path( element ) for element in copy_overserved ] ]
 
->>>>>>> a19549c4bd8af215bf0b05a3235fd491a6c4d868
         return children
 
     @staticmethod
