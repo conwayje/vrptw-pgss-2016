@@ -8,14 +8,16 @@ class State():
         self.truck1 = truck1
         self.truck2 = truck2
         self.truck3 = truck3
+        self.distance = None
         self.parent = parent
         # @TODO -- should we also maintain children...?
-        # @TODO -- similar to Path, might want to store distance so that we don't have to
-        # do repetitive/useless/wasted calculations several times.  just access a value instead
+        #  @TODO -- similar to Path, might want to store distance so that we don't have to
+        #  do repetitive/useless/wasted calculations several times.  just access a value instead -- DONE
 
-    def get_distance(self):
-        # @TODO -- if we do store distance, might want to set it here?
-        return self.truck1.path.get_distance() + self.truck2.path.get_distance() + self.truck3.path.get_distance()
+    def calculate_distance(self):
+        # @TODO -- if we do store distance, might want to set it here? -- DONE
+        self.distance = self.truck1.path.get_distance() + self.truck2.path.get_distance() + self.truck3.path.get_distance()
+        return self.distance
 
     def plot(self):
         Visual.plot_path(self.truck1.path, color='g')

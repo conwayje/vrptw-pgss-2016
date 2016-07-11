@@ -9,12 +9,13 @@ class Path():
 
     def __init__(self, route):
         self.route = route #list of customers
+        self.distance = None
         # @TODO -- now that i think abou tit, we should probably store
         # self.distance on here as well.  otherwise, we're going to be doing a lot of
-        # repeated calculations when we could just be accessing a value
+        # repeated calculations when we could just be accessing a value -- DONE
 
     # returns the total distance
-    def get_distance(self):
+    def calculate_distance(self):
         distance = 0
         prev_customer = None
         is_first_time = True
@@ -32,6 +33,7 @@ class Path():
 
         distance += (prev_customer.x**2 + prev_customer.y**2)**.5
 
+        self.distance = distance
         return distance
 
     def get_arrival_time_of_customer(self, cust):
