@@ -27,7 +27,7 @@ def import_solution(filename):
     for id in ids3:
         path3.route.append(customers[int(id) - 1])
 
-    print path1.get_distance() + path2.get_distance() + path3.get_distance()
+    print path1.calculate_distance() + path2.calculate_distance() + path3.calculate_distance()
 
     return State(Truck(1, 0, 0, path=path1),
                  Truck(2, 0, 0, path=path2),

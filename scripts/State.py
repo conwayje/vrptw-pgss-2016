@@ -27,7 +27,7 @@ class State():
 
     # @TODO -- point to heuristic score
     def get_score(self):
-        return self.get_distance()
+        return self.calculate_distance()
 
     # @TODO -- still lots to do here, of course ;)
     def get_children(self):
