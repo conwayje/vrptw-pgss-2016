@@ -65,7 +65,7 @@ def initial_state():
 
 
     #state = import_solution("C201_wr_solution.txt")
-    # state.plot()
+    state.plot()
 
     return state
 

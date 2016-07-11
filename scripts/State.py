@@ -5,6 +5,7 @@ import math
 from Path import Path
 from random import randint
 import ipdb
+import random
 
 class State():
 
@@ -47,20 +48,85 @@ class State():
     # @TODO -- still lots to do here, of course ;)
     def get_children(self):
         children = [] # list of states
+        children_paths = []
         paths = [self.truck1.path, self.truck2.path, self.truck3.path]
+        
+        children_paths = State.shuffle_in_fives( paths, children_paths )
+        children_paths = State.get_fixed_children( paths, children_paths, 100 )
 
+        #ipdb.set_trace()
 
-        for child_paths in self.path_swap(paths):
+        for child_paths in children_paths:
             children.append(
             State(Truck(1, 0, 0, 700, child_paths[0]), Truck(2, 0, 0, 700, child_paths[1]) ,Truck(3, 0, 0, 700, child_paths[2])))
+
+
+        return children
+
+    @staticmethod
+    def cycle_three(paths):
+        route1 = paths[0].route
+        route2 = paths[1].route
+        route3 = paths[2].route
+        length1 = len(route1)
+        length2 = len(route2)
+        length3 = len(route3)
+        rand1 = randint(0,length1-1)
+        rand2 = randint(0,length2-1)
+        rand3 = randint(0,length3-1)
+        temp = route1[rand1]
+        route1[rand1] = route2[rand2]
+        route2[rand2] = route3[rand3]
+        route3[rand3] = temp
+        return [Path(route1), Path(route2), Path(route3)]
+
+        return children
+
+    @staticmethod
+    def cycle_three_four_times(paths):
+        route1 = paths[0].route
+        route2 = paths[1].route
+        route3 = paths[2].route
+        length1 = len(route1)
+        length2 = len(route2)
+        length3 = len(route3)
+        for i in range(0,4):
+            rand1 = randint(0,length1-1)
+            rand2 = randint(0,length2-1)
+            rand3 = randint(0,length3-1)
+            temp = route1[rand1]
+            route1[rand1] = route2[rand2]
+            route2[rand2] = route3[rand3]
+            route3[rand3] = temp
+        return [Path(route1), Path(route2), Path(route3)]
+
+        return children
+
+    @staticmethod
+    def shuffle_in_fives(paths, children):
+        for i in range(7):
+            new_paths = []
+            for path in paths:
+                route = []
+                for i in range(0, len(path.route), 4):
+                    custs = path.route[i:i+4]
+                    random.shuffle(custs, random.random)
+                    for cust in custs:
+                        route.append(cust)
+                new_path = Path(route)
+
+                new_paths.append(new_path)
+
+            children.append(new_paths)
+
+        #ipdb.set_trace()
 
         return children
 
 
-
     # check if swaps can make the paths valid if they weren't, tolerance controls added distance
-    def get_fixed_children(paths, customers, tolerance):
-        children = [] #list of states
+    @staticmethod
+    def get_fixed_children(paths, children, tolerance):
 
         # @TODO -- this is clever, but it takes
         # waaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaay too long.
@@ -139,8 +205,8 @@ class State():
 
         return children
 
-    def path_swap(self, paths):
-        children = []
+    @staticmethod
+    def path_swap(paths, children):
         for i in range( 15 ):
             new_paths = [copy.deepcopy(element) for element in paths]
             # get two unique random paths
@@ -155,14 +221,13 @@ class State():
             children.append(new_paths)
         return children
 
-    def distance_swap(self, paths):
-        children = []
+    @staticmethod
+    def distance_swap(paths, children):
         for i in range( 15 ):
             new_paths = [copy.deepcopy(element) for element in paths]
-            # get two unique random paths
             path_index = randint(0, 2)
             path = new_paths[path_index]
-            # select two customers
+            # gets two random customers, if the first is farther then the secondthen swap
             customer_a = randint(0, len(path.route) - 1)
             customer_b = randint(customer_a, len(path.route) - 1)
             if path.route[customer_a].distance() > path.route[customer_b].distance():
