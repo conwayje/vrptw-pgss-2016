@@ -84,6 +84,7 @@ class State():
         return children
 
     @staticmethod
+
     def cycle_three_four_times(paths, children):
         for i in range(15):
             route1 = paths[0].route
