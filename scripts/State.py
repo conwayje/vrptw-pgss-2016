@@ -50,7 +50,7 @@ class State():
         children = [] # list of states
         children_paths = []
         paths = [self.truck1.path, self.truck2.path, self.truck3.path]
-
+        
         children_paths = State.shuffle_in_fives( paths, children_paths )
         children_paths = State.get_fixed_children( paths, children_paths, 100 )
         
