@@ -5,6 +5,7 @@ import math
 from Path import Path
 from random import randint, randrange, choice
 import ipdb
+import random
 
 class State():
 
@@ -48,11 +49,12 @@ class State():
     # @TODO -- still lots to do here, of course ;)
     def get_children(self):
         children = [] # list of states
-        kids = []
+        kids = [] # list of path-lists
         paths = self.paths
 
-        kids = State.get_fixed_children( paths, 100)
+        kids = State.get_fixed_children( paths, kids, 100)
         kids = self.redistribute_more_evenly( kids, paths )
+        kids = State.shuffle_in_fives( paths, kids )
 
         # child_paths should be a list containing three paths per entry (as a list)
         for child_paths in kids:
@@ -61,6 +63,42 @@ class State():
 
         return children
 
+    @staticmethod
+    def cycle_three(paths):
+        route1 = paths[0].route
+        route2 = paths[1].route
+        route3 = paths[2].route
+        length1 = len(route1)
+        length2 = len(route2)
+        length3 = len(route3)
+        rand1 = randint(0,length1-1)
+        rand2 = randint(0,length2-1)
+        rand3 = randint(0,length3-1)
+        temp = route1[rand1]
+        route1[rand1] = route2[rand2]
+        route2[rand2] = route3[rand3]
+        route3[rand3] = temp
+        return [Path(route1), Path(route2), Path(route3)]
+
+        return children
+
+    @staticmethod
+    def cycle_three_four_times(paths):
+        route1 = paths[0].route
+        route2 = paths[1].route
+        route3 = paths[2].route
+        length1 = len(route1)
+        length2 = len(route2)
+        length3 = len(route3)
+        for i in range(0,4):
+            rand1 = randint(0,length1-1)
+            rand2 = randint(0,length2-1)
+            rand3 = randint(0,length3-1)
+            temp = route1[rand1]
+            route1[rand1] = route2[rand2]
+            route2[rand2] = route3[rand3]
+            route3[rand3] = temp
+        return [Path(route1), Path(route2), Path(route3)]
 
     def redistribute_more_evenly(self, children, paths):
         """ For ex, with 100 customers and 3 trucks, we expect 33 per truck.  Siphon off the
@@ -95,9 +133,30 @@ class State():
         return children
 
     @staticmethod
+    def shuffle_in_fives(paths, children):
+        for i in range(7):
+            new_paths = []
+            for path in paths:
+                route = []
+                for i in range(0, len(path.route), 4):
+                    custs = path.route[i:i+4]
+                    random.shuffle(custs, random.random)
+                    for cust in custs:
+                        route.append(cust)
+                new_path = Path(route)
+
+                new_paths.append(new_path)
+
+            children.append(new_paths)
+
+        #ipdb.set_trace()
+
+        return children
+
+
     # check if swaps can make the paths valid if they weren't, tolerance controls added distance
-    def get_fixed_children(paths, tolerance):
-        children = [] #list of states
+    @staticmethod
+    def get_fixed_children(paths, children, tolerance):
 
         # @TODO -- this is clever, but it takes
         # waaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaay too long.
