@@ -53,7 +53,7 @@ class State():
 
         children_paths = State.shuffle_in_fives( paths, children_paths )
         children_paths = State.get_fixed_children( paths, children_paths, 100 )
-        
+
         #ipdb.set_trace()
 
         for child_paths in children_paths:
@@ -65,7 +65,26 @@ class State():
         return children
 
     @staticmethod
-    def medium_move(paths):
+    def cycle_three(paths):
+        route1 = paths[0].route
+        route2 = paths[1].route
+        route3 = paths[2].route
+        length1 = len(route1)
+        length2 = len(route2)
+        length3 = len(route3)
+        rand1 = randint(0,length1-1)
+        rand2 = randint(0,length2-1)
+        rand3 = randint(0,length3-1)
+        temp = route1[rand1]
+        route1[rand1] = route2[rand2]
+        route2[rand2] = route3[rand3]
+        route3[rand3] = temp
+        return [Path(route1), Path(route2), Path(route3)]
+
+        return children
+
+    @staticmethod
+    def cycle_three_four_times(paths):
         route1 = paths[0].route
         route2 = paths[1].route
         route3 = paths[2].route
@@ -96,15 +115,15 @@ class State():
                     for cust in custs:
                         route.append(cust)
                 new_path = Path(route)
-                    
+
                 new_paths.append(new_path)
-                
+
             children.append(new_paths)
-              
+
         #ipdb.set_trace()
-                
+
         return children
-            
+
 
     # check if swaps can make the paths valid if they weren't, tolerance controls added distance
     @staticmethod
