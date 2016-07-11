@@ -9,27 +9,19 @@ class Path():
 
     def __init__(self, route):
         self.route = route #list of customers
-        self.distance = None
-        # @TODO -- now that i think abou tit, we should probably store
-        # self.distance on here as well.  otherwise, we're going to be doing a lot of
-        # repeated calculations when we could just be accessing a value -- DONE
+
+        if route != []:
+            self.distance = self.calculate_distance()
 
     # returns the total distance
     def calculate_distance(self):
-        distance = 0
-        prev_customer = None
-        is_first_time = True
 
-        # @TODO -- this if/else seems a little suspect to me... shouldn't we just
-        # add the depot distance once and ignore the first customer or something?
-        for c in self.route:
-            if is_first_time:
-                distance += ((c.x)**2 + (c.y)**2)**.5
-                prev_customer = c
-                is_first_time = False
-            else:
-                distance += ((c.x-prev_customer.x)**2 + (c.y-prev_customer.y)**2)**.5
-                prev_customer = c
+        prev_customer = self.route[0]
+        distance = ((prev_customer.x) ** 2 + (prev_customer.y) ** 2) ** .5
+
+        for c in self.route[1:]:
+            distance += ((c.x-prev_customer.x)**2 + (c.y-prev_customer.y)**2)**.5
+            prev_customer = c
 
         distance += (prev_customer.x**2 + prev_customer.y**2)**.5
 
@@ -40,20 +32,19 @@ class Path():
         """Returns the time at which the truck on this path arrives at this customer
         given the order of customers prior to the given customer and their windows"""
 
-        prev_customer = None
-        time = 0
-        is_first_time = True
+        prev_customer = self.route[0]
+        time = math.hypot(prev_customer.x, prev_customer.y)
 
-        for c in self.route:
-            if is_first_time:
-                # truck leaves from (0, 0)
-                time = math.hypot(c.x, c.y)
-                prev_customer = c
+        if time < prev_customer.open_time:
+            time = prev_customer.open_time
 
-                is_first_time = False
-            else:
-                time += ((c.x-prev_customer.x)**2 + (c.y-prev_customer.y)**2)**.5
-                prev_customer = c
+        if (prev_customer == cust):
+            return time
+
+        for c in self.route[1:]:
+
+            time += ((c.x-prev_customer.x)**2 + (c.y-prev_customer.y)**2)**.5
+            prev_customer = c
 
 
             # if truck arrives before customer is open, assume truck waits
@@ -76,23 +67,24 @@ class Path():
         """returns whether the truck makes it on time to every customer by returning
         an array of the customers missed. If the path is valid, an empty array will be returned"""
 
-        prev_customer = None
-        time = 0
-        is_first_time = True
+        prev_customer = self.route[0]
+        time = math.hypot(prev_customer.x, prev_customer.y)
+
         missedCustomers = []
 
-        for c in self.route:
-            # @TODO -- again, this feels a little suspect to me.  maybe just add the depot and ignore
-            # the first customer in the list.  otherwise we have to evaluate an if/else every time
-            if is_first_time:
-                # truck leaves from (0, 0)
-                time = math.hypot(c.x, c.y)
-                prev_customer = c
+        # if truck arrives before customer is open, assume truck waitds
+        if time < prev_customer.open_time:
+            time = prev_customer.open_time
 
-                is_first_time = False
-            else:
-                time += ((c.x-prev_customer.x)**2 + (c.y-prev_customer.y)**2)**.5
-                prev_customer = c
+        # if truck arrives late, add to missedCustomers
+        if time > prev_customer.close_time:
+            missedCustomers.append(prev_customer)
+
+        time += prev_customer.service_time
+
+        for c in self.route[1:]:
+            time += ((c.x-prev_customer.x)**2 + (c.y-prev_customer.y)**2)**.5
+            prev_customer = c
 
             # if truck arrives before customer is open, assume truck waitds
             if time < c.open_time:
@@ -111,45 +103,39 @@ class Path():
 
     # gets the customer the truck was last at
     def get_last_customer_visited(self, current_time):
-        prev_customer = None
-        is_first_time = True
-        time = 0
+        prev_customer = self.route[0]
 
-        for c in self.route:
+        time = math.hypot(prev_customer.x, prev_customer.y)
+        if (time > current_time):
+            return None
+
+        # if truck arrives before customer is open, assume truck waits
+        if time < prev_customer.open_time:
+            time = prev_customer.open_time
+        time += prev_customer.service_time
+
+        if (time > current_time):
+            return prev_customer
+
+        for c in self.route[1:]:
             # @TODO -- again, suspicious about the first time thing here.  you can really see why now;
             # it's forcing the duplication of a lot of code.
-            if is_first_time:
 
-                # truck leaves from (0, 0)
-                time = math.hypot(c.x, c.y)
-                if(time > current_time):
-                    return None
+            time += ((c.x - prev_customer.x) ** 2 + (c.y - prev_customer.y) ** 2) ** .5
 
-                # if truck arrives before customer is open, assume truck waits
-                if time < c.open_time:
-                    time = c.open_time
-                time += c.service_time
+            if(time > current_time):
+                return prev_customer
 
-                if(time > current_time):
-                    return c
+            # if truck arrives before customer is open, assume truck waitds
+            if time < c.open_time:
+                time = c.open_time
+            time += c.service_time
 
-                prev_customer = c
-                is_first_time = False
-            else:
-                time += ((c.x - prev_customer.x) ** 2 + (c.y - prev_customer.y) ** 2) ** .5
+            if(time > current_time):
+                return c
 
-                if(time > current_time):
-                    return prev_customer
-
-                # if truck arrives before customer is open, assume truck waitds
-                if time < c.open_time:
-                    time = c.open_time
-                time += c.service_time
-
-                if(time > current_time):
-                    return c
-
-                prev_customer = c
+            prev_customer = c
+        return None
 
     # returns whether the path intersects itself
     def intersects_self(self):
@@ -201,16 +187,17 @@ class Path():
     def distance_to_previous(self, customer):
         index = self.route.index(customer) - 1
         if index >= 0:
-            return self.route[index]
+            return self.route[index].distance_to_customer(customer)
         else:
-            return None
+            return customer.distance()
 
     def distance_to_next(self, customer):
         index = self.route.index(customer) + 1
         if index < len(self.route):
-            return self.route[index]
+            return self.route[index].distance_to_customer(customer)
         else:
-            return None
+            return customer.distance()
+
 
     def __repr__(self):
         return "<Path: {0}>".format(self.route)
