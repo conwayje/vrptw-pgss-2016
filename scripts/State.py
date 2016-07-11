@@ -49,13 +49,13 @@ class State():
         children = [] # list of states
         paths = [self.truck1.path, self.truck2.path, self.truck3.path]
 
-
         for child_paths in State.get_fixed_children(paths, 100):
             children.append(
             State(Truck(1, 0, 0, 700, child_paths[0]), Truck(2, 0, 0, 700, child_paths[1]) ,Truck(3, 0, 0, 700, child_paths[2])))
 
         return children
 
+    @staticmethod
     def medium_move(paths):
         route1 = paths[0].route
         route2 = paths[1].route
@@ -64,9 +64,9 @@ class State():
         length2 = len(route2)
         length3 = len(route3)
         for i in range(0,4):
-            rand1 = random.randint(0,length1-1)
-            rand2 = random.randint(0,length2-1)
-            rand3 = random.randint(0,length3-1)
+            rand1 = randint(0,length1-1)
+            rand2 = randint(0,length2-1)
+            rand3 = randint(0,length3-1)
             temp = route1[rand1]
             route1[rand1] = route2[rand2]
             route2[rand2] = route3[rand3]
