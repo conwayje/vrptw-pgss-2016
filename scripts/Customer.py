@@ -25,3 +25,6 @@ class Customer():
         
     def closest_customers(self, cust):
         self = sorted(self, key = lambda customer: customer.distance_to_customer(cust))
+        
+    def timewindow(self):
+        return (self.open_time)

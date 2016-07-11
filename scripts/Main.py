@@ -39,7 +39,7 @@ def initial_state():
     route2 = []
     route3 = []
 
-    customers_by_distance = sorted(customers, key=lambda customer: customer.distance())
+    customers_by_distance = sorted(customers, key=lambda customer: customer.distance()*customer.timewindow())
     # customers_by_distance = customers.closest_customers()
 
     # print customers_by_distance
