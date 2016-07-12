@@ -54,15 +54,19 @@ class State():
 
         #children_paths = State.cycle_three_four_times(paths, children_paths)
         children_paths = State.shuffle_in_fives( paths, children_paths )
-        children_paths = State.get_fixed_children( paths, children_paths, 100 )
-
-        for child_paths in children_paths:
+        children_paths = State.sort_paths( paths, children_paths )
+        #children_paths = State.redistribute_more_evenly( paths, children_paths )
+        #children_paths = State.path_swap( paths, children_paths )
+        children_paths = State.distance_swap( paths, children_paths )
+        
         # child_paths should be a list containing three paths per entry (as a list)
         for child_paths in children_paths:
             children.append(
             State(Truck(1, 0, 0, 700, child_paths[0]), Truck(2, 0, 0, 700, child_paths[1]) ,Truck(3, 0, 0, 700, child_paths[2])))
+        
+        return children
 
-    @staticmethod
+    @staticmethod #medium move
     def cycle_three(paths):
         route1 = paths[0].route
         route2 = paths[1].route
@@ -81,8 +85,7 @@ class State():
 
         return children
 
-    @staticmethod
-
+    @staticmethod #medium move
     def cycle_three_four_times(paths, children):
         for i in range(15):
             route1 = paths[0].route
@@ -101,9 +104,10 @@ class State():
                 route3[rand3] = temp
             new_paths = [Path(route1), Path(route2), Path(route3)]
             children.append(new_paths)
+            return children
 
-
-    def redistribute_more_evenly(self, children, paths):
+    @staticmethod #small move
+    def redistribute_more_evenly(paths, children):
         """ For ex, with 100 customers and 3 trucks, we expect 33 per truck.  Siphon off the
             surplus for any 'overloaded' paths and then add some surplus randomly into 'underloaded'
             paths """
@@ -135,7 +139,7 @@ class State():
 
         return children
 
-    @staticmethod
+    @staticmethod #big move
     def shuffle_in_fives(paths, children):
         for i in range(7):
             new_paths = []
@@ -156,10 +160,10 @@ class State():
 
         return children
 
-
+    @staticmethod #small move
     # check if swaps can make the paths valid if they weren't, tolerance controls added distance
-    def sort_paths(paths):
-        children = [] #list of states
+    #this used to be get_fixed_children
+    def sort_paths(paths, children):
 
         pathnum = 0
 
@@ -197,27 +201,8 @@ class State():
             pathnum += 1
 
         return children
-
-    @staticmethod
-    def switch_between_paths(paths, numtoswap):
-
-
-        p = copy.deepcopy(paths)
-
-        for i in range(numtoswap):
-            path_a = randint(0,2)
-            path_b = randint(0,2)
-
-            cust_a = randint(0, len(p[path_a].route) -1)
-            cust_b = randint(0, len(p[path_b].route) - 1)
-
-            temp = p[path_a].route[cust_a]
-            p[path_a].route[cust_a] = p[path_b].route[cust_b]
-            p[path_b].route[cust_b] = temp
-
-
-        return p
-
+    
+    @staticmethod #small move
     def path_swap(paths, children):
         for i in range( 15 ):
             new_paths = [copy.deepcopy(element) for element in paths]
@@ -233,7 +218,7 @@ class State():
             children.append(new_paths)
         return children
 
-    @staticmethod
+    @staticmethod #small move
     def distance_swap(paths, children):
         for i in range( 15 ):
             new_paths = [copy.deepcopy(element) for element in paths]
