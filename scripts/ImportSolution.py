@@ -28,22 +28,23 @@ def import_solution(filename):
     for id in ids3:
         path3.route.append(customers[int(id) - 1])
 
-    print path1.calculate_distance() + path2.calculate_distance() + path3.calculate_distance()
-
     return State(Truck(1, 0, 0, 700, path=path1),
                  Truck(2, 0, 0, 700, path=path2),
                  Truck(3, 0, 0, 700, path=path3), parent=None)
 
-parser = argparse.ArgumentParser()
-parser.add_argument("filename")
-args = parser.parse_args()
-filename = args.filename
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("filename")
+    args = parser.parse_args()
+    filename = args.filename
 
-state = import_solution(filename)
-#printing missed customers
-Visual.plot_customers(Depot(0,0),state.truck1.path.is_valid())
-Visual.plot_customers(Depot(0,0),state.truck2.path.is_valid())
-Visual.plot_customers(Depot(0,0),state.truck3.path.is_valid())
-Visual.show()
-#printing number of missed customers
-print len(state.truck1.path.is_valid()) + len(state.truck2.path.is_valid()) + len(state.truck3.path.is_valid())
+    state = import_solution(filename)
+
+    # plot solution
+    state.plot()
+
+    # plot missed customers
+    state.plot_missed()
+
+    # print number of missed customers
+    # print len(state.truck1.path.is_valid()) + len(state.truck2.path.is_valid()) + len(state.truck3.path.is_valid())

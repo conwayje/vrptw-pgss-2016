@@ -24,9 +24,9 @@ class Visual():
             plt.plot(x, y, color = color, linewidth = linewidth)
 
     @staticmethod
-    def show():
-        plt.show()
+    def plot_path(path, connect='True', color = 'b', marker = 'o', linewidth = 2.0):
+        Visual.plot_customers(Depot(0,0), path.route, connect = connect, color = color, marker = marker, linewidth= linewidth)\
 
     @staticmethod
-    def plot_path(path, color = 'b', marker = 'o', linewidth = 2.0):
-      Visual.plot_customers(Depot(0,0), path.route, connect= True, color = color, marker = marker, linewidth= linewidth)
+    def show():
+        plt.show()
