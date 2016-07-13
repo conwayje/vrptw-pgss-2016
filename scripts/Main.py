@@ -46,7 +46,6 @@ def initial_state():
     # just a suggestion; y'all can be as creative as you want
 
     state = import_solution("C201_init_solution.txt")
-    # state.plot()
 
     return state
 
