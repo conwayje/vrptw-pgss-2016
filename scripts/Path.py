@@ -7,9 +7,10 @@ import math
 
 class Path():
 
-    def __init__(self, route):
-        self.route = route #list of customers
 
+    def __init__(self, route, distances):
+        self.route = route #list of customers
+        self.distances = distances
         if route != []:
             self.distance = self.calculate_distance()
 
@@ -17,13 +18,14 @@ class Path():
     def calculate_distance(self):
 
         prev_customer = self.route[0]
-        distance = ((prev_customer.x) ** 2 + (prev_customer.y) ** 2) ** .5
+        distance = self.distances[0][prev_customer.number]
 
         for c in self.route[1:]:
-            distance += ((c.x-prev_customer.x)**2 + (c.y-prev_customer.y)**2)**.5
+            distance += self.distances[prev_customer.number][c.number]
             prev_customer = c
 
-        distance += (prev_customer.x**2 + prev_customer.y**2)**.5
+        distance += self.distances[prev_customer.number][0]
+
 
         self.distance = distance
         return distance
@@ -33,7 +35,7 @@ class Path():
         given the order of customers prior to the given customer and their windows"""
 
         prev_customer = self.route[0]
-        time = (prev_customer.x ** 2 + prev_customer.y**2)**.5
+        time = self.distances[0][prev_customer.number]
 
         if time < prev_customer.open_time:
             time = prev_customer.open_time
@@ -44,7 +46,7 @@ class Path():
 
         for c in self.route[1:]:
 
-            time += ((c.x-prev_customer.x)**2 + (c.y-prev_customer.y)**2)**.5
+            time += self.distances[prev_customer.number][c.number]
             prev_customer = c
 
             # if truck arrives before customer is open, assume truck waits
@@ -69,7 +71,7 @@ class Path():
         an array of the customers missed. If the path is valid, an empty array will be returned"""
 
         prev_customer = self.route[0]
-        time = math.hypot(prev_customer.x, prev_customer.y)
+        time = self.distances[prev_customer.number][0]
 
         missedCustomers = []
 
@@ -84,7 +86,7 @@ class Path():
         time += prev_customer.service_time
 
         for c in self.route[1:]:
-            time += ((c.x-prev_customer.x)**2 + (c.y-prev_customer.y)**2)**.5
+            time += self.distances[prev_customer.number][c.number]
             prev_customer = c
 
             # if truck arrives before customer is open, assume truck waitds
@@ -106,7 +108,7 @@ class Path():
     def get_last_customer_visited(self, current_time):
         prev_customer = self.route[0]
 
-        time = math.hypot(prev_customer.x, prev_customer.y)
+        time = self.distances[prev_customer.number][0]
         if (time > current_time):
             return None
 
@@ -119,10 +121,8 @@ class Path():
             return prev_customer
 
         for c in self.route[1:]:
-            # @TODO -- again, suspicious about the first time thing here.  you can really see why now;
-            # it's forcing the duplication of a lot of code.
 
-            time += ((c.x - prev_customer.x) ** 2 + (c.y - prev_customer.y) ** 2) ** .5
+            time += self.distances[prev_customer.number][c.number]
 
             if(time > current_time):
                 return prev_customer
@@ -188,16 +188,16 @@ class Path():
     def distance_to_previous(self, customer):
         index = self.route.index(customer) - 1
         if index >= 0:
-            return self.route[index].distance_to_customer(customer)
+            return self.distances[customer.number][self.route[index].number ]
         else:
-            return customer.distance()
+            return self.distances[customer.number][0]
 
     def distance_to_next(self, customer):
         index = self.route.index(customer) + 1
         if index < len(self.route):
-            return self.route[index].distance_to_customer(customer)
+            return self.distances[customer.number][self.route[index].number ]
         else:
-            return customer.distance()
+            return self.distances[customer.number][0]
 
 
     def __repr__(self):
