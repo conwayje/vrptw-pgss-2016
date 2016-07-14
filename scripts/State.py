@@ -226,13 +226,47 @@ class State():
             children.append(new_paths)
         return children
 
-    @staticmethod #medium move
+    @staticmethod #medium move, 3 children
     def five_section_swap(paths):
-        pass
+        children = []
+        for j in range(len(paths)):
+            path = paths[j]
+            new_route = copy.deepcopy(path.route)
+            section_to_swap = []
+            index = randint(0, len(path)-6)
+            for i in range(index, index+5):
+                section_to_swap.append(path.route[i])
+                new_route.remove(i)
+
+            to_insert = randint(0, len(new_route) - 1)
+            for k in range(to_insert, to_insert+5):
+                new_route.insert(k)
+
+            new_paths = copy.deepcopy(paths)
+            new_paths[j] = Path(new_route)
+            children.append(new_paths)
+
 
     @staticmethod #large move
     def alternating_shuffle_within_path(paths):
-        pass
+        children = []
+
+        for j in range(len(paths)):
+            path = paths[j]
+            temp_route = copy.deepcopy(path.route)
+            new_route = []
+            while(len(temp_route) > 0):
+                cust = temp_route.pop(0)
+                new_route.append(cust)
+                temp_route = sorted(temp_route, key = lambda customer: customer.distance_to_customer(cust))
+
+            new_paths = copy.deepcopy(paths)
+            new_paths[j] = Path(new_route)
+            children.append(new_paths)
+
+        return children
+
+
 
     def is_world_record(self):
         # for c in self.truck1.path.route:
