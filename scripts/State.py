@@ -289,6 +289,23 @@ class State():
 
         # return self.get_score() <= 0
 
+    @staticmethod
+    def switch_between_paths(paths, numtoswap):
+
+        p = copy.deepcopy(paths)
+
+        for i in range(numtoswap):
+            path_a = randint(0, 2)
+            path_b = randint(0, 2)
+
+            cust_a = randint(0, len(p[path_a].route) - 1)
+            cust_b = randint(0, len(p[path_b].route) - 1)
+
+            temp = p[path_a].route[cust_a]
+            p[path_a].route[cust_a] = p[path_b].route[cust_b]
+            p[path_b].route[cust_b] = temp
+
+        return p
 
     def __repr__(self):
         return "\n<State: Truck 1: {0}\nTruck2: {1}\nTruck3:{2}>".format(self.truck1.path.route, self.truck2.path.route, self.truck3.path.route)
