@@ -4,30 +4,46 @@ from Path import Path
 from Customer import Customer
 from Truck import Truck
 from Cluster import Cluster
+from ImportCustomers import imported_customers
 
 ## ********************* CHECK SYNTAX *************************
-class cluster_solutions():
+class ClusterSolution():
 
-	cluster_c_solutions = []
-	cluster_rc_solutions = []
-
-	def _init_ (self, customer, path, cluster_data, optimal_solution):
+	def _init_ (self, customer, path, cluster_id, optimal_solution, sum_cargo, radius, center):
 		self.customer = customer
 		self.path = path
-		self.cluster_data = cluster_data
+		self.sum_cargo = sum_cargo
 		self.optimal_solution = optimal_solution
+		self.cluster_id = cluster_id
+		self.radius = radius
+		self.center = center
+		
+		self.custom_solution
 
-	# CLUSTERS FOR C201
-	def c_cluster1(self):
-		## Customers 39,36,34,38,37,33,32,35,31
-		customer = [39,36,34,38,37,33,32,35,31]
 
-		cluster_data = get_data(customer)
-		optimal_solution = get_solution(customer) 
+	
+	def custom_solution(self, cluster_id, customer, optimal_solution, sum_cargo, radius, center):
 
-		cluster_c_solutions.append(optimal_solution)
-		return cluster_c_solutions
+		##cluster_id
+		cluster_id = cluster_id
+		## Get optimal solution
+		optimal_solution = get_solution(customer)
 
+		## Get data
+		sum_cargo = get_cargo(customer)
+		radius = get_radius(customer)
+		center = get_center(customer)
+
+		
+		return  cluster_id, optimal_solution, sum_cargo, radius, center
+
+
+
+## ## Customers 39,36,34,38,37,33,32,35,31
+	##	customer = [39,36,34,38,37,33,32,35,31]
+
+
+"""
 	def c_cluster2(self):
 		## Customers 16,14,12,19,15,18,17,13
 		customer = [16,14,12,19,15,18,17,13]
@@ -151,7 +167,7 @@ class cluster_solutions():
 		
 		cluster_rc_solutions.append(optimal_solution)
 		return cluster_rc_solutions
-
+"""
 
 
 
