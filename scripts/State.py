@@ -5,7 +5,6 @@ import math
 from Path import Path
 from Depot import Depot
 from random import randint, randrange, choice
-import ipdb
 import random
 
 class State():
@@ -56,22 +55,24 @@ class State():
         children_paths = []
         paths = [self.truck1.path, self.truck2.path, self.truck3.path]
 
-        #children_paths = State.cycle_three_four_times(paths, children_paths)
-        children_paths = State.shuffle_in_fives( paths, children_paths )
-        children_paths = State.sort_paths( paths, children_paths )
-        #children_paths = State.redistribute_more_evenly( paths, children_paths )
-        #children_paths = State.path_swap( paths, children_paths )
-        children_paths = State.distance_swap( paths, children_paths )
-        
+        #children_paths = State.cycle_three_four_times(paths)
+        children_paths = State.shuffle_in_fives( paths )
+        children_paths = State.sort_paths( paths )
+        #children_paths = State.redistribute_more_evenly( paths )
+        #children_paths = State.path_swap( paths )
+        children_paths = State.distance_swap( paths )
+
         # child_paths should be a list containing three paths per entry (as a list)
         for child_paths in children_paths:
             children.append(
             State(Truck(1, 0, 0, 700, child_paths[0]), Truck(2, 0, 0, 700, child_paths[1]) ,Truck(3, 0, 0, 700, child_paths[2])))
-        
+
         return children
 
     @staticmethod #medium move
-    def cycle_three_four_times(paths, children):
+    def cycle_three_four_times(paths):
+        children = []
+
         for i in range(15):
             route1 = paths[0].route
             route2 = paths[1].route
@@ -92,10 +93,12 @@ class State():
             return children
 
     @staticmethod #small move
-    def redistribute_more_evenly(paths, children):
+    def redistribute_more_evenly(paths):
         """ For ex, with 100 customers and 3 trucks, we expect 33 per truck.  Siphon off the
             surplus for any 'overloaded' paths and then add some surplus randomly into 'underloaded'
             paths """
+        children = []
+
         expected = sum( [ len(element.route) for element in paths] ) / len(paths)
         overserved_paths = []
         underserved_paths = []
@@ -110,7 +113,7 @@ class State():
 
         # create 5 different moves
         for k in range(5):
-            # create copies of the paths
+            # create copies of the routes
             copy_overserved = [ copy.deepcopy(path.route) for path in overserved_paths ]
             copy_underserved = [ copy.deepcopy(path.route) for path in underserved_paths ]
             # move a total of [surplus] things from overserved routes to underserved routes
@@ -120,12 +123,15 @@ class State():
                 customer_to_move = overserved_path.pop( randrange( len ( overserved_path ) ) )
                 underserved_path.insert( randrange( len( underserved_path ) ), customer_to_move )
 
-            children += [ [ Path( element ) for element in copy_underserved ] + [ Path( element ) for element in copy_overserved ] ]
+            children.append([ Path( element ) for element in copy_underserved ] + [ Path( element ) for element in copy_overserved ])
 
+        # a list containing lists-of-paths
         return children
 
     @staticmethod #big move
-    def shuffle_in_fives(paths, children):
+    def shuffle_in_fives(paths):
+        children = []
+
         for i in range(7):
             new_paths = []
             for path in paths:
@@ -148,7 +154,8 @@ class State():
     @staticmethod #small move
     # check if swaps can make the paths valid if they weren't, tolerance controls added distance
     #this used to be get_fixed_children
-    def sort_paths(paths, children):
+    def sort_paths(paths):
+        children = []
 
         pathnum = 0
 
@@ -186,9 +193,11 @@ class State():
             pathnum += 1
 
         return children
-    
+
     @staticmethod #small move
-    def path_swap(paths, children):
+    def path_swap(paths):
+        children = []
+
         for i in range( 15 ):
             new_paths = [copy.deepcopy(element) for element in paths]
             # get two unique random paths
@@ -204,7 +213,8 @@ class State():
         return children
 
     @staticmethod #small move
-    def distance_swap(paths, children):
+    def distance_swap(paths):
+        children = []
         for i in range( 15 ):
             new_paths = [copy.deepcopy(element) for element in paths]
             path_index = randint(0, 2)
@@ -216,6 +226,48 @@ class State():
                 path.route[customer_a], path.route[customer_b] = path.route[customer_b], path.route[customer_a]
             children.append(new_paths)
         return children
+
+    @staticmethod #medium move, 3 children
+    def five_section_swap(paths):
+        children = []
+        for j in range(len(paths)):
+            path = paths[j]
+            new_route = copy.deepcopy(path.route)
+            section_to_swap = []
+            index = randint(0, len(path)-6)
+            for i in range(index, index+5):
+                section_to_swap.append(path.route[i])
+                new_route.remove(i)
+
+            to_insert = randint(0, len(new_route) - 1)
+            for k in range(to_insert, to_insert+5):
+                new_route.insert(k)
+
+            new_paths = copy.deepcopy(paths)
+            new_paths[j] = Path(new_route)
+            children.append(new_paths)
+
+
+    @staticmethod #large move
+    def alternating_shuffle_within_path(paths):
+        children = []
+
+        for j in range(len(paths)):
+            path = paths[j]
+            temp_route = copy.deepcopy(path.route)
+            new_route = []
+            while(len(temp_route) > 0):
+                cust = temp_route.pop(0)
+                new_route.append(cust)
+                temp_route = sorted(temp_route, key = lambda customer: customer.distance_to_customer(cust))
+
+            new_paths = copy.deepcopy(paths)
+            new_paths[j] = Path(new_route)
+            children.append(new_paths)
+
+        return children
+
+
 
     def is_world_record(self):
         # for c in self.truck1.path.route:
