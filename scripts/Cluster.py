@@ -37,8 +37,12 @@ class Cluster():
         return best_path
         print (best_path)
 
-    def get_data (self):
+    def get_cargo (self):
         sum_cargo = customers(self.demand)
+        return sum_cargo
+        # print (sum_cargo)
+
+    def get_radius (self):
         # farthest customer from the center, compares each customer x and y to the center...
         # replaces radius every time a bigger one is found
         center_x = total_x/count
@@ -51,17 +55,17 @@ class Cluster():
             delta_y = c.y - center_y
             radius = ((delta_x**2)+(delta_y**2)) ** 0.5
             if radius > new_farthest_distance: 
-                new_farthest_distance = radius;
+                new_farthest_distance = radius
             else:
                 new_farthest_distance = new_farthest_distance
             count+= 1
 
         cluster_radius_final = new_farthest_distance
 
-        return sum_cargo, cluster_radius_final
-        print (sum_cargo)
-        print (cluster_radius_final)
-        print (center_x+ ", " + center_y)
+        return cluster_radius_final
+ 
+        # print (cluster_radius_final)
+        # print (center_x+ ", " + center_y)
         
     # old method to get perms, but python already has one
     # @staticmethod
