@@ -9,8 +9,8 @@ def doAStar(initial_state):
         (priority, state) = heappop(queue)
 
         print "Score of currently explored state: {}".format( priority )
-        if(priority < 10000000):
-            state.plot()
+        # if(priority < 10000000):
+        #     state.plot()
 
         if state.is_world_record():
             print "Yay"

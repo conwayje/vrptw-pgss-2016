@@ -3,6 +3,7 @@ from Truck import Truck
 import copy
 import math
 from Path import Path
+from Depot import Depot
 from random import randint, randrange, choice
 import ipdb
 import random
@@ -17,13 +18,10 @@ class State():
         self.distance = None
         self.parent = parent
         #  @TODO -- should we also maintain children...?
-        #  @TODO -- similar to Path, might want to store distance so that we don't have to
-        #  do repetitive/useless/wasted calculations several times.  just access a value instead -- DONE
 
         #  @TODO -- similar to reason above:  maintain score(?)
 
     def calculate_distance(self):
-        # @TODO -- if we do store distance, might want to set it here? -- DONE
         self.distance = self.truck1.path.calculate_distance() + self.truck2.path.calculate_distance() + self.truck3.path.calculate_distance()
         return self.distance
 
@@ -31,6 +29,12 @@ class State():
         Visual.plot_path(self.truck1.path, color='g')
         Visual.plot_path(self.truck2.path, color='c')
         Visual.plot_path(self.truck3.path, color='m')
+        Visual.show()
+
+    def plot_missed(self):
+        Visual.plot_customers(Depot(0,0), self.truck1.path.is_valid())
+        Visual.plot_customers(Depot(0,0), self.truck2.path.is_valid())
+        Visual.plot_customers(Depot(0,0), self.truck3.path.is_valid())
         Visual.show()
 
     # @TODO -- point to heuristic score

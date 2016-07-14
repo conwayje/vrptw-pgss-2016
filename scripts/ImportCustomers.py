@@ -3,7 +3,7 @@ from Visual import Visual
 from Depot import Depot
 from ClusterSolutions import ClusterSolutions
 path = '../standard_instances/'
-22
+
 customers = []
 
 def import_customers(filename):
@@ -12,7 +12,7 @@ def import_customers(filename):
             f.next()
         for line in f:
             custList = line.replace('\n', '').split()
-            #create temp customer to add to array; shift location so that it is relative to depot at 0,0
+            # create temp customer to add to array; shift location so that it is relative to depot at 0,0
             temp = Customer(int(custList[0])-1, float(custList[1]) - 40, float(custList[2]) - 50, float(custList[4]), float(custList[5]), float(custList[6]), float(custList[3]))
 
             customers.append(temp)
