@@ -113,7 +113,7 @@ class State():
 
         # create 5 different moves
         for k in range(5):
-            # create copies of the paths
+            # create copies of the routes
             copy_overserved = [ copy.deepcopy(path.route) for path in overserved_paths ]
             copy_underserved = [ copy.deepcopy(path.route) for path in underserved_paths ]
             # move a total of [surplus] things from overserved routes to underserved routes
@@ -123,8 +123,9 @@ class State():
                 customer_to_move = overserved_path.pop( randrange( len ( overserved_path ) ) )
                 underserved_path.insert( randrange( len( underserved_path ) ), customer_to_move )
 
-            children += [ [ Path( element ) for element in copy_underserved ] + [ Path( element ) for element in copy_overserved ] ]
+            children.append([ Path( element ) for element in copy_underserved ] + [ Path( element ) for element in copy_overserved ])
 
+        # a list containing lists-of-paths
         return children
 
     @staticmethod #big move
