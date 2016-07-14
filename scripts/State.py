@@ -120,7 +120,7 @@ class State():
                 customer_to_move = overserved_path.pop( randrange( len ( overserved_path ) ) )
                 underserved_path.insert( randrange( len( underserved_path ) ), customer_to_move )
 
-            children += [ [ Path( element ) for element in copy_underserved ] + [ Path( element ) for element in copy_overserved ] ]
+            children.append([ Path( element ) for element in copy_underserved ] + [ Path( element ) for element in copy_overserved ])
 
         return children
 
