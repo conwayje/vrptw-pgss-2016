@@ -71,25 +71,6 @@ class State():
         return children
 
     @staticmethod #medium move
-    def cycle_three(paths):
-        route1 = paths[0].route
-        route2 = paths[1].route
-        route3 = paths[2].route
-        length1 = len(route1)
-        length2 = len(route2)
-        length3 = len(route3)
-        rand1 = randint(0,length1-1)
-        rand2 = randint(0,length2-1)
-        rand3 = randint(0,length3-1)
-        temp = route1[rand1]
-        route1[rand1] = route2[rand2]
-        route2[rand2] = route3[rand3]
-        route3[rand3] = temp
-        return [Path(route1), Path(route2), Path(route3)]
-
-        return children
-
-    @staticmethod #medium move
     def cycle_three_four_times(paths, children):
         for i in range(15):
             route1 = paths[0].route
@@ -115,7 +96,7 @@ class State():
         """ For ex, with 100 customers and 3 trucks, we expect 33 per truck.  Siphon off the
             surplus for any 'overloaded' paths and then add some surplus randomly into 'underloaded'
             paths """
-        expected = sum( [ len(element.route) for element in self.paths] ) / len( self.paths )
+        expected = sum( [ len(element.route) for element in paths] ) / len(paths)
         overserved_paths = []
         underserved_paths = []
         surplus = 0
