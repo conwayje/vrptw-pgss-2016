@@ -19,6 +19,7 @@ def import_customers(filename):
 
             customers.append(temp)
 
+
     # assign clusters
     if filename == "C201.txt":
         # if data needs to be accessed, for each cluster call custom_solution, i.e. "c1.custom_solution"
