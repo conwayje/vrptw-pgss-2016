@@ -57,8 +57,8 @@ class State():
         paths = self.paths
 
         # these ones probably aren't good
-        # children.append( State.cycle_three_four_times(paths) )
-        # children.append( State.redistribute_more_evenly( paths ) )
+        # children_paths += State.cycle_three_four_times(paths)
+        # children_paths += State.redistribute_more_evenly( paths )
 
         # these ones are probably good
         children_paths += State.shuffle_in_fives( paths )
