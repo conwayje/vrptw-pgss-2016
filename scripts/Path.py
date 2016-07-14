@@ -4,27 +4,24 @@
 # c was used as customer in order to avoid conflict with old code
 
 import math
+from Distances import Distances
 
 class Path():
 
-
-    def __init__(self, route, distances):
+    def __init__(self, route):
         self.route = route #list of customers
-        self.distances = distances
-        if route != []:
-            self.distance = self.calculate_distance()
 
     # returns the total distance
     def calculate_distance(self):
 
         prev_customer = self.route[0]
-        distance = self.distances[0][prev_customer.number]
+        distance = Distances.get_distance(0, prev_customer.number)
 
         for c in self.route[1:]:
-            distance += self.distances[prev_customer.number][c.number]
+            distance += Distances.get_distance(prev_customer.number, c.number)
             prev_customer = c
 
-        distance += self.distances[prev_customer.number][0]
+        distance += Distances.get_distance(prev_customer.number, 0)
 
 
         self.distance = distance
@@ -35,7 +32,7 @@ class Path():
         given the order of customers prior to the given customer and their windows"""
 
         prev_customer = self.route[0]
-        time = self.distances[0][prev_customer.number]
+        time = Distances.get_distance(prev_customer.number, 0)
 
         if time < prev_customer.open_time:
             time = prev_customer.open_time
@@ -46,7 +43,7 @@ class Path():
 
         for c in self.route[1:]:
 
-            time += self.distances[prev_customer.number][c.number]
+            time += Distances.get_distance(prev_customer.number, c.number)
             prev_customer = c
 
             # if truck arrives before customer is open, assume truck waits
@@ -71,7 +68,7 @@ class Path():
         an array of the customers missed. If the path is valid, an empty array will be returned"""
 
         prev_customer = self.route[0]
-        time = self.distances[prev_customer.number][0]
+        time = Distances.get_distance(prev_customer.number,0)
 
         missedCustomers = []
 
@@ -86,7 +83,7 @@ class Path():
         time += prev_customer.service_time
 
         for c in self.route[1:]:
-            time += self.distances[prev_customer.number][c.number]
+            time += Distances.get_distance(prev_customer.number, c.number)
             prev_customer = c
 
             # if truck arrives before customer is open, assume truck waitds
@@ -108,7 +105,7 @@ class Path():
     def get_last_customer_visited(self, current_time):
         prev_customer = self.route[0]
 
-        time = self.distances[prev_customer.number][0]
+        time = Distances.get_distance(prev_customer.number, 0)
         if (time > current_time):
             return None
 
@@ -122,7 +119,7 @@ class Path():
 
         for c in self.route[1:]:
 
-            time += self.distances[prev_customer.number][c.number]
+            time += Distances.get_distance(prev_customer.number, c.number)
 
             if(time > current_time):
                 return prev_customer
@@ -188,16 +185,16 @@ class Path():
     def distance_to_previous(self, customer):
         index = self.route.index(customer) - 1
         if index >= 0:
-            return self.distances[customer.number][self.route[index].number ]
+            return Distances.get_distance(customer.number, self.route[index].number)
         else:
-            return self.distances[customer.number][0]
+            return Distances.get_distance(customer.number, 0)
 
     def distance_to_next(self, customer):
         index = self.route.index(customer) + 1
         if index < len(self.route):
-            return self.distances[customer.number][self.route[index].number ]
+            return Distances.get_distance(customer.number, self.route[index].number)
         else:
-            return self.distances[customer.number][0]
+            return Distances.get_distance(customer.number, 0)
 
 
     def __repr__(self):
