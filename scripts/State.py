@@ -6,6 +6,7 @@ from Path import Path
 from Depot import Depot
 from random import randint, randrange, choice
 import random
+import ipdb
 
 class State():
 
@@ -53,18 +54,18 @@ class State():
     def get_children(self):
         children = [] # list of states
         children_paths = []
-        paths = [self.truck1.path, self.truck2.path, self.truck3.path]
+        paths = self.paths
 
         # these ones probably aren't good
         # children.append( State.cycle_three_four_times(paths) )
         # children.append( State.redistribute_more_evenly( paths ) )
 
         # these ones are probably good
-        children.append( State.shuffle_in_fives( paths ) )
-        children.append( State.sort_paths( paths ) )
-        children.append( State.path_swap( paths ) )
-        children.append( State.distance_swap( paths ) )
-        children.append( State.switch_between_paths( paths, 15 ) )
+        children_paths += State.shuffle_in_fives( paths )
+        children_paths += State.sort_paths( paths )
+        children_paths += State.path_swap( paths )
+        children_paths += State.distance_swap( paths )
+        children_paths += State.switch_between_paths( paths, 15 )
 
         # child_paths should be a list containing three paths per entry (as a list)
         for child_paths in children_paths:
@@ -151,8 +152,6 @@ class State():
 
             children.append(new_paths)
 
-        #ipdb.set_trace()
-
         return children
 
     @staticmethod #small move
@@ -200,10 +199,10 @@ class State():
 
     @staticmethod #small move
     def path_swap(paths):
-        children = []
+        new_path_sets = []
 
         for i in range( 15 ):
-            new_paths = [copy.deepcopy(element) for element in paths]
+            new_paths = copy.deepcopy( paths )
             # get two unique random paths
             path_a_index = randint(0, 2)
             path_b_index = (path_a_index + randint(1, 2)) % 3
@@ -213,8 +212,9 @@ class State():
             customer_a = randint(0, len(path_a.route) - 1)
             customer_b = randint(0, len(path_b.route) - 1)
             path_a.route[customer_a], path_b.route[customer_b] = path_b.route[customer_b], path_a.route[customer_a]
-            children.append(new_paths)
-        return children
+            new_path_sets.append(new_paths)
+
+        return new_path_sets
 
     @staticmethod #small move
     def distance_swap(paths):
@@ -274,40 +274,29 @@ class State():
 
 
     def is_world_record(self):
-        # for c in self.truck1.path.route:
-        #     print c.number,
-        #
-        # print "\n"
-        # for c in self.truck2.path.route:
-        #     print c.number,
-        #
-        # print "\n"
-        # for c in self.truck3.path.route:
-        #     print c.number,
-
-
         return (self.calculate_distance() < 591.55)
-
-        # return self.get_score() <= 0
 
     @staticmethod
     def switch_between_paths(paths, numtoswap):
+        new_path_lists = []
 
+        for k in range(10):
+            p = copy.deepcopy(paths)
 
-        p = copy.deepcopy(paths)
+            for i in range(numtoswap):
+                path_a = randint(0, 2)
+                path_b = randint(0, 2)
 
-        for i in range(numtoswap):
-            path_a = randint(0, 2)
-            path_b = randint(0, 2)
+                cust_a = randint(0, len(p[path_a].route) - 1)
+                cust_b = randint(0, len(p[path_b].route) - 1)
 
-            cust_a = randint(0, len(p[path_a].route) - 1)
-            cust_b = randint(0, len(p[path_b].route) - 1)
+                temp = p[path_a].route[cust_a]
+                p[path_a].route[cust_a] = p[path_b].route[cust_b]
+                p[path_b].route[cust_b] = temp
 
-            temp = p[path_a].route[cust_a]
-            p[path_a].route[cust_a] = p[path_b].route[cust_b]
-            p[path_b].route[cust_b] = temp
+            new_path_lists.append( p )
 
-        return p
+        return new_path_lists
 
     def __repr__(self):
         return "\n<State: Truck 1: {0}\nTruck2: {1}\nTruck3:{2}>".format(self.truck1.path.route, self.truck2.path.route, self.truck3.path.route)

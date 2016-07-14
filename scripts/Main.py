@@ -11,6 +11,10 @@ from ImportSolution import import_solution
 from Distances import Distances
 import argparse
 
+# @TODO -- parse arguments in this file for things like...
+# # which initial solution to use
+# # which problem instance to solve
+
 # Filenames:    C201.txt, C201_wr_solution.txt
 # 				RC208.txt, RC208_wr_solution.txt
 

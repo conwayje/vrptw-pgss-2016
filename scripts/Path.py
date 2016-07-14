@@ -198,4 +198,5 @@ class Path():
 
 
     def __repr__(self):
-        return "<Path: {0}>".format(self.route)
+        # return "<Path: {0}>".format(self.route)
+        return "<Path: {}>".format([customer.number for customer in self.route])
