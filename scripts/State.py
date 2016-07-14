@@ -72,8 +72,6 @@ class State():
 
         return children
 
-    @staticmethod 
-
     @staticmethod #medium move
     def cycle_three_four_times(paths):
         children = []
