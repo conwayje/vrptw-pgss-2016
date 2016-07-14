@@ -56,14 +56,15 @@ class State():
         paths = [self.truck1.path, self.truck2.path, self.truck3.path]
 
         # these ones probably aren't good
-        # children_paths = State.cycle_three_four_times(paths)
-        # children_paths = State.redistribute_more_evenly( paths )
+        # children.append( State.cycle_three_four_times(paths) )
+        # children.append( State.redistribute_more_evenly( paths ) )
 
         # these ones are probably good
-        children_paths = State.shuffle_in_fives( paths )
-        children_paths = State.sort_paths( paths )
-        children_paths = State.path_swap( paths )
-        children_paths = State.distance_swap( paths )
+        children.append( State.shuffle_in_fives( paths ) )
+        children.append( State.sort_paths( paths ) )
+        children.append( State.path_swap( paths ) )
+        children.append( State.distance_swap( paths ) )
+        children.append( State.switch_between_paths( paths, 15 ) )
 
         # child_paths should be a list containing three paths per entry (as a list)
         for child_paths in children_paths:
@@ -291,6 +292,7 @@ class State():
 
     @staticmethod
     def switch_between_paths(paths, numtoswap):
+
 
         p = copy.deepcopy(paths)
 
