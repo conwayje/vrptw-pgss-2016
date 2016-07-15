@@ -8,6 +8,7 @@ from State import State
 from AStar import doAStar
 from ImportCustomers import import_customers
 from ImportSolution import import_solution
+from Dijkstra import do_dijkstra
 import argparse
 
 # Filenames:    C201.txt, C201_wr_solution.txt
