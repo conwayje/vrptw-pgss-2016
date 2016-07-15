@@ -8,8 +8,16 @@ from State import State
 from AStar import doAStar
 from ImportCustomers import import_customers
 from ImportSolution import import_solution
+<<<<<<< HEAD
 from Dijkstra import do_dijkstra
+=======
+from Distances import Distances
+>>>>>>> acdee23f12064e6d3b4d406c9953aba2c0e3ec5a
 import argparse
+
+# @TODO -- parse arguments in this file for things like...
+# # which initial solution to use
+# # which problem instance to solve
 
 # Filenames:    C201.txt, C201_wr_solution.txt
 # 				RC208.txt, RC208_wr_solution.txt
@@ -25,6 +33,7 @@ def init(filename = "C201.txt"):
     global customers, depot, truck1, truck2, truck3
 
     customers = import_customers(filename)
+    Distances.calculate_matrix(customers)
     depot = Depot(0,0)
     truck1 = Truck(1,0,0,700)
     truck2 = Truck(2,0,0,700)
