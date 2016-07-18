@@ -11,3 +11,4 @@
 - Easier to switch instance when calling from the command line
 - - Example: Should be able to run by calling "python Main.py RC208"
 - Look for any @TODO markers and fix as needed
+- Use clusters somewhere
