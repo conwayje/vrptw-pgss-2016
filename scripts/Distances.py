@@ -16,7 +16,7 @@ class Distances():
             for c2 in customers:
                 row.append(c1.distance_to_customer(c2))
             Distances.matrix.append(row)
-        return Distances.matrix
+#        return Distances.matrix
 
     # @TODO -- does this return what you think it would?  if you pass in cust #1 and cust #2, don't you get
     # the distance from cust 2 to cust 3?

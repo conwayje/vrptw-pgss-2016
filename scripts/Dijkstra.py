@@ -1,8 +1,8 @@
 from ImportCustomers import import_customers
 from Distances import Distances
-<<<<<<< HEAD
-from Customer import distance_to_customer
-=======
+from Customer import Customer
+from Depot import Depot
+from copy import deepcopy
 #nearest neighbors works
 
 #may use this
@@ -17,14 +17,13 @@ def create_graph(customers):
 
 
 def dijkstra(customers, source):
-    matrix = Distances.calculate_matrix(customers)
     d={}
     unvisited = []
     for c in customers:
         d[c] = float('inf')
         unvisited.append(c)
     d[source] = 0
-   for c in unvisited:
+    for c in unvisited:
        d[c] = c.distance_to_customer(source)
        
     # @TODO -- what is the deal with this thing ((o_O))
@@ -38,7 +37,25 @@ def get_closest(source, matrix):
             i = cust
     print i
     return i
-
+    
+def get_nearest_neighbors_all_trucks(customers, source, numtrucks):
+    l = len(customers)
+    print l
+    plen = 1
+    paths = [ [source] for t in range(numtrucks) ]
+    
+    while (plen < l):
+        for path in paths:
+            if plen < l:
+                path.append(get_next(path[-1], customers, paths))
+                plen += 1
+            #print "path"
+            #print path
+            #unvisited.pop(source)
+    for path in paths: print path 
+    for path in paths: print len(path) 
+    return paths
+            
 
 def get_nearest_neighbors(customers, source):
     path = [source]
@@ -48,11 +65,20 @@ def get_nearest_neighbors(customers, source):
         source = get_next(source, customers, path)
     return path
 
-def get_next(source, customers, path):
+def get_next(source, customers, paths):
+
     min = float('inf')
     next = source
     for i in range(len(customers)):
-        if Distances.get_distance(customers.index(source), i) < min and customers.index(source) != i and customers[i] not in path:
+        if Distances.get_distance(customers.index(source), i) < min and customers.index(source) != i and customers[i] not in paths[0] and customers[i] not in paths[1] and customers[i] not in paths[2]:
             next = customers[i]
             min = Distances.get_distance(customers.index(source), i)
     return next
+    
+custs = import_customers("C201.txt")
+depot = Customer(0, 0, 0, 0, 0, 0, 0) # @HACK
+c = [depot]
+for cust in custs:
+    c.append(cust)
+Distances.calculate_matrix(custs)
+get_nearest_neighbors_all_trucks(c, depot, 3)
