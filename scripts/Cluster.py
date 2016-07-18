@@ -29,7 +29,7 @@ class Cluster():
         best_path = Path(self.customers)
         for cs in itertools.permutations(self.customers):
             p = Path(cs)
-            dist = p.calculate_distance()
+            dist = p.distance
             if min == -1 or dist < min:
                 min = dist
                 best_path = p

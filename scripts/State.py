@@ -23,7 +23,7 @@ class State():
         #  @TODO -- similar to reason above:  maintain score(?)
 
     def calculate_distance(self):
-        self.distance = self.truck1.path.calculate_distance() + self.truck2.path.calculate_distance() + self.truck3.path.calculate_distance()
+        self.distance = self.truck1.path.distance + self.truck2.path.distance + self.truck3.path.distance
         return self.distance
 
     def plot(self):
@@ -44,7 +44,7 @@ class State():
 
         paths = [self.truck1.path, self.truck2.path, self.truck3.path]
 
-        score = sum( [path.calculate_distance() for path in paths] )
+        score = sum( [path.distnace for path in paths] )
 
         for path in paths:
             score += len( path.is_valid() ) * missed_customer_penalty
@@ -313,7 +313,7 @@ class State():
 
 
     def is_world_record(self):
-        return (self.calculate_distance() < 591.55)
+        return (self.distance < 591.55)
 
     def __repr__(self):
         return "\n<State: Truck 1: {0}\nTruck2: {1}\nTruck3:{2}>".format(self.truck1.path.route, self.truck2.path.route, self.truck3.path.route)
