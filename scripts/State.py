@@ -140,6 +140,24 @@ class State():
 
         return children
 
+    # @staticmethod
+    # def small_move_by_time(self):
+    #     for i in range(40):
+    #         new_paths = [ copy.deepcopy(element) for element in paths ]
+    #         trucks = [truck1, truck2, truck3]
+    #         truck_chosen = trucks[randint(0,2)]
+    #         route = trucks[randint(0,2)].route
+    #         for custi in route:
+    #             if(custi.get_arrival_time_of_customer > custi.close_time):
+    #                 swap_Customers(route)
+    #         children.append(new_paths)
+    #     return children
+
+
+    # def swap_Customers(route)
+    #     route[ customer_a ], route[ customer_b ] = route[ customer_b ], route[ customer_a ]
+
+
     def is_world_record(self):
         # return (self.calculate_distance() < 591)
         return self.get_score() <= 0
