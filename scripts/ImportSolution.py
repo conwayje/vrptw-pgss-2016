@@ -6,6 +6,8 @@ from Depot import Depot
 from Path import Path
 from Truck import Truck
 from State import State
+from Distances import Distances
+
 from Visual import Visual
 import argparse
 
@@ -13,30 +15,44 @@ path = '../standard_instances/'
 
 def import_solution(filename):
     with open(path + filename) as f:
-        customers = import_customers(filename.replace("_init_solution", ""))
+        customers = import_customers(filename.split("_")[0] + ".txt")
         lines = f.readlines()
+
+        # @TODO -- truck number dependency (from here until the end of the function)
         ids1 = lines[5].split()[3:]
         ids2 = lines[6].split()[3:]
         ids3 = lines[7].split()[3:]
-        path1 = Path([])
-        path2 = Path([])
-        path3 = Path([])
+        route1 = []
+        route2 = []
+        route3 = []
     for id in ids1:
-        path1.route.append(customers[int(id) - 1])
+        route1.append(customers[int(id) - 1])
     for id in ids2:
-        path2.route.append(customers[int(id) - 1])
+        route2.append(customers[int(id) - 1])
     for id in ids3:
-        path3.route.append(customers[int(id) - 1])
+        route3.append(customers[int(id) - 1])
 
-    print path1.calculate_distance() + path2.calculate_distance() + path3.calculate_distance()
+    path1 = Path(route1)
+    path2 = Path(route2)
+    path3 = Path(route3)
 
-    return State(Truck(1, 0, 0, path=path1),
-                 Truck(2, 0, 0, path=path2),
-                 Truck(3, 0, 0, path=path3), parent=None)
+    return State(Truck(1, 0, 0, 700, path=path1),
+                 Truck(2, 0, 0, 700, path=path2),
+                 Truck(3, 0, 0, 700, path=path3), parent=None)
 
-parser = argparse.ArgumentParser()
-parser.add_argument("filename")
-args = parser.parse_args()
-filename = args.filename
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("filename")
+    args = parser.parse_args()
+    filename = args.filename
 
-import_solution(filename).plot()
+    state = import_solution(filename)
+
+    # plot solution
+    state.plot()
+
+    # plot missed customers
+    state.plot_missed()
+
+    # print number of missed customers
+    # print len(state.truck1.path.is_valid()) + len(state.truck2.path.is_valid()) + len(state.truck3.path.is_valid())
