@@ -39,7 +39,7 @@ def init(filename = "C201.txt"):
     # Visual.plot_customers(depot, customers)
     # Visual.show()
 
-def initial_state():
+def initial_state(filename = "C201_init_solution.txt"):
     global customers, depot, truck1, truck2, truck3
     route1 = []
     route2 = []
@@ -51,10 +51,17 @@ def initial_state():
     # until there are no customers remaining.
     # just a suggestion; y'all can be as creative as you want
 
-    state = import_solution("C201_init_solution.txt")
+    state = import_solution(filename)
 
     return state
 
-init()
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("problem_file")
+    parser.add_argument("init_solution_file")
+    args = parser.parse_args()
+    problem_file = args.problem_file
+    init_solution_file = args.init_solution_file
 
-doAStar(initial_state())
+    init(problem_file)
+    doAStar(initial_state(init_solution_file))
