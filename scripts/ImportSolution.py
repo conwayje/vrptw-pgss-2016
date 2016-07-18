@@ -13,7 +13,7 @@ path = '../standard_instances/'
 
 def import_solution(filename):
     with open(path + filename) as f:
-        customers = import_customers(filename.replace("_wr_solution", ""))
+        customers = import_customers(filename.replace("_init_solution", ""))
         lines = f.readlines()
         ids1 = lines[5].split()[3:]
         ids2 = lines[6].split()[3:]
