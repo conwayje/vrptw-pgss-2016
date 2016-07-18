@@ -137,17 +137,17 @@ class Path():
 
     # returns whether the path intersects itself
     def intersects_self(self):
-        # @TODO -- i know we stole this from stackoverflow, but have we tested it?
-        # let's make sure we do that [and then delete this comment]
-        intersects = False
+        intersects = 0
         points = [(0, 0)]
         for c in self.route:
             points.append((c.x, c.y))
 
+        points.append((0,0))
+
         for i in range(1, len(points)):
             for j in range(i + 1, len(self.route)):
                 if (Path.lines_intersect(points[i - 1], points[i], points[j], points[j - 1])):
-                    intersects = True
+                    intersects += 1
 
         return intersects
 
@@ -196,7 +196,27 @@ class Path():
         else:
             return Distances.get_distance(customer.number, 0)
 
+    def cargo_used(self, customer=None):
+        result = 0
+        for cust in self.route:
+            result += customer.demand
+            if customer == cust:
+                return result
+        return result
+
+    def get_indice_customer_missed(self, cargo):
+        ''':return the indice of the first customer missed, will return -1 if makes it '''
+        indice = 0
+        cargo_used = 0
+        for cust in self.route:
+            if cargo_used > cargo:
+                return indice
+            cargo_used += cust.cargo
+            indice += 1
+        return -1
+
 
     def __repr__(self):
         # return "<Path: {0}>".format(self.route)
         return "<Path: {}>".format([customer.number for customer in self.route])
+

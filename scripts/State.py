@@ -4,6 +4,7 @@ import copy
 import math
 from Path import Path
 from Depot import Depot
+from HeuristicScore import Heuristic_Score
 from random import randint, randrange, choice
 import random
 import ipdb
@@ -61,7 +62,7 @@ class State():
         # children_paths += State.redistribute_more_evenly( paths )
 
         # these ones are probably good
-        children_paths += State.shuffle_in_fives( paths )
+        children_paths += State.shuffle( paths, 5 )
         children_paths += State.sort_paths( paths )
         children_paths += State.path_swap( paths )
         children_paths += State.distance_swap( paths )
@@ -134,15 +135,15 @@ class State():
         return children
 
     @staticmethod #big move
-    def shuffle_in_fives(paths):
+    def shuffle(paths, by_num):
         children = []
 
         for i in range(7):
             new_paths = []
             for path in paths:
                 route = []
-                for i in range(0, len(path.route), 4):
-                    custs = path.route[i:i+4]
+                for i in range(0, len(path.route), by_num - 1):
+                    custs = path.route[i:i+by_num-1]
                     random.shuffle(custs, random.random)
                     for cust in custs:
                         route.append(cust)
@@ -231,6 +232,23 @@ class State():
             children.append(new_paths)
         return children
 
+    # @staticmethod
+    # def small_move_by_time(self):
+    #     for i in range(40):
+    #         new_paths = [ copy.deepcopy(element) for element in paths ]
+    #         trucks = [truck1, truck2, truck3]
+    #         truck_chosen = trucks[randint(0,2)]
+    #         route = trucks[randint(0,2)].route
+    #         for custi in route:
+    #             if(custi.get_arrival_time_of_customer > custi.close_time):
+    #                 swap_Customers(route)
+    #         children.append(new_paths)
+    #     return children
+
+
+    # def swap_Customers(route)
+    #     route[ customer_a ], route[ customer_b ] = route[ customer_b ], route[ customer_a ]
+
     @staticmethod #medium move, 3 children
     def five_section_swap(paths):
         children = []
@@ -271,11 +289,6 @@ class State():
 
         return children
 
-
-
-    def is_world_record(self):
-        return (self.calculate_distance() < 591.55)
-
     @staticmethod
     def switch_between_paths(paths, numtoswap):
         new_path_lists = []
@@ -297,6 +310,10 @@ class State():
             new_path_lists.append( p )
 
         return new_path_lists
+
+
+    def is_world_record(self):
+        return (self.calculate_distance() < 591.55)
 
     def __repr__(self):
         return "\n<State: Truck 1: {0}\nTruck2: {1}\nTruck3:{2}>".format(self.truck1.path.route, self.truck2.path.route, self.truck3.path.route)
