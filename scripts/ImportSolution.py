@@ -17,6 +17,8 @@ def import_solution(filename):
     with open(path + filename) as f:
         customers = import_customers(filename.split("_")[0] + ".txt")
         lines = f.readlines()
+
+        # @TODO -- truck number dependency (from here until the end of the function)
         ids1 = lines[5].split()[3:]
         ids2 = lines[6].split()[3:]
         ids3 = lines[7].split()[3:]

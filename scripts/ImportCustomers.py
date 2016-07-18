@@ -20,6 +20,8 @@ def import_customers(filename):
             customers.append(temp)
 
 
+    # @TODO -- what's going on here?  are we not using clusters at all?
+    # If we do use it, make sure that the filename thing is coming from argparse magic
     #assign clusters
     #if filename == "C201.txt":
     #    # if data needs to be accessed, for each cluster call custom_solution, i.e. "c1.custom_solution"
