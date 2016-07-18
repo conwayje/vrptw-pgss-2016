@@ -7,29 +7,24 @@ from Truck import Truck
 ## STILL NEED PENALTIES FOR COMING OUT OF CLUSTERS AND OUTRAGEOUS ANGLE OF TURNING
 
 class Heuristic_Score():
-    def _init_(self, state, customer, truck):
+    def _init_(self, state):
         self.state = state
-        self.customer = customer
-        self.truck = truck
+
 
     def penalties(self):
+        score = 0
+
         # placeholder paths until state is generated
-        paths = state.get_paths
-        customer = Customer(self.customer)
-        truck = Truck(self.truck)
+        paths = self.state.get_paths
         # get the distance (benchmark score) from paths
         distance = paths.distance
 
-        # get data
-        did_cross = paths.intersect  ## from 'Path.py'
-        missed_customer = paths.missedCustomers  ## from 'Path.py'
-        capacity = truck.cargo  ## from 'Truck.py'
-        early_arrival = path.diff_time  ## from 'Path.py'
-
-        if (missed_customer == True):
+        score += distance
+        for path in paths:
             # ya done goofed
-            distance += 1000000000
+            score += 1000000000 * len(path.is_valid())
 
+        return score
         # #if (did_cross == True):
         # #	distance += 100
 
