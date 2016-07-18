@@ -23,7 +23,7 @@ class State():
         #  @TODO -- similar to reason above:  maintain score(?)
 
     def calculate_distance(self):
-        self.distance = self.truck1.path.calculate_distance() + self.truck2.path.calculate_distance() + self.truck3.path.calculate_distance()
+        self.distance = self.truck1.path.distance + self.truck2.path.distance + self.truck3.path.distance
         return self.distance
 
     def plot(self):
@@ -44,7 +44,7 @@ class State():
 
         paths = [self.truck1.path, self.truck2.path, self.truck3.path]
 
-        score = sum( [path.calculate_distance() for path in paths] )
+        score = sum( [path.distnace for path in paths] )
 
         for path in paths:
             score += len( path.is_valid() ) * missed_customer_penalty
@@ -232,6 +232,23 @@ class State():
             children.append(new_paths)
         return children
 
+    # @staticmethod
+    # def small_move_by_time(self):
+    #     for i in range(40):
+    #         new_paths = [ copy.deepcopy(element) for element in paths ]
+    #         trucks = [truck1, truck2, truck3]
+    #         truck_chosen = trucks[randint(0,2)]
+    #         route = trucks[randint(0,2)].route
+    #         for custi in route:
+    #             if(custi.get_arrival_time_of_customer > custi.close_time):
+    #                 swap_Customers(route)
+    #         children.append(new_paths)
+    #     return children
+
+
+    # def swap_Customers(route)
+    #     route[ customer_a ], route[ customer_b ] = route[ customer_b ], route[ customer_a ]
+
     @staticmethod #medium move, 3 children
     def five_section_swap(paths):
         children = []
@@ -272,11 +289,6 @@ class State():
 
         return children
 
-
-
-    def is_world_record(self):
-        return (self.calculate_distance() < 591.55)
-
     @staticmethod
     def switch_between_paths(paths, numtoswap):
         new_path_lists = []
@@ -298,6 +310,10 @@ class State():
             new_path_lists.append( p )
 
         return new_path_lists
+
+
+    def is_world_record(self):
+        return (self.distance < 591.55)
 
     def __repr__(self):
         return "\n<State: Truck 1: {0}\nTruck2: {1}\nTruck3:{2}>".format(self.truck1.path.route, self.truck2.path.route, self.truck3.path.route)
