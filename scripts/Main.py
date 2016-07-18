@@ -20,17 +20,22 @@ import argparse
 
 customers = None
 depot = None
+
+# @TODO -- Truck number dependency
 truck1 = None
 truck2 = None
 truck3 = None
 
-
+# @TODO -- we probably don't want a default like this
+# And also I think we should probably aim to pass in something like "RC201" and then let it add the ".txt" automatically
 def init(filename = "C201.txt"):
     global customers, depot, truck1, truck2, truck3
 
     customers = import_customers(filename)
     Distances.calculate_matrix(customers)
     depot = Depot(0,0)
+
+    # @TODO -- truck number dependency
     truck1 = Truck(1,0,0,700)
     truck2 = Truck(2,0,0,700)
     truck3 = Truck(3,0,0,700)
@@ -39,8 +44,12 @@ def init(filename = "C201.txt"):
     # Visual.plot_customers(depot, customers)
     # Visual.show()
 
+# @TODO -- scary, scary hard-coding / no ".txt" ? / probably better to have no default b/c defaults lead to unexpected
+# breaks due to default magicness
 def initial_state(filename = "C201_init_solution.txt"):
     global customers, depot, truck1, truck2, truck3
+
+    # @TODO -- truck number dependency
     route1 = []
     route2 = []
     route3 = []

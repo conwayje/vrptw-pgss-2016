@@ -10,6 +10,7 @@ class Path():
 
     def __init__(self, route):
         self.route = route #list of customers
+        self.distance = self.calculate_distance()
 
     # returns the total distance
     def calculate_distance(self):
@@ -24,7 +25,6 @@ class Path():
         distance += Distances.get_distance(prev_customer.number, 0)
 
 
-        self.distance = distance
         return distance
 
     def get_arrival_time_of_customer(self, cust):
@@ -215,6 +215,30 @@ class Path():
             indice += 1
         return -1
 
+
+    def get_wait_time(self):
+        wait_time = 0
+        prev_customer = self.route[0]
+        time = Distances.get_distance(prev_customer.number, 0)
+
+        if time < prev_customer.open_time:
+            wait_time += prev_customer.open_time - time
+            time = prev_customer.open_time
+
+
+        for c in self.route[1:]:
+
+            time += Distances.get_distance(prev_customer.number, c.number)
+            prev_customer = c
+
+            # if truck arrives before customer is open, assume truck waits
+            if time < c.open_time:
+                wait_time += prev_customer.open_time - time
+                time = c.open_time
+
+            time += c.service_time
+
+        return wait_time
 
     def __repr__(self):
         # return "<Path: {0}>".format(self.route)

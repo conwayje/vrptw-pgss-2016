@@ -11,7 +11,10 @@ import ipdb
 
 class State():
 
+    # @TODO -- truck number dependency
     def __init__(self, truck1, truck2, truck3, parent = None):
+
+        # @TODO -- truck number dependency
         self.truck1 = truck1
         self.truck2 = truck2
         self.truck3 = truck3
@@ -23,16 +26,18 @@ class State():
         #  @TODO -- similar to reason above:  maintain score(?)
 
     def calculate_distance(self):
-        self.distance = self.truck1.path.calculate_distance() + self.truck2.path.calculate_distance() + self.truck3.path.calculate_distance()
+        self.distance = self.truck1.path.distance + self.truck2.path.distance + self.truck3.path.distance
         return self.distance
 
     def plot(self):
+        # @TODO -- truck number dependency
         Visual.plot_path(self.truck1.path, color='g')
         Visual.plot_path(self.truck2.path, color='c')
         Visual.plot_path(self.truck3.path, color='m')
         Visual.show()
 
     def plot_missed(self):
+        # @TODO -- truck number dependency
         Visual.plot_customers(Depot(0,0), self.truck1.path.is_valid())
         Visual.plot_customers(Depot(0,0), self.truck2.path.is_valid())
         Visual.plot_customers(Depot(0,0), self.truck3.path.is_valid())
@@ -42,9 +47,10 @@ class State():
     def get_score(self):
         missed_customer_penalty = 10**6
 
+        # @TODO -- truck number dependency
         paths = [self.truck1.path, self.truck2.path, self.truck3.path]
 
-        score = sum( [path.calculate_distance() for path in paths] )
+        score = sum( [path.distnace for path in paths] )
 
         for path in paths:
             score += len( path.is_valid() ) * missed_customer_penalty
@@ -70,12 +76,14 @@ class State():
 
         # child_paths should be a list containing three paths per entry (as a list)
         for child_paths in children_paths:
+            # @TODO -- truck number dependency
             children.append(
             State(Truck(1, 0, 0, 700, child_paths[0]), Truck(2, 0, 0, 700, child_paths[1]) ,Truck(3, 0, 0, 700, child_paths[2])))
 
         return children
 
     @staticmethod #medium move
+    # @TODO -- truck number dependency (entire function)
     def cycle_three_four_times(paths):
         children = []
 
@@ -181,19 +189,6 @@ class State():
             if not is_sorted:
                 children.append(new_paths)
 
-            # for cust in p.route:
-            #     time = p.get_arrival_time_of_customer(cust)
-            #     diff = time - prevtime
-            #     if diff > 120 and i != len(p.route):
-            #         temp = sorted(p.route[i:], key = lambda customer: customer.close_time)[0]
-            #         p.route[p.route.index(temp)] = p.route[i]
-            #         p.route[i] = temp
-            #         new_paths =  copy.deepcopy(paths)
-            #         new_paths[pathnum] = p
-            #         children.append(new_paths)
-            #
-            #     prevtime = time
-            #     i += 1
             pathnum += 1
 
         return children
@@ -206,6 +201,7 @@ class State():
             new_paths = copy.deepcopy( paths )
             # get two unique random paths
             path_a_index = randint(0, 2)
+            # @TODO -- truck number dependency
             path_b_index = (path_a_index + randint(1, 2)) % 3
             path_a = new_paths[path_a_index]
             path_b = new_paths[path_b_index]
@@ -222,6 +218,7 @@ class State():
         children = []
         for i in range( 15 ):
             new_paths = [copy.deepcopy(element) for element in paths]
+            # @TODO -- truck number dependency
             path_index = randint(0, 2)
             path = new_paths[path_index]
             # gets two random customers, if the first is farther then the secondthen swap
@@ -231,23 +228,6 @@ class State():
                 path.route[customer_a], path.route[customer_b] = path.route[customer_b], path.route[customer_a]
             children.append(new_paths)
         return children
-
-    # @staticmethod
-    # def small_move_by_time(self):
-    #     for i in range(40):
-    #         new_paths = [ copy.deepcopy(element) for element in paths ]
-    #         trucks = [truck1, truck2, truck3]
-    #         truck_chosen = trucks[randint(0,2)]
-    #         route = trucks[randint(0,2)].route
-    #         for custi in route:
-    #             if(custi.get_arrival_time_of_customer > custi.close_time):
-    #                 swap_Customers(route)
-    #         children.append(new_paths)
-    #     return children
-
-
-    # def swap_Customers(route)
-    #     route[ customer_a ], route[ customer_b ] = route[ customer_b ], route[ customer_a ]
 
     @staticmethod #medium move, 3 children
     def five_section_swap(paths):
@@ -297,6 +277,7 @@ class State():
             p = copy.deepcopy(paths)
 
             for i in range(numtoswap):
+                # @TODO -- truck number dependency
                 path_a = randint(0, 2)
                 path_b = randint(0, 2)
 
@@ -310,10 +291,6 @@ class State():
             new_path_lists.append( p )
 
         return new_path_lists
-
-
-    def is_world_record(self):
-        return (self.calculate_distance() < 591.55)
 
     def __repr__(self):
         return "\n<State: Truck 1: {0}\nTruck2: {1}\nTruck3:{2}>".format(self.truck1.path.route, self.truck2.path.route, self.truck3.path.route)

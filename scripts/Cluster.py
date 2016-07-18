@@ -29,7 +29,7 @@ class Cluster():
         best_path = Path(self.customers)
         for cs in itertools.permutations(self.customers):
             p = Path(cs)
-            dist = p.calculate_distance()
+            dist = p.distance
             if min == -1 or dist < min:
                 min = dist
                 best_path = p
@@ -64,22 +64,15 @@ class Cluster():
         cluster_radius_final = new_farthest_distance
 
         return cluster_radius_final
- 
-        # print (cluster_radius_final)
-        # print (center_x+ ", " + center_y)
-        
-    # old method to get perms, but python already has one
-    # @staticmethod
-    # def generate_perms(customers):
-    #     perms = []
-    #     if len(customers) == 1:
-    #         return customers
+
     # @TODO -- this might also need the problem definition name [rc208, c201, or whatever]
     # in order to properly decide which customers are clustered.  also ask @suvir if you
     # need help visualizing.
+    # This @TODO may now be out of date... haven't look that far in the code yet.
     #
     # personal request:  keep clusters small so that [cluster].get_solution() is useful more often
     # than not =)
     @staticmethod
     def create_clusters(customers):
+        # @TODO -- is this supposed to do anything / still exist?
         pass
