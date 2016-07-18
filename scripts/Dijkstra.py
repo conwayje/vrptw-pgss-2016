@@ -1,7 +1,6 @@
 from ImportCustomers import import_customers
 from Distances import Distances
-#this doesn't work yet
-
+from Customer import distance_to_customer
 def create_matrix(customers):
     return Distances.calculate_matrix(customers)
     
@@ -37,7 +36,18 @@ def get_distance(self, vertex):
 #        source  = get_closest(source, matrix, path, end)
 #    path.append(end)
 
-def dijkstra():
+def dijkstra(customers, source):
+    matrix = Distances.calculate_matrix(customers)
+    d={}
+    unvisited = []
+    for c in customers:
+        d[c] = float('inf')
+        unvisited.append(c)
+    d[source] = 0
+   for c in unvisited:
+       d[c] = c.distance_to_customer(source)
+       
+        
     
     
 def get_closest(source, matrix):
