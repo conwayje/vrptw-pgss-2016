@@ -8,11 +8,7 @@ from State import State
 from AStar import doAStar
 from ImportCustomers import import_customers
 from ImportSolution import import_solution
-<<<<<<< HEAD
-from Dijkstra import do_dijkstra
-=======
 from Distances import Distances
->>>>>>> acdee23f12064e6d3b4d406c9953aba2c0e3ec5a
 import argparse
 
 # @TODO -- parse arguments in this file for things like...

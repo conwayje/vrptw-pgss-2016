@@ -1,5 +1,10 @@
 from ImportCustomers import import_customers
+from Distances import Distances
 #this doesn't work yet
+
+def create_matrix(customers):
+    return Distances.calculate_matrix(customers)
+    
 def create_graph(customers):
     g = {}
     for c in customers:
@@ -12,79 +17,55 @@ def create_graph(customers):
 def get_distance(self, vertex):
     return ((vertex.y - self.y)**2 + (vertex.x - self.x)**2)**0.5
     
-def shortest_path(graph, source, target):
-    d,p = djikstra(source, target, graph)
-    path = []
-    while 1:
-        path.append(target)
-        if target == source: break
-        #target = p[target]
-    path.reverse()
+#def shortest_path(graph, source, target):
+#    d,p = djikstra(source, target, graph)
+#    path = []
+#    while 1:
+#        path.append(target)
+#        if target == source: break
+#        #target = p[target]
+#    path.reverse()
+#    return path
+    
+#def shortest_paths(source, end, matrix):
+#    p = {} #predecessors
+#    d = {}
+#    path = []
+#    path.append(source)
+#    while len(path) < len(matrix):
+#        path.append(get_closest(source, matrix, path, end))
+#        source  = get_closest(source, matrix, path, end)
+#    path.append(end)
+
+def dijkstra():
+    
+    
+def get_closest(source, matrix):
+    closest = float('inf')
+    i = None
+    for cust in matrix[source]:
+        if (Distances.get_distance(source, cust) < closest) and (Distances.get_distance(source, cust) > 0) and (cust not in path):
+            closest = Distances.get_distance(source, cust)
+            i = cust
+    print i
+    return i
+
+
+def get_nearest_neighbors(customers, source):
+    path = [source]
+    l = len(customers)
+    while len(path) < l:
+        path.append(get_next(source, customers, path))
+        source = get_next(source, customers, path)
     return path
     
-#def djikstra(source, end, graph):
-#    d = {}
-#    p = {}
-#    q = {}
-#    q[source] = 0
-#    for v in graph:
-#        d[v] = float('inf')
-#    d[source] = 0
-#    
-#    for w in graph[v]:
-#        print("doing djikstra")
-#        l = graph[v][w]
-#        if w in d: 
-#            if l < d[w]: #distance is less than old distance
-##                print("idk what to do here")
-##            elif w not in q or l < q[w]: 
-##                q[w] = l 
-#            p[w] = v #add previous vertex as predecessor in the path
-#    
-#    return(d,p)
+def get_next(source, customers, path):
+    min = float('inf')
+    next = source
+    for i in range(len(customers)):
+        if Distances.get_distance(customers.index(source), i) < min and customers.index(source) != i and customers[i] not in path:
+            next = customers[i]
+            min = Distances.get_distance(customers.index(source), i)
+    return next
+    
 
-def nearest_neighbors(customers, source, end):
-    graph = create_graph(customers)
-    p = {}
-    d = {}
-    for cust in graph:
-        d[cust] = float('inf')
-    d[source] = 0
-
-    dist = float('inf')
-    for cust in graph[source]:
-        d[cust] = graph[source][cust]
-        if d[cust] < dist:
-            dist = d[cust]
-            p[cust] = source
-        
-    print p
-    path = [source]
-    for cust in p:
-        while not(cust == end and len(path) == len(customers)):
-            path.append(p[cust])
-        path.append(end)
-    print path
-
-def do_dijkstra(customers, source, end):
-    nearest_neighbors(customers, source, end)
-
-custs = import_customers("C201.txt")
-custs = custs[1:15]
-do_dijkstra(custs, custs[1], custs[13])
-
-
-#def get_adjacent_node(source, vertices):
-#    node = None
-#    distance = 200 #arbitrary value
-#    for vertex in vertices:
-#        new_distance = vertex.get_distance(source)
-#        if new_distance <= distance:
-#            distance = new_distance
-#    return node, new_distance
-#    
-#def get_closest_node(source, vertices):
-#    node = None
-#    vertices = sorted(vertices, key=lambda vertex: vertex.get_distance(source))
-#    node = vertices[0]
-#    return node
