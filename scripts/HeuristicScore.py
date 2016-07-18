@@ -28,7 +28,7 @@ class Heuristic_Score():
 
         if (missed_customer == True):
             # ya done goofed
-            distance += 10000000000000000000000000000000
+            distance += 1000000000
 
         # #if (did_cross == True):
         # #	distance += 100

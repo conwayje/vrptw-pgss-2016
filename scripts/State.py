@@ -4,6 +4,7 @@ import copy
 import math
 from Path import Path
 from Depot import Depot
+from HeuristicScore import Heuristic_Score
 from random import randint, randrange, choice
 import random
 import ipdb
@@ -61,7 +62,7 @@ class State():
         # children_paths += State.redistribute_more_evenly( paths )
 
         # these ones are probably good
-        children_paths += State.shuffle_in_fives( paths )
+        children_paths += State.shuffle( paths, 5 )
         children_paths += State.sort_paths( paths )
         children_paths += State.path_swap( paths )
         children_paths += State.distance_swap( paths )
@@ -134,15 +135,15 @@ class State():
         return children
 
     @staticmethod #big move
-    def shuffle_in_fives(paths):
+    def shuffle(paths, by_num):
         children = []
 
         for i in range(7):
             new_paths = []
             for path in paths:
                 route = []
-                for i in range(0, len(path.route), 4):
-                    custs = path.route[i:i+4]
+                for i in range(0, len(path.route), by_num - 1):
+                    custs = path.route[i:i+by_num-1]
                     random.shuffle(custs, random.random)
                     for cust in custs:
                         route.append(cust)
