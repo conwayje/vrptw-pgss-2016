@@ -11,10 +11,6 @@ from ImportSolution import import_solution
 from Distances import Distances
 import argparse
 
-# @TODO -- parse arguments in this file for things like...
-# # which initial solution to use
-# # which problem instance to solve
-
 # Filenames:    C201.txt, C201_wr_solution.txt
 # 				RC208.txt, RC208_wr_solution.txt
 
@@ -26,9 +22,7 @@ truck1 = None
 truck2 = None
 truck3 = None
 
-# @TODO -- we probably don't want a default like this
-# And also I think we should probably aim to pass in something like "RC201" and then let it add the ".txt" automatically
-def init(filename = "C201.txt"):
+def init(filename):
     global customers, depot, truck1, truck2, truck3
 
     customers = import_customers(filename)
@@ -44,9 +38,7 @@ def init(filename = "C201.txt"):
     # Visual.plot_customers(depot, customers)
     # Visual.show()
 
-# @TODO -- scary, scary hard-coding / no ".txt" ? / probably better to have no default b/c defaults lead to unexpected
-# breaks due to default magicness
-def initial_state(filename = "C201_init_solution.txt"):
+def initial_state(filename):
     global customers, depot, truck1, truck2, truck3
 
     # @TODO -- truck number dependency
@@ -69,8 +61,8 @@ if __name__ == "__main__":
     parser.add_argument("problem_file")
     parser.add_argument("init_solution_file")
     args = parser.parse_args()
-    problem_file = args.problem_file
-    init_solution_file = args.init_solution_file
+    problem_file = args.problem_file + ".txt"
+    init_solution_file = args.init_solution_file + ".txt"
 
     init(problem_file)
     doAStar(initial_state(init_solution_file))
