@@ -9,10 +9,22 @@ def doAStar(initial_state):
         (priority, state) = heappop(queue)
 
         print "Score of currently explored state: {}".format( priority )
+        # if(priority < 10000000):
+        #     state.plot()
 
         if state.is_world_record():
             print "Yay"
             print state
+            print state.get_score()
+            for c in state.truck1.path.route:
+                print c.number,
+            print
+            for c in state.truck2.path.route:
+                print c.number,
+            print
+            for c in state.truck3.path.route:
+                print c.number,
+
             queue = []
             world_record_not_broken = False
             break
@@ -22,7 +34,7 @@ def doAStar(initial_state):
         # print len(children)
         for c in children:
             heappush(queue, ( c.get_score(), c) )
-
+    
     return state
 
 
