@@ -1,6 +1,6 @@
 from heapq import *
 
-def doAStar(initial_state):
+def doAStar(initial_state, world_record = 591.55):
     queue = []
     heappush(queue, (0, initial_state))
     world_record_not_broken = True
@@ -12,7 +12,7 @@ def doAStar(initial_state):
         # if(priority < 10000000):
         #     state.plot()
 
-        if state.is_world_record():
+        if state.distance < world_record:
             print "Yay"
             print state
             print state.get_score()
@@ -30,7 +30,7 @@ def doAStar(initial_state):
             break
 
         # print state.get_score(), state
-        children =state.get_children()
+        children = state.get_children()
         # print len(children)
         for c in children:
             heappush(queue, ( c.get_score(), c) )

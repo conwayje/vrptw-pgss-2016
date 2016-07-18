@@ -237,7 +237,7 @@ class Path():
                 time = c.open_time
 
             time += c.service_time
-            
+
         return wait_time
 
     def __repr__(self):

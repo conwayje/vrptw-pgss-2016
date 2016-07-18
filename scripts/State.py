@@ -312,9 +312,6 @@ class State():
         return new_path_lists
 
 
-    def is_world_record(self):
-        return (self.distance < 591.55)
-
     def __repr__(self):
         return "\n<State: Truck 1: {0}\nTruck2: {1}\nTruck3:{2}>".format(self.truck1.path.route, self.truck2.path.route, self.truck3.path.route)
 
