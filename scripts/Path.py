@@ -196,6 +196,25 @@ class Path():
         else:
             return Distances.get_distance(customer.number, 0)
 
+    def cargo_used(self, customer=None):
+        result = 0
+        for cust in self.route:
+            result += customer.demand
+            if customer == cust:
+                return result
+        return result
+
+    def get_indice_customer_missed(self, cargo):
+        ''':return the indice of the first customer missed, will return -1 if makes it '''
+        indice = 0
+        cargo_used = 0
+        for cust in self.route:
+            if cargo_used > cargo:
+                return indice
+            cargo_used += cust.cargo
+            indice += 1
+        return -1
+
 
     def __repr__(self):
         # return "<Path: {0}>".format(self.route)

@@ -18,3 +18,9 @@ class Truck():
 
     def distance_from_depot(self): #distance from depot
         return (self.y**2 + self.x**2)**0.5
+
+    def cargo_missed(self):
+        return self.cargo - self.path.cargo_used()
+
+    def get_indice_customer_missed(self, cargo):
+        return self.path.get_indice_customer_missed(self.cargo)
