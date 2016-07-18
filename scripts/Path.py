@@ -211,7 +211,7 @@ class Path():
         for cust in self.route:
             if cargo_used > cargo:
                 return indice
-            cargo_used += cust.cargo
+            cargo_used += cust.demand
             indice += 1
         return -1
 

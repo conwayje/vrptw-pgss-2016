@@ -4,7 +4,6 @@ import copy
 import math
 from Path import Path
 from Depot import Depot
-from HeuristicScore import Heuristic_Score
 from random import randint, randrange, choice
 import random
 
