@@ -8,6 +8,11 @@ def doAStar(initial_state, world_record = 591.55):
     world_record_not_broken = True
 
     while ( len(queue) > 0 ) and world_record_not_broken:
+        print len(queue)
+        while(len(queue) > 10000):
+            extra = queue.pop()
+            del extra
+
         (priority, state) = heappop(queue)
 
         print "Score of currently explored state: {}".format( priority )
