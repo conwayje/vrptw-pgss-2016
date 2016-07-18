@@ -13,6 +13,7 @@ class Distances():
             for c2 in customers:
                 row.append(c1.distance_to_customer(c2))
             Distances.matrix.append(row)
+        return Distances.matrix
 
     @staticmethod
     def get_distance(c1, c2):

@@ -10,6 +10,7 @@ class Path():
 
     def __init__(self, route):
         self.route = route #list of customers
+        self.distance = self.calculate_distance()
 
     # returns the total distance
     def calculate_distance(self):
@@ -24,7 +25,6 @@ class Path():
         distance += Distances.get_distance(prev_customer.number, 0)
 
 
-        self.distance = distance
         return distance
 
     def get_arrival_time_of_customer(self, cust):
