@@ -23,8 +23,8 @@ class Heuristic_Score():
         for path in paths:
             # ya done goofed
             score += 1000000 * len(path.is_valid())
-            score += 1000 * path.intersects_self()
-            score += 5000 * ( len(path.route() ) - len( path.get_indice_customer_missed()) )
+            score += 500 * path.intersects_self()
+            score += 100000 * ( len(path.route() ) - len( path.get_indice_customer_missed()) )
             score += 50 * path.get_waittime()
 
         return score
