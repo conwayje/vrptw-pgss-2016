@@ -1,10 +1,11 @@
 from ImportCustomers import import_customers
 from Distances import Distances
 #this doesn't work yet
+# @TODO -- does this work yet? >.>
 
 def create_matrix(customers):
     return Distances.calculate_matrix(customers)
-    
+
 def create_graph(customers):
     g = {}
     for c in customers:
@@ -13,33 +14,15 @@ def create_graph(customers):
         for d in customers:
             g[c][d] = d.distance_to_customer(c)
     return g
-    
+
+# @TODO -- should probably refer to DistanceMatrix
 def get_distance(self, vertex):
     return ((vertex.y - self.y)**2 + (vertex.x - self.x)**2)**0.5
-    
-#def shortest_path(graph, source, target):
-#    d,p = djikstra(source, target, graph)
-#    path = []
-#    while 1:
-#        path.append(target)
-#        if target == source: break
-#        #target = p[target]
-#    path.reverse()
-#    return path
-    
-#def shortest_paths(source, end, matrix):
-#    p = {} #predecessors
-#    d = {}
-#    path = []
-#    path.append(source)
-#    while len(path) < len(matrix):
-#        path.append(get_closest(source, matrix, path, end))
-#        source  = get_closest(source, matrix, path, end)
-#    path.append(end)
 
 def dijkstra():
-    
-    
+    # @TODO -- what is the deal with this thing ((o_O))
+    pass
+
 def get_closest(source, matrix):
     closest = float('inf')
     i = None
@@ -58,7 +41,7 @@ def get_nearest_neighbors(customers, source):
         path.append(get_next(source, customers, path))
         source = get_next(source, customers, path)
     return path
-    
+
 def get_next(source, customers, path):
     min = float('inf')
     next = source
@@ -67,5 +50,3 @@ def get_next(source, customers, path):
             next = customers[i]
             min = Distances.get_distance(customers.index(source), i)
     return next
-    
-
