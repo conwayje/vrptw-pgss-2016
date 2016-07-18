@@ -22,15 +22,19 @@ def import_solution(filename):
         ids1 = lines[5].split()[3:]
         ids2 = lines[6].split()[3:]
         ids3 = lines[7].split()[3:]
-        path1 = Path([])
-        path2 = Path([])
-        path3 = Path([])
+        route1 = []
+        route2 = []
+        route3 = []
     for id in ids1:
-        path1.route.append(customers[int(id) - 1])
+        route1.append(customers[int(id) - 1])
     for id in ids2:
-        path2.route.append(customers[int(id) - 1])
+        route2.append(customers[int(id) - 1])
     for id in ids3:
-        path3.route.append(customers[int(id) - 1])
+        route3.append(customers[int(id) - 1])
+
+    path1 = Path(route1)
+    path2 = Path(route2)
+    path3 = Path(route3)
 
     return State(Truck(1, 0, 0, 700, path=path1),
                  Truck(2, 0, 0, 700, path=path2),

@@ -4,10 +4,8 @@ import copy
 import math
 from Path import Path
 from Depot import Depot
-from HeuristicScore import Heuristic_Score
 from random import randint, randrange, choice
 import random
-import ipdb
 
 class State():
 
@@ -50,7 +48,7 @@ class State():
         # @TODO -- truck number dependency
         paths = [self.truck1.path, self.truck2.path, self.truck3.path]
 
-        score = sum( [path.distnace for path in paths] )
+        score = sum( [path.distance for path in paths] )
 
         for path in paths:
             score += len( path.is_valid() ) * missed_customer_penalty
