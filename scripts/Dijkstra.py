@@ -1,11 +1,11 @@
 from ImportCustomers import import_customers
 from Distances import Distances
-#this doesn't work yet
-# @TODO -- does this work yet? >.>
+<<<<<<< HEAD
+from Customer import distance_to_customer
+=======
+#nearest neighbors works
 
-def create_matrix(customers):
-    return Distances.calculate_matrix(customers)
-
+#may use this
 def create_graph(customers):
     g = {}
     for c in customers:
@@ -15,13 +15,19 @@ def create_graph(customers):
             g[c][d] = d.distance_to_customer(c)
     return g
 
-# @TODO -- should probably refer to DistanceMatrix
-def get_distance(self, vertex):
-    return ((vertex.y - self.y)**2 + (vertex.x - self.x)**2)**0.5
 
-def dijkstra():
+def dijkstra(customers, source):
+    matrix = Distances.calculate_matrix(customers)
+    d={}
+    unvisited = []
+    for c in customers:
+        d[c] = float('inf')
+        unvisited.append(c)
+    d[source] = 0
+   for c in unvisited:
+       d[c] = c.distance_to_customer(source)
+       
     # @TODO -- what is the deal with this thing ((o_O))
-    pass
 
 def get_closest(source, matrix):
     closest = float('inf')
