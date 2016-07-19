@@ -8,6 +8,7 @@ def doAStar(initial_state, world_record = 591.55):
     world_record_not_broken = True
 
     initial_state.plot()
+    print initial_state
 
     while ( len(queue) > 0 ) and world_record_not_broken:
         while(len(queue) > 10000):
