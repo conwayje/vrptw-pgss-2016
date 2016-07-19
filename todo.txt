@@ -2,6 +2,10 @@
 - - Nearest neighbor
 - - Dijkstra
 - - Note: Both should use distance matrix
+
+- Clear queue if no progress
+- Bigger move types
+- Get distance optimization acutally working
 - Heuristic scoring
 - - Include all attributes that we want
 - Additional moves

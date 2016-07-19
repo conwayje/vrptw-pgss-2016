@@ -9,14 +9,11 @@ import random
 
 class State():
 
-    # @TODO -- truck number dependency
-    def __init__(self, truck1, truck2, truck3, parent = None):
+    def __init__(self, trucks, parent = None):
 
-        # @TODO -- truck number dependency
-        self.truck1 = truck1
-        self.truck2 = truck2
-        self.truck3 = truck3
-        self.paths = [truck1.path, truck2.path, truck3.path]
+        self.trucks = trucks
+        self.paths = [truck.path for truck in trucks]
+
         self.distance = None
         self.parent = parent
         #  @TODO -- should we also maintain children...?
@@ -24,29 +21,28 @@ class State():
         #  @TODO -- similar to reason above:  maintain score(?)
 
     def calculate_distance(self):
-        self.distance = self.truck1.path.distance + self.truck2.path.distance + self.truck3.path.distance
+        self.distance = self.trucks[0].path.distance + self.trucks[1].path.distance + self.trucks[2].path.distance
         return self.distance
 
     def plot(self):
         # @TODO -- truck number dependency
-        Visual.plot_path(self.truck1.path, color='g')
-        Visual.plot_path(self.truck2.path, color='c')
-        Visual.plot_path(self.truck3.path, color='m')
+        Visual.plot_path(self.trucks[0].path, color='g')
+        Visual.plot_path(self.trucks[1].path, color='c')
+        Visual.plot_path(self.trucks[2].path, color='m')
         Visual.show()
 
     def plot_missed(self):
         # @TODO -- truck number dependency
-        Visual.plot_customers(Depot(0,0), self.truck1.path.is_valid())
-        Visual.plot_customers(Depot(0,0), self.truck2.path.is_valid())
-        Visual.plot_customers(Depot(0,0), self.truck3.path.is_valid())
+        Visual.plot_customers(Depot(0,0), self.trucks[0].path.is_valid())
+        Visual.plot_customers(Depot(0,0), self.trucks[1].path.is_valid())
+        Visual.plot_customers(Depot(0,0), self.trucks[2].path.is_valid())
         Visual.show()
 
     # @TODO -- point to heuristic score
     def get_score(self):
         missed_customer_penalty = 10**6
 
-        # @TODO -- truck number dependency
-        paths = [self.truck1.path, self.truck2.path, self.truck3.path]
+        paths = self.paths
 
         score = sum( [path.distance for path in paths] )
 
@@ -74,10 +70,14 @@ class State():
 
         # child_paths should be a list containing three paths per entry (as a list)
         for child_paths in children_paths:
-            # @TODO -- truck number dependency
-            children.append(
-            State(Truck(1, 0, 0, 700, child_paths[0]), Truck(2, 0, 0, 700, child_paths[1]) ,Truck(3, 0, 0, 700, child_paths[2])))
+            trucks = []
 
+            i = 1
+            for child in child_paths:
+                trucks.append(Truck(i+1, 0, 0, 700, child))
+                i += 1
+
+            children.append(State(trucks))
         return children
 
     @staticmethod #medium move
@@ -198,9 +198,8 @@ class State():
         for i in range( 15 ):
             new_paths = copy.deepcopy( paths )
             # get two unique random paths
-            path_a_index = randint(0, 2)
-            # @TODO -- truck number dependency
-            path_b_index = (path_a_index + randint(1, 2)) % 3
+            path_a_index = randint(0, len(paths)-1)
+            path_b_index = (path_a_index + randint(1, len(paths)-1)) % 3
             path_a = new_paths[path_a_index]
             path_b = new_paths[path_b_index]
             # select two customers
@@ -216,8 +215,7 @@ class State():
         children = []
         for i in range( 15 ):
             new_paths = [copy.deepcopy(element) for element in paths]
-            # @TODO -- truck number dependency
-            path_index = randint(0, 2)
+            path_index = randint(0, len(paths)-1)
             path = new_paths[path_index]
             # gets two random customers, if the first is farther then the secondthen swap
             customer_a = randint(0, len(path.route) - 1)
@@ -271,25 +269,23 @@ class State():
     def switch_between_paths(paths, numtoswap):
         new_path_lists = []
 
-        for k in range(10):
-            p = copy.deepcopy(paths)
+        p = copy.deepcopy(paths)
 
-            for i in range(numtoswap):
-                # @TODO -- truck number dependency
-                path_a = randint(0, 2)
-                path_b = randint(0, 2)
+        for i in range(numtoswap):
+            path_a = randint(0, len(paths)-1)
+            path_b = randint(0, len(paths)-1)
 
-                cust_a = randint(0, len(p[path_a].route) - 1)
-                cust_b = randint(0, len(p[path_b].route) - 1)
+            cust_a = randint(0, len(p[path_a].route) - 1)
+            cust_b = randint(0, len(p[path_b].route) - 1)
 
-                temp = p[path_a].route[cust_a]
-                p[path_a].route[cust_a] = p[path_b].route[cust_b]
-                p[path_b].route[cust_b] = temp
+            temp = p[path_a].route[cust_a]
+            p[path_a].route[cust_a] = p[path_b].route[cust_b]
+            p[path_b].route[cust_b] = temp
 
             new_path_lists.append( p )
 
         return new_path_lists
 
     def __repr__(self):
-        return "\n<State: Truck 1: {0}\nTruck2: {1}\nTruck3:{2}>".format(self.truck1.path.route, self.truck2.path.route, self.truck3.path.route)
+        return "\n<State: Truck 1: {0}\nTruck 2: {1}\nTruck 3:{2}>".format(self.trucks[0].path.route, self.trucks[1].path.route, self.trucks[2].path.route)
 

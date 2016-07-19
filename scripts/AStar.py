@@ -7,6 +7,8 @@ def doAStar(initial_state, world_record = 591.55):
     heappush(queue, (0, initial_state))
     world_record_not_broken = True
 
+    initial_state.plot()
+
     while ( len(queue) > 0 ) and world_record_not_broken:
         while(len(queue) > 10000):
             extra = queue.pop()
@@ -14,9 +16,9 @@ def doAStar(initial_state, world_record = 591.55):
 
         (priority, state) = heappop(queue)
 
+
+
         print "Score of currently explored state: {}".format( priority )
-        # if(priority < 10000000):
-        #     state.plot()
 
         if state.calculate_distance()< world_record:
             print "Yay"
@@ -43,6 +45,7 @@ def doAStar(initial_state, world_record = 591.55):
 
         for c in children:
             heappush(queue, ( score(c), c) )
+
 
     return state
 

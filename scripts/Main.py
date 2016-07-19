@@ -18,33 +18,20 @@ customers = None
 depot = None
 
 # @TODO -- Truck number dependency
-truck1 = None
-truck2 = None
-truck3 = None
 
 def init(filename):
-    global customers, depot, truck1, truck2, truck3
+    global customers, depot
 
     customers = import_customers(filename)
     Distances.calculate_matrix(customers)
     depot = Depot(0,0)
-
-    # @TODO -- truck number dependency
-    truck1 = Truck(1,0,0,700)
-    truck2 = Truck(2,0,0,700)
-    truck3 = Truck(3,0,0,700)
 
     # plot the problem
     # Visual.plot_customers(depot, customers)
     # Visual.show()
 
 def initial_state(filename):
-    global customers, depot, truck1, truck2, truck3
-
-    # @TODO -- truck number dependency
-    route1 = []
-    route2 = []
-    route3 = []
+    global customers
 
     # @TODO -- this seems a little bit more naive than we want for an initial solution =/
     # maybe try to do something along these lines but also implement dijkstra or something like that?
