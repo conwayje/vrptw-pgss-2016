@@ -27,7 +27,6 @@ def import_solution(filename):
 
     routes = []
     for line in ids:
-        print line
         route = []
         for cust_number in line:
             route.append((customers[int(cust_number)-1]))
