@@ -3,6 +3,7 @@ from Distances import Distances
 from Customer import Customer
 from Depot import Depot
 from copy import deepcopy
+from Visual import Visual
 #nearest neighbors works
 
 #may use this
@@ -61,9 +62,9 @@ def get_nearest_neighbors(customers, source):
     path = [source]
     l = len(customers)
     while len(path) < l:
-        path.append(get_next(source, customers, path))
-        source = get_next(source, customers, path)
-    return path
+        path.append(get_next_one_path(source, customers, path))
+        source = get_next_one_path(source, customers, path)
+    return Path(path)
 
 def get_next(source, customers, paths):
 
@@ -75,6 +76,17 @@ def get_next(source, customers, paths):
             min = Distances.get_distance(customers.index(source), i)
     return next
     
+def get_next_one_path(source, customers, paths):
+
+    min = float('inf')
+    next = source
+    for i in range(len(customers)):
+        if Distances.get_distance(customers.index(source), i) < min and customers.index(source) != i and customers[i] not in path:
+            next = customers[i]
+            min = Distances.get_distance(customers.index(source), i)
+    return next
+
+
 custs = import_customers("C201.txt")
 depot = Customer(0, 0, 0, 0, 0, 0, 0) # @HACK
 c = [depot]
