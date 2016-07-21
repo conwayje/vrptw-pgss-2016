@@ -72,10 +72,10 @@ def doAStar(initial_state, world_record = 591.55):
         if average_rate > -100000:
             queue = queue[100:]
             children = []
-            children.append(state.get_children_big_moves())
-            children.append((state.get_children_medium_moves()))
-
-
+            for c in state.get_children_big_moves():
+                children.append(c)
+            for c in state.get_children_medium_moves():
+                children.append(c)
 
         for c in children:
             heappush(queue, ( score(c), c) )
