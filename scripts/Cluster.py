@@ -65,14 +65,6 @@ class Cluster():
 
         return cluster_radius_final
 
-    # @TODO -- this might also need the problem definition name [rc208, c201, or whatever]
-    # in order to properly decide which customers are clustered.  also ask @suvir if you
-    # need help visualizing.
-    # This @TODO may now be out of date... haven't look that far in the code yet.
-    #
     # personal request:  keep clusters small so that [cluster].get_solution() is useful more often
     # than not =)
-    @staticmethod
-    def create_clusters(customers):
-        # @TODO -- is this supposed to do anything / still exist?
-        pass
+    

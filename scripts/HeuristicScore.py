@@ -22,7 +22,6 @@ def score(state):
         score += 10 * path.intersects_self()
         score += 5000 * ( len(path.route ) - path.get_indice_customer_missed(state.truck1.cargo))
         score += 5 * path.get_wait_time()
-
     return score
 
     
