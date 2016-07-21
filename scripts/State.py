@@ -4,7 +4,6 @@ import copy
 import math
 from Path import Path
 from Depot import Depot
-from Dijkstra import get_nearest_neighbors_all_trucks
 from random import randint, randrange, choice
 import random
 
