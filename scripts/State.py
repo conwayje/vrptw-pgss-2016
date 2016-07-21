@@ -2,6 +2,7 @@ from Visual import Visual
 from Truck import Truck
 import copy
 import math
+from Dijkstra import Dijsktra
 from Path import Path
 from Depot import Depot
 from random import randint, randrange, choice
@@ -70,7 +71,7 @@ class State():
         # children_paths += State.switch_between_paths( paths, 5)
         children_paths += State.switch_between_paths( paths, 15 )
         #children_paths += State.alternating_shuffle_within_path( paths ) #big move
-        # children_paths += State.random_nearest_neighbors( paths )
+        #children_paths += State.random_nearest_neighbors( paths )
 
         # child_paths should be a list containing three paths per entry (as a list)
         for child_paths in children_paths:
@@ -113,7 +114,7 @@ class State():
         children_paths += State.cycle_three_four_times(paths) 
         #might be good, never used
         children_paths += State.five_section_swap(paths)
-        children_paths += State.random_nearest_neighbors(paths)
+        #children_paths += State.random_nearest_neighbors(paths)
         
         for child_paths in children_paths:
             trucks = []
@@ -328,10 +329,11 @@ class State():
             r = random.randint(0, len(path.route) - 10)
             for l in range(r, r+10):
                 customers.append(new_path[l])
-            customers = get_nearest_neighbors(customers, customers[0])
+            customers = Dijsktra.get_nearest_neighbors(customers, customers[0])
             for x in range(r, r+10):
                 new_path[x] = customers[x - r]
             new_paths.append(new_path)
+    
         children.append(new_paths)
         return children
             

@@ -47,7 +47,12 @@ def initial_state(filename):
         c = [depot_c]
         for cust in customers:
             c.append(cust)
-        return Dijsktra.get_nearest_neighbors_all_trucks(c, depot_c, 3)
+            
+        paths = Dijsktra.get_nearest_neighbors_all_trucks(c, depot_c, 3)
+        state = State([Truck(1, 0, 0, 700, path=Path(paths[0][1:])),
+                      Truck(2, 0, 0, 700, path=Path(paths[1][1:])),
+                      Truck(3, 0, 0, 700, path=Path(paths[2][1:]))], parent=None)
+        state.plot()
 
     else:
         state = import_solution(filename  + ".txt")
