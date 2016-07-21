@@ -31,9 +31,9 @@ def doAStar(initial_state, world_record = 591.55):
                 done = True
 
 
-        print "Score of currently explored state: {}".format( priority )
+        print "Score of currently explored state: {}".format( priority ),
         # if(priority < 10000000):
-        print "Distance:", state.calculate_distance()
+        print "Distance:", state.calculate_distance(),
 
         if state.calculate_distance() < world_record:
             print "Yay"
@@ -71,11 +71,12 @@ def doAStar(initial_state, world_record = 591.55):
 
         if diff > -100000:
             children = []
+            for c in state.get_children_big_moves():
+                children.append(c)
+            for c in state.get_children_medium_moves():
+                children.append(c)
             prev_scores = []
             diff == -1000000
-            children.append(state.get_children_big_moves())
-            children.append((state.get_children_medium_moves()))
-
 
 
         for c in children:

@@ -36,11 +36,11 @@ class Dijsktra():
             # @TODO -- what is the deal with this thing ((o_O))
 
     @staticmethod
-    def get_nearest_neighbors_all_trucks(customers, source, numtrucks):
+    def get_nearest_neighbors_all_trucks(customers, source, num_trucks):
         l = len(customers)
         print l
         plen = 1
-        paths = [[source] for t in range(numtrucks)]
+        paths = [[source] for t in range(num_trucks)]
 
         # All trucks simultaneously
         while (plen < l):

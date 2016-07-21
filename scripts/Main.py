@@ -111,7 +111,7 @@ parser.add_argument("--plot", help="plot the map before the main loop engages", 
 args = parser.parse_args()
 problem_file = args.problem_file
 init_solution_file = args.init_solution_file
-num_trucks = args.num_trucks
+num_trucks = int(args.num_trucks)
 do_plots = args.plot
 truck_capacity = args.truck_capacity
 
