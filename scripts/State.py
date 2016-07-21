@@ -63,21 +63,6 @@ class State():
         children_paths = []
         paths = self.paths
 
-        # these ones probably aren't good
-        # children_paths += State.cycle(paths, 4)
-        # children_paths += State.redistribute_more_evenly( paths )
-
-        # these ones are probably good
-        children_paths += State.shuffle( paths, 5 ) #big move
-        # children_paths += State.shuffle( paths, 20 ) #big move
-        children_paths += State.sort_paths( paths ) #small move
-        children_paths += State.path_swap( paths )
-        children_paths += State.distance_swap( paths )
-        # children_paths += State.switch_between_paths( paths, 5)
-        children_paths += State.switch_between_paths( paths, 15 )
-        #children_paths += State.alternating_shuffle_within_path( paths ) #big move
-        # children_paths += State.random_nearest_neighbors( paths )
-        # children_paths += State.large_reconstruction( paths, 25, 75, 50)
         if big:
             #good
             children_paths += State.shuffle( paths, 5 )
