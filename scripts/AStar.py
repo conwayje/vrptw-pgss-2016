@@ -10,9 +10,9 @@ def doAStar(initial_state, world_record = 591.55):
     print initial_state
 
     prev_scores = []
-    diff = 0
+    diff = -100000000
     counter = 0
-    average_rate = 0
+    average_rate = -1000000
     rate = 0
 
     while ( len(queue) > 0 ) and world_record_not_broken:
@@ -21,7 +21,7 @@ def doAStar(initial_state, world_record = 591.55):
             del extra
 
         (priority, state) = heappop(queue)
-        
+
         done = False
         while len(queue) > 0 and not done:
             (next, next_state) =  queue[0]
@@ -69,9 +69,10 @@ def doAStar(initial_state, world_record = 591.55):
         counter += 1
         print average_rate, diff
 
-        if average_rate > -100000:
-            queue = queue[100:]
+        if diff > -100000:x
             children = []
+            prev_scores = []
+            diff == -1000000
             children.append(state.get_children_big_moves())
             children.append((state.get_children_medium_moves()))
 
