@@ -24,6 +24,7 @@ def import_solution(filename):
         ids.append(lines[6].split()[3:])
         ids.append(lines[7].split()[3:])
 
+
     routes = []
     for line in ids:
         route = []

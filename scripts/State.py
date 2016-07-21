@@ -4,6 +4,7 @@ import copy
 import math
 from Path import Path
 from Depot import Depot
+from Dijkstra import get_nearest_neighbors_all_trucks
 from random import randint, randrange, choice
 import random
 
@@ -63,10 +64,13 @@ class State():
 
         # these ones are probably good
         children_paths += State.shuffle( paths, 5 )
+        # children_paths += State.shuffle( paths, 20 )
         children_paths += State.sort_paths( paths )
         children_paths += State.path_swap( paths )
         children_paths += State.distance_swap( paths )
+        # children_paths += State.switch_between_paths( paths, 5)
         children_paths += State.switch_between_paths( paths, 15 )
+        # children_paths += State.random_nearest_neighbors( paths )
 
         # child_paths should be a list containing three paths per entry (as a list)
         for child_paths in children_paths:
@@ -103,7 +107,8 @@ class State():
             new_paths = [Path(route1), Path(route2), Path(route3)]
             children.append(new_paths)
             return children
-
+    
+            
     @staticmethod #small move
     def redistribute_more_evenly(paths):
         """ For ex, with 100 customers and 3 trucks, we expect 33 per truck.  Siphon off the
@@ -245,7 +250,27 @@ class State():
             new_paths[j] = Path(new_route)
             children.append(new_paths)
 
-
+    #@FIXME
+    @staticmethod #medium move? , takes random set of 10 and does nearest neighbors on it
+    def random_nearest_neighbors(paths):
+        children = []
+        new_paths = []
+        for i in range(len(paths)):
+            path = paths[i]
+            new_path = copy.deepcopy(path.route)
+            customers = [] #customers to do nearest neighbors
+            r = random.randint(0, len(path.route) - 10)
+            for l in range(r, r+10):
+                customers.append(new_path[l])
+            customers = get_nearest_neighbors(customers, customers[0])
+            for x in range(r, r+10):
+                new_path[x] = customers[x - r]
+            new_paths.append(new_path)
+        children.append(new_paths)
+        return children
+            
+                
+        
     @staticmethod #large move
     def alternating_shuffle_within_path(paths):
         children = []
