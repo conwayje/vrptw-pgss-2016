@@ -35,7 +35,7 @@ def import_solution(filename):
 
     trucks = []
     for i in range(len(routes)):
-        trucks.append(Truck(i+1, 0, 0, 700, Path(routes[i])))
+        trucks.append(Truck(i, 0, 0, truck_capacity, Path(routes[i])))
 
     return State(trucks)
 
