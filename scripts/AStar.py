@@ -10,9 +10,8 @@ def doAStar(initial_state, world_record = 591.55):
     initial_state.plot()
     print initial_state
 
-    rate = 0
-    prev_score = score(initial_state)
-    counter = 0
+    prev_scores = []
+    diff = 0
 
     while ( len(queue) > 0 ) and world_record_not_broken:
         while(len(queue) > 10000):
@@ -23,8 +22,8 @@ def doAStar(initial_state, world_record = 591.55):
 
 
         print "Score of currently explored state: {}".format( priority )
-        if(priority < 10000000):
-             print "Distance:", state.calculate_distance()
+        # if(priority < 10000000):
+        print "Distance:", state.calculate_distance()
 
         if state.calculate_distance() < world_record:
             print "Yay"
@@ -33,14 +32,9 @@ def doAStar(initial_state, world_record = 591.55):
 
             # @TODO: truck number dependency
             # also, this is kind of messy generally...
-            for c in state.truck1.path.route:
-                print c.number,
-            print
-            for c in state.truck2.path.route:
-                print c.number,
-            print
-            for c in state.truck3.path.route:
-                print c.number,
+            for truck in state.trucks:
+                for c in truck.path.route:
+                    print c.number,
             queue = []
             world_record_not_broken = False
             break
@@ -50,13 +44,13 @@ def doAStar(initial_state, world_record = 591.55):
         # print len(children)
 
 
-        if(rate  >= -500):
-            counter += 1
-        else:
-            counter = 0
+        prev_scores.insert(0, priority)
 
-        rate = priority-prev_score
-        prev_score = priority
+        if (not len(prev_scores) <= 10):
+            to_remove = prev_scores.pop()
+            diff = priority - to_remove
+        print len(prev_scores)
+
         for c in children:
             heappush(queue, ( score(c), c) )
 
@@ -67,6 +61,7 @@ def doAStar(initial_state, world_record = 591.55):
                 heappop(queue)
             else:
                 done = True
+
 
     return state
 

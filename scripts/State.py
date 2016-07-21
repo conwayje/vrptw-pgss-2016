@@ -21,7 +21,7 @@ class State():
         #  @TODO -- similar to reason above:  maintain score(?)
 
     def calculate_distance(self):
-        self.distance = self.trucks[0].path.distance + self.trucks[1].path.distance + self.trucks[2].path.distance
+        self.distance = self.trucks[0].path.calculate_distance() + self.trucks[1].path.calculate_distance() + self.trucks[2].path.calculate_distance()
         return self.distance
 
     def plot(self):
