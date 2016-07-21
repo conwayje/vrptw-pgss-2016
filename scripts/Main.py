@@ -69,7 +69,7 @@ def initial_state(filename):
         
         if do_plots:
             state.plot()
-    
+    #doesn't work yet, don't use
     elif filename == "split_nearest_neighbors":
         paths = []
         depot_c = Customer(0, 0, 0, 0, 0, 0, 0)
@@ -85,11 +85,11 @@ def initial_state(filename):
                 else:
                     route3.append(customer)
         route1 = Dijsktra.get_nearest_neighbors(route1, route1[0])
-        route2 = Dijsktra.get_nearest_neighbors(route1, route2[0])
-        route3 = Dijsktra.get_nearest_neighbors(route1, route3[0])
-        state = State([Truck(1, 0, 0, 700, path=Path(route1)),
-                      Truck(2, 0, 0, 700, path=Path(route2)),
-                      Truck(3, 0, 0, 700, path=Path(route3))], parent=None)
+        route2 = Dijsktra.get_nearest_neighbors(route2, route2[0])
+        route3 = Dijsktra.get_nearest_neighbors(route3, route3[0])
+        state = State([Truck(1, 0, 0, 700, path=route1),
+                      Truck(2, 0, 0, 700, path=route2),
+                      Truck(3, 0, 0, 700, path=route3)], parent=None)
         state.plot()
         
     else:
