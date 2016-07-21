@@ -10,13 +10,11 @@ def doAStar(initial_state, world_record = 591.55):
     initial_state.plot()
     print initial_state
 
-<<<<<<< HEAD
-=======
     rate = 0
     prev_score = score(initial_state)
     counter = 0
 
->>>>>>> 578d95b4def62305cfe51fe36127c4256c953116
+
     while ( len(queue) > 0 ) and world_record_not_broken:
         while(len(queue) > 10000):
             extra = queue.pop()
@@ -61,11 +59,11 @@ def doAStar(initial_state, world_record = 591.55):
         # print len(children)
 
 
-<<<<<<< HEAD
+
         for c in children:
             heappush(queue, ( score(c), c) )
 
-=======
+
         if(rate  >= -500):
             counter += 1
         else:
@@ -83,7 +81,7 @@ def doAStar(initial_state, world_record = 591.55):
                 heappop(queue)
             else:
                 done = True
->>>>>>> 578d95b4def62305cfe51fe36127c4256c953116
+
 
     return state
 
