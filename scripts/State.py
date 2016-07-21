@@ -71,7 +71,7 @@ class State():
         children_paths += State.switch_between_paths( paths, 15 )
         #children_paths += State.alternating_shuffle_within_path( paths ) #big move
         # children_paths += State.random_nearest_neighbors( paths )
-        children_paths += State.large_reconstruction( paths, 25, 75, 50)
+        # children_paths += State.large_reconstruction( paths, 25, 75, 50)
 
         # child_paths should be a list containing three paths per entry (as a list)
         for child_paths in children_paths:
@@ -135,7 +135,7 @@ class State():
         #not that good
         children_paths += State.redistribute_more_evenly(paths)
         #good
-        childern_paths += State.sort_paths(paths)
+        children_paths += State.sort_paths(paths)
         children_paths += State.path_swap( paths )
         children_paths += State.distance_swap( paths )
         children_paths += State.switch_between_paths( paths, 15 )
