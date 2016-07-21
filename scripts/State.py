@@ -71,8 +71,8 @@ class State():
         # children_paths += State.switch_between_paths( paths, 5)
         children_paths += State.switch_between_paths( paths, 15 )
         #children_paths += State.alternating_shuffle_within_path( paths ) #big move
-        # children_paths += State.random_nearest_neighbors( paths )
-        children_paths += State.large_reconstruction( paths, 25, 75, 50)
+        #children_paths += State.random_nearest_neighbors( paths )
+        #children_paths += State.large_reconstruction( paths, 25, 75, 50)
 
 
         # child_paths should be a list containing three paths per entry (as a list)
@@ -332,8 +332,11 @@ class State():
             for l in range(r, r+10):
                 customers.append(new_path[l])
             customers = Dijsktra.get_nearest_neighbors(customers, customers[0])
+            #print customers
             for x in range(r, r+10):
-                new_path[x] = customers[x - r]
+                #print x-r
+                #print customers[0]
+                new_path[x] = customers.route[x - r]
             new_paths.append(new_path)
     
         children.append(new_paths)
