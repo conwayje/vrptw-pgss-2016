@@ -9,7 +9,7 @@ from AStar import doAStar
 from ImportCustomers import import_customers
 from ImportSolution import import_solution
 from Distances import Distances
-import Dijkstra
+from Dijkstra import Dijsktra
 import copy
 import argparse
 
@@ -47,7 +47,7 @@ def initial_state(filename):
         c = [depot_c]
         for cust in customers:
             c.append(cust)
-        return Dijkstra.get_nearest_neighbors_all_trucks(c, depot_c, 3)
+        return Dijsktra.get_nearest_neighbors_all_trucks(c, depot_c, 3)
 
     else:
         state = import_solution(filename  + ".txt")
