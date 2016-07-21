@@ -9,6 +9,8 @@ from AStar import doAStar
 from ImportCustomers import import_customers
 from ImportSolution import import_solution
 from Distances import Distances
+from Dijkstra import Dijsktra
+import copy
 import argparse
 
 # Filenames:    C201.txt, C201_wr_solution.txt
@@ -18,33 +20,20 @@ customers = None
 depot = None
 
 # @TODO -- Truck number dependency
-truck1 = None
-truck2 = None
-truck3 = None
 
 def init(filename):
-    global customers, depot, truck1, truck2, truck3
+    global customers, depot
 
-    customers = import_customers(filename)
+    customers = import_customers(filename + ".txt")
     Distances.calculate_matrix(customers)
     depot = Depot(0,0)
-
-    # @TODO -- truck number dependency
-    truck1 = Truck(1,0,0,700)
-    truck2 = Truck(2,0,0,700)
-    truck3 = Truck(3,0,0,700)
 
     # plot the problem
     # Visual.plot_customers(depot, customers)
     # Visual.show()
 
 def initial_state(filename):
-    global customers, depot, truck1, truck2, truck3
-
-    # @TODO -- truck number dependency
-    route1 = []
-    route2 = []
-    route3 = []
+    global customers
 
     # @TODO -- this seems a little bit more naive than we want for an initial solution =/
     # maybe try to do something along these lines but also implement dijkstra or something like that?
@@ -52,7 +41,17 @@ def initial_state(filename):
     # until there are no customers remaining.
     # just a suggestion; y'all can be as creative as you want
 
-    state = import_solution(filename)
+    # @TODO -- just for testing, write init solutions to file and remove truck dependency
+    if filename == "nearest_neighbors":
+        depot_c = Customer(0, 0, 0, 0, 0, 0, 0)
+        c = [depot_c]
+        for cust in customers:
+            c.append(cust)
+        return Dijsktra.get_nearest_neighbors_all_trucks(c, depot_c, 3)
+
+    else:
+        state = import_solution(filename  + ".txt")
+        state.plot()
 
     return state
 
@@ -61,8 +60,8 @@ if __name__ == "__main__":
     parser.add_argument("problem_file")
     parser.add_argument("init_solution_file")
     args = parser.parse_args()
-    problem_file = args.problem_file + ".txt"
-    init_solution_file = args.init_solution_file + ".txt"
+    problem_file = args.problem_file
+    init_solution_file = args.init_solution_file
 
     init(problem_file)
     doAStar(initial_state(init_solution_file))
