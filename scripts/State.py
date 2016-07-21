@@ -418,5 +418,6 @@ class State():
     def __repr__(self):
         str = "\n<State: "
         for i in range(len(self.trucks)):
-            str += "Truck " + i + self.trucks[i].path.route
+            str += "Truck {0}: {1}".format(i, self.trucks[i].path.route)
         str += ">"
+        return str
