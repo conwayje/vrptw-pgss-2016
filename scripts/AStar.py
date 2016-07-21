@@ -7,7 +7,6 @@ def doAStar(initial_state, world_record = 591.55):
     heappush(queue, (score(initial_state), initial_state))
     world_record_not_broken = True
 
-    initial_state.plot()
     print initial_state
 
     prev_scores = []

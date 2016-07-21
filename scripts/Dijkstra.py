@@ -4,7 +4,7 @@ from Customer import Customer
 from Depot import Depot
 from copy import deepcopy
 from Visual import Visual
-from State import State
+#from State import State
 from Truck import Truck
 from Path import Path
 
@@ -59,15 +59,16 @@ class Dijsktra():
         #         plen += 1
         #         path.append(get_next(path[-1], customers, paths))
 
-        for path in paths: print path
-        for path in paths: print len(path)
+        #for path in paths: print path
+        #for path in paths: print len(path)
 
         # @TODO Fix trucks
-        state = State([Truck(1, 0, 0, 700, path=Path(paths[0][1:])),
-                      Truck(2, 0, 0, 700, path=Path(paths[1][1:])),
-                      Truck(3, 0, 0, 700, path=Path(paths[2][1:]))], parent=None)
-        state.plot()
-        return state
+        #state = State([Truck(1, 0, 0, 700, path=Path(paths[0][1:])),
+        #              Truck(2, 0, 0, 700, path=Path(paths[1][1:])),
+        #              Truck(3, 0, 0, 700, path=Path(paths[2][1:]))], parent=None)
+        #state.plot()
+        #return state
+        return paths
 
     @staticmethod
     def get_nearest_neighbors(customers, source):
