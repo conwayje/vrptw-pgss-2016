@@ -67,6 +67,8 @@ def initial_state(filename):
 
         state = State( trucks, parent = None )
         
+        state.plot()
+        
         if do_plots:
             state.plot()
     #doesn't work yet, don't use

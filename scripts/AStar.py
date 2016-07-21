@@ -69,7 +69,7 @@ def doAStar(initial_state, world_record = 591.55):
         counter += 1
         print average_rate, diff
 
-        if diff > -100000:x
+        if diff > -100000:
             children = []
             prev_scores = []
             diff == -1000000
