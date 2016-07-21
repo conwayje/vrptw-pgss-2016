@@ -4,6 +4,7 @@ from Customer import Customer
 from Depot import Depot
 from copy import deepcopy
 from Visual import Visual
+from Path import Path
 #nearest neighbors works
 
 #may use this
@@ -81,16 +82,17 @@ def get_next_one_path(source, customers, paths):
     min = float('inf')
     next = source
     for i in range(len(customers)):
-        if Distances.get_distance(customers.index(source), i) < min and customers.index(source) != i and customers[i] not in path:
+        if Distances.get_distance(customers.index(source), i) < min and customers.index(source) != i and ( customers[i] not in path for path in paths):
             next = customers[i]
             min = Distances.get_distance(customers.index(source), i)
     return next
 
 
-custs = import_customers("C201.txt")
+custs = import_customers("RC208.txt")
 depot = Customer(0, 0, 0, 0, 0, 0, 0) # @HACK
 c = [depot]
 for cust in custs:
     c.append(cust)
 Distances.calculate_matrix(custs)
 get_nearest_neighbors_all_trucks(c, depot, 3)
+

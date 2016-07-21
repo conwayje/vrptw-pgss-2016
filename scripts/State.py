@@ -68,7 +68,7 @@ class State():
         children_paths += State.path_swap( paths )
         children_paths += State.distance_swap( paths )
         children_paths += State.switch_between_paths( paths, 15 )
-        children_paths += State.random_nearest_neighbors( paths )
+        # children_paths += State.random_nearest_neighbors( paths )
 
         # child_paths should be a list containing three paths per entry (as a list)
         for child_paths in children_paths:
@@ -256,10 +256,10 @@ class State():
             path = paths[i]
             new_path = copy.deepcopy(path.route)
             customers = [] #customers to do nearest neighbors
-            r = random.randint(0, len(path) - 10)
+            r = random.randint(0, len(path.route) - 10)
             for l in range(r, r+10):
                 customers.append(new_path[l])
-            customers = Dijkstra.get_nearest_neighbors(customers, customers[0])
+            customers = get_nearest_neighbors(customers, customers[0])
             for x in range(r, r+10):
                 new_path[x] = customers[x - r]
             new_paths.append(new_path)
