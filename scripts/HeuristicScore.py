@@ -28,7 +28,7 @@ def score(state):
         score += 5000 * ( len(path.route ) - path.get_indice_customer_missed(state.trucks[0].cargo))
 
         #The following is for hitting a customer, but not having enough cargo 
-        score += 5000 * ( len(path.route ) - path.get_indice_customer_missed(state.truck[0].cargo))
+        score += 5000 * ( len(path.route ) - path.get_indice_customer_missed(state.trucks[0].cargo))
         # The following is a penalty for each minute spent waiting 
 
         score += 5000 * ( len(path.route ) - path.get_indice_customer_missed(state.trucks[0].cargo))
