@@ -18,27 +18,27 @@ def import_solution(filename):
         customers = import_customers(filename.split("_")[0] + ".txt")
         lines = f.readlines()
 
+        ids = []
         # @TODO -- truck number dependency (from here until the end of the function)
-        ids1 = lines[5].split()[3:]
-        ids2 = lines[6].split()[3:]
-        ids3 = lines[7].split()[3:]
-        route1 = []
-        route2 = []
-        route3 = []
-    for id in ids1:
-        route1.append(customers[int(id) - 1])
-    for id in ids2:
-        route2.append(customers[int(id) - 1])
-    for id in ids3:
-        route3.append(customers[int(id) - 1])
+        ids.append(lines[5].split()[3:])
+        ids.append(lines[6].split()[3:])
+        ids.append(lines[7].split()[3:])
 
-    path1 = Path(route1)
-    path2 = Path(route2)
-    path3 = Path(route3)
 
-    return State(Truck(1, 0, 0, 700, path=path1),
-                 Truck(2, 0, 0, 700, path=path2),
-                 Truck(3, 0, 0, 700, path=path3), parent=None)
+    routes = []
+    for line in ids:
+        route = []
+        for cust_number in line:
+            route.append((customers[int(cust_number)-1]))
+        routes.append(route)
+
+
+    trucks = []
+    for i in range(len(routes)):
+        trucks.append(Truck(i+1, 0, 0, 700, Path(routes[i])))
+
+    return State(trucks)
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

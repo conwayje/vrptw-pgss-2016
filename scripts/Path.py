@@ -14,7 +14,6 @@ class Path():
 
     # returns the total distance
     def calculate_distance(self):
-
         prev_customer = self.route[0]
         distance = Distances.get_distance(0, prev_customer.number)
 

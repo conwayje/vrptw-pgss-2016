@@ -49,28 +49,30 @@ def get_nearest_neighbors_all_trucks(customers, source, numtrucks):
     plen = 1
     paths = [ [source] for t in range(numtrucks) ]
 
-    # while (plen < l):
-    #     for path in paths:
-    #         if plen < l:
-    #             path.append(get_next(path[-1], customers, paths))
-    #             plen += 1
-    #         print "path"
-    #         print path
-    #         # unvisited.pop(source)
+    # All trucks simultaneously
+    while (plen < l):
+        for path in paths:
+            if plen < l:
+                path.append(get_next(path[-1], customers, paths))
+                plen += 1
+            print "path"
+            print path
+            # unvisited.pop(source)
 
-    for path in paths:
-        plen = 1
-        while (plen < l / numtrucks):
-            plen += 1
-            path.append(get_next(path[-1], customers, paths))
+    # One truck at a time
+    # for path in paths:
+    #     plen = 1
+    #     while (plen < l / numtrucks):
+    #         plen += 1
+    #         path.append(get_next(path[-1], customers, paths))
 
     for path in paths: print path 
     for path in paths: print len(path)
 
     # @TODO Fix trucks
     state = State(Truck(1, 0, 0, 700, path=Path(paths[0][1:])),
-                 Truck(2, 0, 0, 700, path=Path(paths[1][1:])),
-                 Truck(3, 0, 0, 700, path=Path(paths[2][1:])), parent=None)
+                  Truck(2, 0, 0, 700, path=Path(paths[1][1:])),
+                  Truck(3, 0, 0, 700, path=Path(paths[2][1:])), parent=None)
     state.plot()
     return state
 
@@ -78,9 +80,9 @@ def get_nearest_neighbors(customers, source):
     path = [source]
     l = len(customers)
     while len(path) < l:
-        path.append(get_next(source, customers, path))
-        source = get_next(source, customers, path)
-    return path
+        path.append(get_next_one_path(source, customers, path))
+        source = get_next_one_path(source, customers, path)
+    return Path(path)
 
 def get_next(source, customers, paths):
 
@@ -88,6 +90,16 @@ def get_next(source, customers, paths):
     next = source
     for i in range(len(customers)):
         if Distances.get_distance(customers.index(source), i) < min and customers.index(source) != i and customers[i] not in paths[0] and customers[i] not in paths[1] and customers[i] not in paths[2]:
+            next = customers[i]
+            min = Distances.get_distance(customers.index(source), i)
+    return next
+
+def get_next_one_path(source, customers, path):
+
+    min = float('inf')
+    next = source
+    for i in range(len(customers)):
+        if Distances.get_distance(customers.index(source), i) < min and customers.index(source) != i and customers[i] not in path:
             next = customers[i]
             min = Distances.get_distance(customers.index(source), i)
     return next

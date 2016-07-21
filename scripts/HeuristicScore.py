@@ -17,10 +17,9 @@ def score(state):
 
     score += distance
     for path in paths:
-        # ya done goofed
         score += 1000000 * len(path.is_valid())
         score += 10 * path.intersects_self()
-        score += 5000 * ( len(path.route ) - path.get_indice_customer_missed(state.truck1.cargo))
+        score += 5000 * ( len(path.route ) - path.get_indice_customer_missed(state.trucks[0].cargo))
         score += 5 * path.get_wait_time()
 
     return score
