@@ -2,13 +2,15 @@
 - - Nearest neighbor
 - - Dijkstra
 - - Note: Both should use distance matrix
+
+- Clear queue if no progress
+- Bigger move types
+- Get distance optimization acutally working
 - Heuristic scoring
 - - Include all attributes that we want
 - Additional moves
 - - Include anything that we think is clever / useful
 - Paper & Slides
 - Ambiguous with respect to # of trucks
-- Easier to switch instance when calling from the command line
-- - Example: Should be able to run by calling "python Main.py RC208"
 - Look for any @TODO markers and fix as needed
 - Use clusters somewhere
