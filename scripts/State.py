@@ -6,6 +6,7 @@ from Path import Path
 from Depot import Depot
 from random import randint, randrange, choice
 import random
+import ipdb
 
 class State():
 
@@ -373,12 +374,16 @@ class State():
             for k in range( n_changes_to_make ):
                 # remove #[n_changes_to_make] customers
                 path_a = new_paths[ randint( 0, n_paths - 1 ) ]
-                cust_a = path_a.pop( [ randint( 0, len( path_a.route ) - 1 ) ] )
-                removed_customers.append( cust_a )
+                if len(path_a) > 0:
+                    cust_a = path_a.route.pop( randint( 0, len( path_a.route ) - 1 ) )
+                    removed_customers.append( cust_a )
 
             for cust_a in removed_customers:
                 path_a = new_paths[ randint( 0, n_paths - 1 ) ]
-                path_a.insert( randrange( len(path_a.route), cust_a ) )
+                if len(path_a) > 0:
+                    path_a.route.insert( randrange( len(path_a.route) ), cust_a )
+                else:
+                    path_a.route.insert( 0, cust_a )
 
             children.append( new_paths )
 

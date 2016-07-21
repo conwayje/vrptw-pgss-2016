@@ -51,7 +51,8 @@ def initial_state(filename):
 
     else:
         state = import_solution(filename  + ".txt")
-        state.plot()
+        if args.plot:
+            state.plot()
 
     return state
 
@@ -59,6 +60,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("problem_file")
     parser.add_argument("init_solution_file")
+    parser.add_argument("--plot", help="plot the map before the main loop engages", action = "store_true")
     args = parser.parse_args()
     problem_file = args.problem_file
     init_solution_file = args.init_solution_file
