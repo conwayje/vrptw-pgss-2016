@@ -364,7 +364,7 @@ class State():
         n_paths = len(paths)
 
         for i in range( n_children ):
-            new_paths = deepcopy( paths )
+            new_paths = copy.deepcopy( paths )
 
             # choose a percentage between your min and max; multiply it and take it based on n_customers
             n_changes_to_make = int( n_customers * ( random.randint(min_percentage, max_percentage) / 100.0 ) )
