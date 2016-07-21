@@ -99,7 +99,7 @@ def get_next_one_path(source, customers, path):
     min = float('inf')
     next = source
     for i in range(len(customers)):
-        if Distances.get_distance(customers.index(source), i) < min and customers.index(source) != i and customers[i] not in path:
+        if Distances.get_distance(customers.index(source), i) < min and customers.index(source) != i and ( customers[i] not in path for path in paths):
             next = customers[i]
             min = Distances.get_distance(customers.index(source), i)
     return next
