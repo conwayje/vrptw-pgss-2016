@@ -58,7 +58,7 @@ class State():
         return score
 
     # @TODO -- still lots to do here, of course ;)
-    def get_children(self):
+    def get_children(self, big = True, medium = True, small = True):
         children = [] # list of states
         children_paths = []
         paths = self.paths
@@ -78,74 +78,26 @@ class State():
         #children_paths += State.alternating_shuffle_within_path( paths ) #big move
         # children_paths += State.random_nearest_neighbors( paths )
         # children_paths += State.large_reconstruction( paths, 25, 75, 50)
-
+        if big:
+            #good
+            children_paths += State.shuffle( paths, 5 )
+            #might be good or not, we've never used it
+            children_paths += State.alternating_shuffle_within_path( paths )
+        if medium:
+            #not that good
+            #children_paths += State.cycle(paths, 4)
+            #might be good, never used
+            #children_paths += State.five_section_swap(paths)
+            #children_paths += State.random_nearest_neighbors(paths)
+        if small:
+            #not that good
+            children_paths += State.redistribute_more_evenly(paths)
+            #good
+            children_paths += State.sort_paths(paths)
+            children_paths += State.path_swap( paths )
+            children_paths += State.distance_swap( paths )
+            children_paths += State.switch_between_paths( paths, 15 )
         # child_paths should be a list containing three paths per entry (as a list)
-        for child_paths in children_paths:
-            trucks = []
-
-            i = 1
-            for child in child_paths:
-                trucks.append(Truck(i, 0, 0, 700, child))
-                i += 1
-
-            children.append(State(trucks))
-        return children
-    
-    def get_children_big_moves(self):
-        children = []
-        children_paths = []
-        paths = self.paths
-        #good
-        children_paths += State.shuffle( paths, 5 )
-        #might be good or not, we've never used it
-        children_paths += State.alternating_shuffle_within_path( paths )
-        
-        for child_paths in children_paths:
-            trucks = []
-
-            i = 1
-            for child in child_paths:
-                trucks.append(Truck(i, 0, 0, 700, child))
-                i += 1
-
-            children.append(State(trucks))
-        return children
-        
-    
-    def get_children_medium_moves(self):
-        children = []
-        children_paths = []
-        paths = self.paths
-        #not that good
-        #children_paths += State.cycle(paths, 4)
-        #might be good, never used
-        #children_paths += State.five_section_swap(paths)
-        #children_paths += State.random_nearest_neighbors(paths)
-        
-        for child_paths in children_paths:
-            trucks = []
-
-            i = 1
-            for child in child_paths:
-                trucks.append(Truck(i, 0, 0, 700, child))
-                i += 1
-
-            children.append(State(trucks))
-        return children
-        
-        
-    def get_children_small_moves(self):
-        children = []
-        children_paths = []
-        paths = self.paths
-        #not that good
-        children_paths += State.redistribute_more_evenly(paths)
-        #good
-        children_paths += State.sort_paths(paths)
-        children_paths += State.path_swap( paths )
-        children_paths += State.distance_swap( paths )
-        children_paths += State.switch_between_paths( paths, 15 )
-        
         for child_paths in children_paths:
             trucks = []
 
