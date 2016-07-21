@@ -22,7 +22,7 @@ class State():
         #  @TODO -- similar to reason above:  maintain score(?)
 
     def calculate_distance(self):
-        self.distance = self.trucks[0].path.distance + self.trucks[1].path.distance + self.trucks[2].path.distance
+        self.distance = self.trucks[0].path.calculate_distance() + self.trucks[1].path.calculate_distance() + self.trucks[2].path.calculate_distance()
         return self.distance
 
     def plot(self):
@@ -71,7 +71,9 @@ class State():
         # children_paths += State.switch_between_paths( paths, 5)
         children_paths += State.switch_between_paths( paths, 15 )
         #children_paths += State.alternating_shuffle_within_path( paths ) #big move
-        #children_paths += State.random_nearest_neighbors( paths )
+        # children_paths += State.random_nearest_neighbors( paths )
+        children_paths += State.large_reconstruction( paths, 25, 75, 50)
+
 
         # child_paths should be a list containing three paths per entry (as a list)
         for child_paths in children_paths:
@@ -358,7 +360,34 @@ class State():
 
         return children
 
-    @staticmethod #small move
+    @staticmethod
+    def large_reconstruction(paths, min_percentage = 25, max_percentage = 75, n_children = 50):
+        children = []
+        n_customers = sum([len(path.route) for path in paths])
+        n_paths = len(paths)
+
+        for i in range( n_children ):
+            new_paths = copy.deepcopy( paths )
+
+            # choose a percentage between your min and max; multiply it and take it based on n_customers
+            n_changes_to_make = int( n_customers * ( random.randint(min_percentage, max_percentage) / 100.0 ) )
+
+            removed_customers = []
+            for k in range( n_changes_to_make ):
+                # remove #[n_changes_to_make] customers
+                path_a = new_paths[ randint( 0, n_paths - 1 ) ]
+                cust_a = path_a.pop( [ randint( 0, len( path_a.route ) - 1 ) ] )
+                removed_customers.append( cust_a )
+
+            for cust_a in removed_customers:
+                path_a = new_paths[ randint( 0, n_paths - 1 ) ]
+                path_a.insert( randrange( len(path_a.route), cust_a ) )
+
+            children.append( new_paths )
+
+        return children
+
+    @staticmethod
     def switch_between_paths(paths, numtoswap):
         new_path_lists = []
 

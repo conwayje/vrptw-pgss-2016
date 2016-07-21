@@ -18,8 +18,8 @@ import argparse
 
 customers = None
 depot = None
+num_trucks = 0
 
-# @TODO -- Truck number dependency
 
 def init(filename):
     global customers, depot
@@ -41,7 +41,7 @@ def initial_state(filename):
     # until there are no customers remaining.
     # just a suggestion; y'all can be as creative as you want
 
-    # @TODO -- just for testing, write init solutions to file and remove truck dependency
+    # @TODO -- just for testing, write init solutions to file
     if filename == "nearest_neighbors":
         depot_c = Customer(0, 0, 0, 0, 0, 0, 0)
         c = [depot_c]
@@ -54,19 +54,22 @@ def initial_state(filename):
                       Truck(3, 0, 0, 700, path=Path(paths[2][1:]))], parent=None)
         state.plot()
 
+
+
     else:
         state = import_solution(filename  + ".txt")
         state.plot()
 
     return state
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("problem_file")
-    parser.add_argument("init_solution_file")
-    args = parser.parse_args()
-    problem_file = args.problem_file
-    init_solution_file = args.init_solution_file
+parser = argparse.ArgumentParser()
+parser.add_argument("problem_file")
+parser.add_argument("init_solution_file")
+parser.add_argument("num_trucks")
+args = parser.parse_args()
+problem_file = args.problem_file
+init_solution_file = args.init_solution_file
+num_trucks = args.num_trucks
 
-    init(problem_file)
-    doAStar(initial_state(init_solution_file))
+init(problem_file)
+doAStar(initial_state(init_solution_file))
