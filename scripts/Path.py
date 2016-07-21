@@ -12,6 +12,9 @@ class Path():
         self.route = route #list of customers
         self.distance = self.calculate_distance()
 
+    def __len__(self):
+        return len( self.route )
+
     # returns the total distance
     def calculate_distance(self):
         prev_customer = self.route[0]
@@ -155,7 +158,7 @@ class Path():
         self.route.append(toAppend.route)
 
     # Will probably be used for inserting in completed solutions for clusters
-    def insert(self, toAppend, index):
+    def lol_insert(self, toAppend, index):
         for c in toAppend.route:
             self.insert(index, c)
             index += 1

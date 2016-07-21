@@ -47,11 +47,19 @@ def initial_state(filename):
         c = [depot_c]
         for cust in customers:
             c.append(cust)
-        return Dijsktra.get_nearest_neighbors_all_trucks(c, depot_c, num_trucks)
+            
+        paths = Dijsktra.get_nearest_neighbors_all_trucks(c, depot_c, 3)
+        state = State([Truck(1, 0, 0, 700, path=Path(paths[0][1:])),
+                      Truck(2, 0, 0, 700, path=Path(paths[1][1:])),
+                      Truck(3, 0, 0, 700, path=Path(paths[2][1:]))], parent=None)
+        
+        if do_plots:
+            state.plot()
 
     else:
         state = import_solution(filename  + ".txt")
-        state.plot()
+        if args.plot:
+            state.plot()
 
     return state
 
@@ -59,10 +67,12 @@ parser = argparse.ArgumentParser()
 parser.add_argument("problem_file")
 parser.add_argument("init_solution_file")
 parser.add_argument("num_trucks")
+parser.add_argument("--plot", help="plot the map before the main loop engages", action = "store_true")
 args = parser.parse_args()
 problem_file = args.problem_file
 init_solution_file = args.init_solution_file
 num_trucks = args.num_trucks
+do_plots = args.plot
 
 init(problem_file)
 doAStar(initial_state(init_solution_file))

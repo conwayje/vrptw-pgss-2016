@@ -2,10 +2,12 @@ from Visual import Visual
 from Truck import Truck
 import copy
 import math
+from Dijkstra import Dijsktra
 from Path import Path
 from Depot import Depot
 from random import randint, randrange, choice
 import random
+# import ipdb
 
 class State():
 
@@ -72,7 +74,7 @@ class State():
         children_paths += State.switch_between_paths( paths, 15 )
         #children_paths += State.alternating_shuffle_within_path( paths ) #big move
         # children_paths += State.random_nearest_neighbors( paths )
-        children_paths += State.large_reconstruction( paths, 25, 75, 50)
+        # children_paths += State.large_reconstruction( paths, 25, 75, 50)
 
         # child_paths should be a list containing three paths per entry (as a list)
         for child_paths in children_paths:
@@ -115,7 +117,7 @@ class State():
         #children_paths += State.cycle(paths, 4)
         #might be good, never used
         children_paths += State.five_section_swap(paths)
-        children_paths += State.random_nearest_neighbors(paths)
+        #children_paths += State.random_nearest_neighbors(paths)
         
         for child_paths in children_paths:
             trucks = []
@@ -329,10 +331,14 @@ class State():
             r = random.randint(0, len(path.route) - 10)
             for l in range(r, r+10):
                 customers.append(new_path[l])
-            customers = get_nearest_neighbors(customers, customers[0])
+            customers = Dijsktra.get_nearest_neighbors(customers, customers[0])
+            #print customers
             for x in range(r, r+10):
-                new_path[x] = customers[x - r]
+                #print x-r
+                #print customers[0]
+                new_path[x] = customers.route[x - r]
             new_paths.append(new_path)
+    
         children.append(new_paths)
         return children
             
@@ -373,12 +379,16 @@ class State():
             for k in range( n_changes_to_make ):
                 # remove #[n_changes_to_make] customers
                 path_a = new_paths[ randint( 0, n_paths - 1 ) ]
-                cust_a = path_a.pop( [ randint( 0, len( path_a.route ) - 1 ) ] )
-                removed_customers.append( cust_a )
+                if len(path_a) > 0:
+                    cust_a = path_a.route.pop( randint( 0, len( path_a.route ) - 1 ) )
+                    removed_customers.append( cust_a )
 
             for cust_a in removed_customers:
                 path_a = new_paths[ randint( 0, n_paths - 1 ) ]
-                path_a.insert( randrange( len(path_a.route), cust_a ) )
+                if len(path_a) > 0:
+                    path_a.route.insert( randrange( len(path_a.route) ), cust_a )
+                else:
+                    path_a.route.insert( 0, cust_a )
 
             children.append( new_paths )
 
