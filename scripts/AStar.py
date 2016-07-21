@@ -13,12 +13,21 @@ def doAStar(initial_state, world_record = 591.55):
     prev_scores = []
     diff = 0
 
+
     while ( len(queue) > 0 ) and world_record_not_broken:
         while(len(queue) > 10000):
             extra = queue.pop()
             del extra
 
         (priority, state) = heappop(queue)
+        
+        done = False
+        while len(queue) > 0 and not done:
+            (next, next_state) =  queue[0]
+            if next == priority:
+                heappop(queue)
+            else:
+                done = True
 
 
         print "Score of currently explored state: {}".format( priority )
@@ -43,13 +52,15 @@ def doAStar(initial_state, world_record = 591.55):
         children = state.get_children()
         # print len(children)
 
-
         prev_scores.insert(0, priority)
 
         if (not len(prev_scores) <= 10):
             to_remove = prev_scores.pop()
             diff = priority - to_remove
         print len(prev_scores)
+
+        for c in children:
+            heappush(queue, ( score(c), c) )
 
         for c in children:
             heappush(queue, ( score(c), c) )
