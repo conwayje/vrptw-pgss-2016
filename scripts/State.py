@@ -7,7 +7,10 @@ from Path import Path
 from Depot import Depot
 from random import randint, randrange, choice
 import random
-# import ipdb
+try:
+    import ipdb
+except:
+    print "Skipping ipdb import because Dan's school is full of jerks"
 
 class State():
 
