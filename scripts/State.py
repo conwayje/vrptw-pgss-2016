@@ -71,6 +71,7 @@ class State():
         # children_paths += State.switch_between_paths( paths, 5)
         children_paths += State.switch_between_paths( paths, 15 )
         # children_paths += State.random_nearest_neighbors( paths )
+        children_paths += State.large_reconstruction( paths, 25, 75, 50)
 
         # child_paths should be a list containing three paths per entry (as a list)
         for child_paths in children_paths:
@@ -287,6 +288,33 @@ class State():
             new_paths = copy.deepcopy(paths)
             new_paths[j] = Path(new_route)
             children.append(new_paths)
+
+        return children
+
+    @staticmethod
+    def large_reconstruction(paths, min_percentage = 25, max_percentage = 75, n_children = 50):
+        children = []
+        n_customers = sum([len(path.route) for path in paths])
+        n_paths = len(paths)
+
+        for i in range( n_children ):
+            new_paths = deepcopy( paths )
+
+            # choose a percentage between your min and max; multiply it and take it based on n_customers
+            n_changes_to_make = int( n_customers * ( random.randint(min_percentage, max_percentage) / 100.0 ) )
+
+            removed_customers = []
+            for k in range( n_changes_to_make ):
+                # remove #[n_changes_to_make] customers
+                path_a = new_paths[ randint( 0, n_paths - 1 ) ]
+                cust_a = path_a.pop( [ randint( 0, len( path_a.route ) - 1 ) ] )
+                removed_customers.append( cust_a )
+
+            for cust_a in removed_customers:
+                path_a = new_paths[ randint( 0, n_paths - 1 ) ]
+                path_a.insert( randrange( len(path_a.route), cust_a ) )
+
+            children.append( new_paths )
 
         return children
 
