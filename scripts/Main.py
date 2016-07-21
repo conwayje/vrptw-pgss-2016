@@ -13,8 +13,14 @@ from Dijkstra import Dijsktra
 import copy
 import argparse
 
+
+
 # Filenames:    C201.txt, C201_wr_solution.txt
 # 				RC208.txt, RC208_wr_solution.txt
+
+# sample calls (made from inside the scripts directory):
+# python Main.py C201 C201_wr_solution 3 700
+# python Main.py RC208 RC208_wr_solution 3 1000 --plot
 
 customers = None
 depot = None
@@ -52,12 +58,43 @@ def initial_state(filename):
         state = State([Truck(1, 0, 0, 700, path=Path(paths[0][1:])),
                       Truck(2, 0, 0, 700, path=Path(paths[1][1:])),
                       Truck(3, 0, 0, 700, path=Path(paths[2][1:]))], parent=None)
+        paths = Dijsktra.get_nearest_neighbors_all_trucks(c, depot_c, num_trucks)
+
+        trucks = []
+        for k in range(1, num_trucks + 1):
+            t = Truck(k, 0, 0, truck_capacity, path = Path(paths[k-1][1:]))
+            trucks.append(t)
+
+        state = State( trucks, parent = None )
         
         if do_plots:
             state.plot()
-
+    
+    elif filename == "split_nearest_neighbors":
+        paths = []
+        depot_c = Customer(0, 0, 0, 0, 0, 0, 0)
+        route1 = [depot_c]
+        route2 = [depot_c]
+        route3 = [depot_c]
+        customers_by_distance = sorted(customers, key=lambda customer: customer.distance()*customer.timewindow())
+        for customer in customers_by_distance:
+                if customer.x < 0 and customer.y > -15:
+                    route1.append(customer)
+                elif customer.x >= 0 and customer.y > -15:
+                    route2.append(customer)
+                else:
+                    route3.append(customer)
+        route1 = Dijsktra.get_nearest_neighbors(route1, route1[0])
+        route2 = Dijsktra.get_nearest_neighbors(route1, route2[0])
+        route3 = Dijsktra.get_nearest_neighbors(route1, route3[0])
+        state = State([Truck(1, 0, 0, 700, path=Path(route1)),
+                      Truck(2, 0, 0, 700, path=Path(route2)),
+                      Truck(3, 0, 0, 700, path=Path(route3))], parent=None)
+        state.plot()
+        
     else:
         state = import_solution(filename  + ".txt")
+        
         if args.plot:
             state.plot()
 
@@ -67,12 +104,14 @@ parser = argparse.ArgumentParser()
 parser.add_argument("problem_file")
 parser.add_argument("init_solution_file")
 parser.add_argument("num_trucks")
+parser.add_argument("truck_capacity")
 parser.add_argument("--plot", help="plot the map before the main loop engages", action = "store_true")
 args = parser.parse_args()
 problem_file = args.problem_file
 init_solution_file = args.init_solution_file
 num_trucks = args.num_trucks
 do_plots = args.plot
+truck_capacity = args.truck_capacity
 
 init(problem_file)
 doAStar(initial_state(init_solution_file))

@@ -26,22 +26,23 @@ class State():
         #  @TODO -- similar to reason above:  maintain score(?)
 
     def calculate_distance(self):
-        self.distance = self.trucks[0].path.calculate_distance() + self.trucks[1].path.calculate_distance() + self.trucks[2].path.calculate_distance()
+        self.distance = 0
+        for truck in self.trucks:
+            self.distance += truck.path.calculate_distance()
         return self.distance
 
     def plot(self):
-        # @TODO -- truck number dependency
-        Visual.plot_path(self.trucks[0].path, color='g')
-        Visual.plot_path(self.trucks[1].path, color='c')
-        Visual.plot_path(self.trucks[2].path, color='m')
+        colors = ['g', 'c', 'm', 'b', 'y', 'r']
+        for i in range(len(self.trucks)):
+            Visual.plot_path(self.trucks[i].path, color = colors[i % len(colors)])
         Visual.show()
 
     def plot_missed(self):
-        # @TODO -- truck number dependency
-        Visual.plot_customers(Depot(0,0), self.trucks[0].path.is_valid())
-        Visual.plot_customers(Depot(0,0), self.trucks[1].path.is_valid())
-        Visual.plot_customers(Depot(0,0), self.trucks[2].path.is_valid())
-        Visual.show()
+        for truck in self.trucks:
+            Visual.plot_customers(Depot(0,0), truck.path.is_valid())
+            Visual.plot_customers(Depot(0,0), truck.truckpath.is_valid())
+            Visual.plot_customers(Depot(0,0), truck.path.is_valid())
+            Visual.show()
 
     # @TODO -- point to heuristic score
     def get_score(self):
@@ -63,7 +64,7 @@ class State():
         paths = self.paths
 
         # these ones probably aren't good
-        # children_paths += State.cycle_three_four_times(paths)
+        # children_paths += State.cycle(paths, 4)
         # children_paths += State.redistribute_more_evenly( paths )
 
         # these ones are probably good
@@ -84,7 +85,7 @@ class State():
 
             i = 1
             for child in child_paths:
-                trucks.append(Truck(i+1, 0, 0, 700, child))
+                trucks.append(Truck(i, 0, 0, 700, child))
                 i += 1
 
             children.append(State(trucks))
@@ -104,7 +105,7 @@ class State():
 
             i = 1
             for child in child_paths:
-                trucks.append(Truck(i+1, 0, 0, 700, child))
+                trucks.append(Truck(i, 0, 0, 700, child))
                 i += 1
 
             children.append(State(trucks))
@@ -116,7 +117,7 @@ class State():
         children_paths = []
         paths = self.paths
         #not that good
-        children_paths += State.cycle_three_four_times(paths) 
+        #children_paths += State.cycle(paths, 4)
         #might be good, never used
         children_paths += State.five_section_swap(paths)
         #children_paths += State.random_nearest_neighbors(paths)
@@ -126,7 +127,7 @@ class State():
 
             i = 1
             for child in child_paths:
-                trucks.append(Truck(i+1, 0, 0, 700, child))
+                trucks.append(Truck(i, 0, 0, 700, child))
                 i += 1
 
             children.append(State(trucks))
@@ -150,7 +151,7 @@ class State():
 
             i = 1
             for child in child_paths:
-                trucks.append(Truck(i+1, 0, 0, 700, child))
+                trucks.append(Truck(i, 0, 0, 700, child))
                 i += 1
 
             children.append(State(trucks))
@@ -158,9 +159,8 @@ class State():
 
     @staticmethod #medium move
     # @TODO -- truck number dependency (entire function)
-    def cycle_three_four_times(paths):
+    def cycle(paths, times):
         children = []
-
         for i in range(15):
             route1 = paths[0].route
             route2 = paths[1].route
@@ -168,7 +168,7 @@ class State():
             length1 = len(route1)
             length2 = len(route2)
             length3 = len(route3)
-            for i in range(0,4):
+            for i in range(0,times):
                 rand1 = randint(0,length1-1)
                 rand2 = randint(0,length2-1)
                 rand3 = randint(0,length3-1)
@@ -258,7 +258,7 @@ class State():
 
             is_sorted = True
             for i in range(min(len(new_paths[pathnum].route), len(p.route))):
-                if not (new_paths[pathnum].route[i].x == p.route[i].x and new_paths[pathnum].route[i].y ==   p.route[i].y):
+                if not (new_paths[pathnum].route[i].x == p.route[i].x and new_paths[pathnum].route[i].y == p.route[i].y):
                     is_sorted = False
 
             if not is_sorted:
@@ -276,7 +276,7 @@ class State():
             new_paths = copy.deepcopy( paths )
             # get two unique random paths
             path_a_index = randint(0, len(paths)-1)
-            path_b_index = (path_a_index + randint(1, len(paths)-1)) % 3
+            path_b_index = (path_a_index + randint(1, len(paths)-1)) % len(paths)
             path_a = new_paths[path_a_index]
             path_b = new_paths[path_b_index]
             # select two customers
@@ -419,5 +419,8 @@ class State():
         return new_path_lists
 
     def __repr__(self):
-        return "\n<State: Truck 1: {0}\nTruck 2: {1}\nTruck 3:{2}>".format(self.trucks[0].path.route, self.trucks[1].path.route, self.trucks[2].path.route)
-
+        str = "\n<State: "
+        for i in range(len(self.trucks)):
+            str += "Truck {0}: {1}".format(i, self.trucks[i].path.route)
+        str += ">"
+        return str
