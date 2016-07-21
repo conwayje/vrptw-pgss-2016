@@ -3,6 +3,11 @@ from Distances import Distances
 from Customer import Customer
 from Depot import Depot
 from copy import deepcopy
+from Visual import Visual
+from State import State
+from Truck import Truck
+from Path import Path
+
 #nearest neighbors works
 
 #may use this
@@ -43,19 +48,31 @@ def get_nearest_neighbors_all_trucks(customers, source, numtrucks):
     print l
     plen = 1
     paths = [ [source] for t in range(numtrucks) ]
-    
-    while (plen < l):
-        for path in paths:
-            if plen < l:
-                path.append(get_next(path[-1], customers, paths))
-                plen += 1
-            #print "path"
-            #print path
-            #unvisited.pop(source)
+
+    # while (plen < l):
+    #     for path in paths:
+    #         if plen < l:
+    #             path.append(get_next(path[-1], customers, paths))
+    #             plen += 1
+    #         print "path"
+    #         print path
+    #         # unvisited.pop(source)
+
+    for path in paths:
+        plen = 1
+        while (plen < l / numtrucks):
+            plen += 1
+            path.append(get_next(path[-1], customers, paths))
+
     for path in paths: print path 
-    for path in paths: print len(path) 
-    return paths
-            
+    for path in paths: print len(path)
+
+    # @TODO Fix trucks
+    state = State(Truck(1, 0, 0, 700, path=Path(paths[0][1:])),
+                 Truck(2, 0, 0, 700, path=Path(paths[1][1:])),
+                 Truck(3, 0, 0, 700, path=Path(paths[2][1:])), parent=None)
+    state.plot()
+    return state
 
 def get_nearest_neighbors(customers, source):
     path = [source]
@@ -74,11 +91,3 @@ def get_next(source, customers, paths):
             next = customers[i]
             min = Distances.get_distance(customers.index(source), i)
     return next
-    
-custs = import_customers("C201.txt")
-depot = Customer(0, 0, 0, 0, 0, 0, 0) # @HACK
-c = [depot]
-for cust in custs:
-    c.append(cust)
-Distances.calculate_matrix(custs)
-get_nearest_neighbors_all_trucks(c, depot, 3)

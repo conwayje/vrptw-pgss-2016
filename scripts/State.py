@@ -67,10 +67,12 @@ class State():
 
         # these ones are probably good
         children_paths += State.shuffle( paths, 5 )
+        # children_paths += State.shuffle( paths, 20 )
         children_paths += State.sort_paths( paths )
         children_paths += State.path_swap( paths )
         children_paths += State.distance_swap( paths )
-        children_paths += State.switch_between_paths( paths, 15 )
+        # children_paths += State.switch_between_paths( paths, 10 )
+        # children_paths += State.switch_between_paths( paths, 5)
 
         # child_paths should be a list containing three paths per entry (as a list)
         for child_paths in children_paths:

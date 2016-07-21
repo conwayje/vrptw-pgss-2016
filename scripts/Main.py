@@ -9,6 +9,8 @@ from AStar import doAStar
 from ImportCustomers import import_customers
 from ImportSolution import import_solution
 from Distances import Distances
+from Dijkstra import get_nearest_neighbors_all_trucks
+import copy
 import argparse
 
 # Filenames:    C201.txt, C201_wr_solution.txt
@@ -53,6 +55,14 @@ def initial_state(filename):
     # just a suggestion; y'all can be as creative as you want
 
     state = import_solution(filename)
+    state.plot()
+
+
+    # depot_c = Customer(0, 0, 0, 0, 0, 0, 0)  # @HACK
+    # c = [depot_c]
+    # for cust in customers:
+    #     c.append(cust)
+    # return get_nearest_neighbors_all_trucks(c, depot_c, 3)
 
     return state
 
