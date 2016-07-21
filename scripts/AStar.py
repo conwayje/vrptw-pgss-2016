@@ -16,14 +16,7 @@ def doAStar(initial_state, world_record = 591.55):
             del extra
 
         (priority, state) = heappop(queue)
-        
-        done = False
-        while len(queue) > 0 and not done:
-            (next, next_state) =  queue[0]
-            if next == priority:
-                heappop(queue)
-            else:
-                done = True
+
 
         print "Score of currently explored state: {}".format( priority )
 
@@ -54,6 +47,13 @@ def doAStar(initial_state, world_record = 591.55):
         for c in children:
             heappush(queue, ( score(c), c) )
 
+        done = False
+        while len(queue) > 0 and not done:
+            (next, next_state) = queue[0]
+            if next == priority:
+                heappop(queue)
+            else:
+                done = True
 
     return state
 
