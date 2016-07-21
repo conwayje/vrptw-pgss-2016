@@ -4,7 +4,7 @@ import copy
 import math
 from Path import Path
 from Depot import Depot
-from Dijkstra import get_nearest_neighbors
+from Dijkstra import get_nearest_neighbors_all_trucks
 from random import randint, randrange, choice
 import random
 
@@ -64,9 +64,11 @@ class State():
 
         # these ones are probably good
         children_paths += State.shuffle( paths, 5 )
+        # children_paths += State.shuffle( paths, 20 )
         children_paths += State.sort_paths( paths )
         children_paths += State.path_swap( paths )
         children_paths += State.distance_swap( paths )
+        # children_paths += State.switch_between_paths( paths, 5)
         children_paths += State.switch_between_paths( paths, 15 )
         # children_paths += State.random_nearest_neighbors( paths )
 
@@ -248,6 +250,7 @@ class State():
             new_paths[j] = Path(new_route)
             children.append(new_paths)
 
+    #@FIXME
     @staticmethod #medium move? , takes random set of 10 and does nearest neighbors on it
     def random_nearest_neighbors(paths):
         children = []

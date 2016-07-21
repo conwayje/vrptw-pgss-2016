@@ -19,8 +19,10 @@ def doAStar(initial_state, world_record = 591.55):
 
 
         print "Score of currently explored state: {}".format( priority )
+        if(priority < 10000000):
+             print "Distance:", state.calculate_distance()
 
-        if state.calculate_distance()< world_record:
+        if state.calculate_distance() < world_record:
             print "Yay"
             print state
             print state.get_score()
