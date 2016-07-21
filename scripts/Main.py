@@ -55,9 +55,9 @@ def initial_state(filename):
             c.append(cust)
             
         paths = Dijsktra.get_nearest_neighbors_all_trucks(c, depot_c, 3)
-        state = State([Truck(1, 0, 0, 700, path=Path(paths[0][1:])),
-                      Truck(2, 0, 0, 700, path=Path(paths[1][1:])),
-                      Truck(3, 0, 0, 700, path=Path(paths[2][1:]))], parent=None)
+        state = State([Truck(0, 0, 0, truck_capacity, path=Path(paths[0][1:])),
+                      Truck(1, 0, 0, truck_capacity, path=Path(paths[1][1:])),
+                      Truck(2, 0, 0, truck_capacity, path=Path(paths[2][1:]))], parent=None)
         paths = Dijsktra.get_nearest_neighbors_all_trucks(c, depot_c, num_trucks)
 
         trucks = []
@@ -66,6 +66,8 @@ def initial_state(filename):
             trucks.append(t)
 
         state = State( trucks, parent = None )
+        
+        state.plot()
         
         if do_plots:
             state.plot()
@@ -87,9 +89,9 @@ def initial_state(filename):
         route1 = Dijsktra.get_nearest_neighbors(route1, route1[0])
         route2 = Dijsktra.get_nearest_neighbors(route2, route2[0])
         route3 = Dijsktra.get_nearest_neighbors(route3, route3[0])
-        state = State([Truck(1, 0, 0, 700, path=route1),
-                      Truck(2, 0, 0, 700, path=route2),
-                      Truck(3, 0, 0, 700, path=route3)], parent=None)
+        state = State([Truck(0, 0, 0, truck_capacity, path=route1),
+                       Truck(1, 0, 0, truck_capacity, path=route2),
+                       Truck(2, 0, 0, truck_capacity, path=route3)], parent=None)
         state.plot()
         
     else:

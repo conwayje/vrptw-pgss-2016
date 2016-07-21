@@ -62,12 +62,6 @@ class Dijsktra():
         #for path in paths: print path
         #for path in paths: print len(path)
 
-        # @TODO Fix trucks
-        #state = State([Truck(1, 0, 0, 700, path=Path(paths[0][1:])),
-        #              Truck(2, 0, 0, 700, path=Path(paths[1][1:])),
-        #              Truck(3, 0, 0, 700, path=Path(paths[2][1:]))], parent=None)
-        #state.plot()
-        #return state
         return paths
 
     @staticmethod
