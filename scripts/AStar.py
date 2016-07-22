@@ -63,16 +63,6 @@ def doAStar(initial_state, world_record = 591.55):
             average_rate = (rate + average_rate * (counter-1))/counter
 
         counter += 1
-        # print average_rate, diff
-
-        # if diff > -100000:
-        #     for c in state.get_children_big_moves():
-        #         children.append(c)
-        #     for c in state.get_children_medium_moves():
-        #         children.append(c)
-        #     prev_scores = []
-        #     diff == -100000000
-
 
         for c in children:
             heappush(queue, ( score(c), c) )
