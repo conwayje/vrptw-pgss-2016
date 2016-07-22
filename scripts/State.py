@@ -5,6 +5,7 @@ import math
 from Dijkstra import Dijsktra
 from Path import Path
 from Depot import Depot
+from ClusterStore import ClusterStore
 from random import randint, randrange, choice
 import random
 try:
@@ -99,7 +100,7 @@ class State():
         children_paths += State.shuffle( paths, 5 )
         #might be good or not, we've never used it
         children_paths += State.alternating_shuffle_within_path( paths )
-        
+
         for child_paths in children_paths:
             trucks = []
 
@@ -121,7 +122,7 @@ class State():
         #might be good, never used
         #children_paths += State.five_section_swap(paths)
         #children_paths += State.random_nearest_neighbors(paths)
-        
+
         for child_paths in children_paths:
             trucks = []
 
@@ -145,7 +146,8 @@ class State():
         children_paths += State.path_swap( paths )
         children_paths += State.distance_swap( paths )
         children_paths += State.switch_between_paths( paths, 15 )
-        
+        children_paths += State.use_clusters( paths, 10 )
+
         for child_paths in children_paths:
             trucks = []
 
@@ -155,6 +157,59 @@ class State():
                 i += 1
 
             children.append(State(trucks))
+        return children
+
+    @staticmethod
+    def use_clusters( paths, n_children ):
+        children = []
+
+        for k in range( n_children ):
+            new_paths = copy.deepcopy( paths )
+
+            # get a customer to base the cluster on
+            cluster_base_customer_id = choice( ClusterStore().clustered_customer_ids )
+            # find the path that contains this customer
+            containing_path = State.find_path_containing_customer( new_paths, cluster_base_customer_id )
+            # separate out the paths aside from this one
+            non_containing_paths = [path for path in new_paths if path != containing_path]
+            # find the cluster which contains the chosen customer
+            containing_cluster = ClusterStore.find_cluster_containing_customer( cluster_base_customer_id )
+
+            # remove the other customers from whatever paths they are on
+            customer_ids_to_handle = [c.number for c in containing_cluster.optimal_solution.route if c.number != cluster_base_customer_id]
+            customers_to_handle = []
+            indexes_for_removal = [[] for path in new_paths]
+
+
+            # store the customers you'll have to handle
+            # get the INDEXES of the customers you have to remove
+            i = 0
+            for path in new_paths:
+                j = 0
+                for customer in path.route:
+                    if customer.number in customer_ids_to_handle:
+                        indexes_for_removal[i].append(j)
+                        customers_to_handle.append( customer )
+                    j += 1
+                i += 1
+
+            # remove the customers at the desired indexes (backwards)
+            i = 0
+            for indexes in indexes_for_removal:
+                for index in indexes[::-1]:
+                    new_paths[i].route.pop( index )
+                i += 1
+
+            # force customers [in cyclical right order] into the solution
+            id_to_insert_after = cluster_base_customer_id
+            id_to_be_inserted = None
+            for i in range( len( containing_cluster.optimal_solution ) - 1 ):
+                id_to_be_inserted = containing_cluster.next_to_visit_ids( id_to_insert_after )
+                containing_path.insert_customer( id_to_insert_after, id_to_be_inserted, customers_to_handle )
+                id_to_insert_after = id_to_be_inserted
+
+            children.append( new_paths )
+
         return children
 
     @staticmethod #medium move
@@ -418,6 +473,13 @@ class State():
             new_path_lists.append( p )
 
         return new_path_lists
+
+    @staticmethod
+    def find_path_containing_customer(paths, customer_id):
+        for path in paths:
+            for customer in path.route:
+                if customer.number == customer_id:
+                    return path
 
     def __repr__(self):
         str = "\n<State: "

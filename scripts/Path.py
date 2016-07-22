@@ -217,6 +217,14 @@ class Path():
             indice += 1
         return -1
 
+    def customer_ids(self):
+        """Returns a *SET* of customer IDs based on the route of this path.
+
+           Note that sets are faster at returning in/out than lists, though
+           other operations are impossible or worse =)
+        """
+        return {customer.number for customer in self.route}
+
 
     def get_wait_time(self):
         wait_time = 0
@@ -241,6 +249,16 @@ class Path():
             time += c.service_time
 
         return wait_time
+
+    def insert_customer( self, anchor_id, inserted_id, customer_list ):
+        """ Args: ( ID of a customer; ID of a customer to be inserted onto the path after anchor; list of customers to choose from )"""
+        anchor_index = self.get_customer_index( anchor_id )
+        customer = filter( lambda c: c.number == inserted_id, customer_list )[0]
+        self.route.insert( anchor_index + 1, customer )
+
+    def get_customer_index( self, customer_id ):
+        """ Finds the customer's index in the path's route given a customer's ID """
+        return self.route.index( filter( lambda c: c.number == customer_id, self.route )[0] )
 
     def __repr__(self):
         # return "<Path: {0}>".format(self.route)

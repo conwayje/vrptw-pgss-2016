@@ -34,7 +34,6 @@ class Cluster():
                 min = dist
                 best_path = p
 
-        print (best_path)
         return best_path
 
     def get_cargo(self):

@@ -17,7 +17,6 @@ class Dijsktra():
     def create_graph(customers):
         g = {}
         for c in customers:
-            print('graphing')
             g[c] = {}
             for d in customers:
                 g[c][d] = d.distance_to_customer(c)
@@ -38,7 +37,6 @@ class Dijsktra():
     @staticmethod
     def get_nearest_neighbors_all_trucks(customers, source, num_trucks):
         l = len(customers)
-        print l
         plen = 1
         paths = [[source] for t in range(num_trucks)]
 
@@ -48,8 +46,6 @@ class Dijsktra():
                 if plen < l:
                     path.append(Dijsktra.get_next(path[-1], customers, paths))
                     plen += 1
-                print "path"
-                print path
                 # unvisited.pop(source)
 
         # One truck at a time
@@ -58,9 +54,6 @@ class Dijsktra():
         #     while (plen < l / numtrucks):
         #         plen += 1
         #         path.append(get_next(path[-1], customers, paths))
-
-        #for path in paths: print path
-        #for path in paths: print len(path)
 
         # @TODO Fix trucks
         #state = State([Truck(1, 0, 0, 700, path=Path(paths[0][1:])),

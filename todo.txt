@@ -14,3 +14,4 @@
 - Ambiguous with respect to # of trucks
 - Look for any @TODO markers and fix as needed
 - Use clusters somewhere
+- add cleverness to cluster move

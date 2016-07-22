@@ -6,3 +6,7 @@
 
 # ignore pyc files
 **/*.pyc
+
+# ignore the diff files
+diff.txt
+scripts/diff.txt

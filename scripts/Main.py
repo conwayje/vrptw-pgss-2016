@@ -10,10 +10,13 @@ from ImportCustomers import import_customers
 from ImportSolution import import_solution
 from Distances import Distances
 from Dijkstra import Dijsktra
+from ClusterStore import ClusterStore
 import copy
 import argparse
-
-
+try:
+    import ipdb
+except:
+    print "import ipdb skipped because Dan's school is full of jerks"
 
 # Filenames:    C201.txt, C201_wr_solution.txt
 # 				RC208.txt, RC208_wr_solution.txt
@@ -26,12 +29,16 @@ customers = None
 depot = None
 num_trucks = 0
 
-
 def init(filename):
     global customers, depot
 
+    print "Importing customers..."
     customers = import_customers(filename + ".txt")
+    print "Calculating distances..."
     Distances.calculate_matrix(customers)
+    print "Storing clusters..."
+    ClusterStore.store_clusters(filename, customers)
+
     depot = Depot(0,0)
 
     # plot the problem
@@ -49,6 +56,7 @@ def initial_state(filename):
 
     # @TODO -- just for testing, write init solutions to file
     if filename == "nearest_neighbors":
+        print "Generating nearest neighbors solution..."
         depot_c = Customer(0, 0, 0, 0, 0, 0, 0)
         c = [depot_c]
         for cust in customers:

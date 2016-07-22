@@ -31,9 +31,9 @@ def doAStar(initial_state, world_record = 591.55):
                 done = True
 
 
-        print "Score of currently explored state: {}".format( priority )
+        print "Score: {0:<20,} Distance: {1:<20}".format( priority, state.calculate_distance(), grouping = True )
         # if(priority < 10000000):
-        print "Distance:", state.calculate_distance()
+        # print "Distance:", state.calculate_distance()
 
         if state.calculate_distance() < world_record:
             print "Yay"
@@ -42,9 +42,9 @@ def doAStar(initial_state, world_record = 591.55):
 
             # @TODO: truck number dependency
             # also, this is kind of messy generally...
-            for truck in state.trucks:
-                for c in truck.path.route:
-                    print c.number,
+            # for truck in state.trucks:
+            #     for c in truck.path.route:
+            #         print c.number,
             queue = []
             world_record_not_broken = False
             break
@@ -67,7 +67,7 @@ def doAStar(initial_state, world_record = 591.55):
             average_rate = (rate + average_rate * (counter-1))/counter
 
         counter += 1
-        print average_rate, diff
+        # print average_rate, diff
 
         if diff > -100000:
             children = []
