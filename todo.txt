@@ -15,3 +15,5 @@
 - Look for any @TODO markers and fix as needed
 - Use clusters somewhere
 - add cleverness to cluster move
+- case move choices and child numbers on situation in AStar / etc.
+- use deque
