@@ -62,11 +62,6 @@ def initial_state(filename):
         for cust in customers:
             c.append(cust)
             
-        # @TODO truck number dependency
-        paths = Dijsktra.get_nearest_neighbors_all_trucks(c, depot_c, 3)
-        state = State([Truck(0, 0, 0, truck_capacity, path=Path(paths[0][1:])),
-                      Truck(1, 0, 0, truck_capacity, path=Path(paths[1][1:])),
-                      Truck(2, 0, 0, truck_capacity, path=Path(paths[2][1:]))], parent=None)
         paths = Dijsktra.get_nearest_neighbors_all_trucks(c, depot_c, num_trucks)
 
         trucks = []
@@ -76,10 +71,9 @@ def initial_state(filename):
 
         state = State( trucks, parent = None )
         
-        state.plot()
-        
-        if do_plots:
+        if do_plot:
             state.plot()
+        
     #doesn't work yet, don't use
     elif filename == "split_nearest_neighbors":
         paths = []
@@ -95,20 +89,18 @@ def initial_state(filename):
                     route2.append(customer)
                 else:
                     route3.append(customer)
-        
+
         # @TODO truck number dependency
-        route1 = Dijsktra.get_nearest_neighbors(route1, route1[0])
-        route2 = Dijsktra.get_nearest_neighbors(route2, route2[0])
-        route3 = Dijsktra.get_nearest_neighbors(route3, route3[0])
-        state = State([Truck(0, 0, 0, truck_capacity, path=route1),
-                       Truck(1, 0, 0, truck_capacity, path=route2),
-                       Truck(2, 0, 0, truck_capacity, path=route3)], parent=None)
-        state.plot()
+        routes = [ Dijsktra.get_nearest_neighbors( [depot_c], [depot_c][0] ) for x in range( num_trucks ) ]
+        state = State( [Truck( k + 1, 0, 0, truck_capacity, path=routes[k] ) for k in range( num_trucks ) ], parent = None)
+
+        if do_plot:
+            state.plot()
         
     else:
         state = import_solution(filename  + ".txt")
         
-        if args.plot:
+        if do_plot:
             state.plot()
 
     return state
@@ -123,7 +115,7 @@ args = parser.parse_args()
 problem_file = args.problem_file
 init_solution_file = args.init_solution_file
 num_trucks = int(args.num_trucks)
-do_plots = args.plot
+do_plot = args.plot
 truck_capacity = args.truck_capacity
 
 init(problem_file)

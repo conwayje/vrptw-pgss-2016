@@ -49,10 +49,10 @@ if __name__ == "__main__":
     state = import_solution(filename)
 
     # plot solution
-    state.plot()
+    # state.plot()
 
     # plot missed customers
-    state.plot_missed()
+    # state.plot_missed()
 
     # print number of missed customers
     # print len(state.truck1.path.is_valid()) + len(state.truck2.path.is_valid()) + len(state.truck3.path.is_valid())
