@@ -37,7 +37,7 @@ class Cluster():
         return best_path
 
     def get_cargo(self):
-        sum_cargo = 0;
+        sum_cargo = 0
         for customer in self.customers:
             sum_cargo += customer.demand
         return sum_cargo

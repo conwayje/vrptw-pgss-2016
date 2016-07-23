@@ -37,9 +37,6 @@ def doAStar(initial_state, world_record = 591.55 ):
                 print "Yay"
                 print state
                 print state.get_score()
-
-                # @TODO: truck number dependency
-                # also, this is kind of messy generally...
                 for truck in state.trucks:
                     for c in truck.path.route:
                         print c.number,

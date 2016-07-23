@@ -48,11 +48,6 @@ def init(filename):
 def initial_state(filename):
     global customers
 
-    # @TODO -- this seems a little bit more naive than we want for an initial solution =/
-    # maybe try to do something along these lines but also implement dijkstra or something like that?
-    # as in:  partition into three sets, and then for each set, go to the closest remaining unserved customer
-    # until there are no customers remaining.
-    # just a suggestion; y'all can be as creative as you want
 
     # @TODO -- just for testing, write init solutions to file
     if filename == "nearest_neighbors":

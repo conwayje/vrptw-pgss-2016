@@ -30,6 +30,7 @@ class Customer():
         return (self.y**2 + self.x**2)**0.5
 
     # @TODO -- may want to refer directly to DistanceMatrix?
+    # Circular imports are screwing it up right now
     def closest_customers(self, cust):
         self = sorted(self, key = lambda customer: customer.distance_to_customer(cust))
 

@@ -1,7 +1,7 @@
 from Visual import Visual
 from Truck import Truck
 import copy
-import math
+from HeuristicScore import score
 from Dijkstra import Dijsktra
 from Path import Path
 from Depot import Depot
@@ -47,16 +47,16 @@ class State():
 
     # @TODO -- point to heuristic score
     def get_score(self):
-        missed_customer_penalty = 10**6
+        # missed_customer_penalty = 10**6
+        #
+        # paths = self.paths
+        #
+        # score = sum( [path.distance for path in paths] )
+        #
+        # for path in paths:
+        #     score += len( path.is_valid() ) * missed_customer_penalty
 
-        paths = self.paths
-
-        score = sum( [path.distance for path in paths] )
-
-        for path in paths:
-            score += len( path.is_valid() ) * missed_customer_penalty
-
-        return score
+        return score(self)
 
     # @TODO -- still lots to do here, of course ;)
     def get_children(self, big = True, medium = True, small = True):
@@ -425,3 +425,4 @@ class State():
             str += "Truck {0}: {1}".format(i, self.trucks[i].path.route)
         str += ">"
         return str
+

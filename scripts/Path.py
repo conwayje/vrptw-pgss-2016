@@ -61,7 +61,7 @@ class Path():
         return -1
 
     def is_valid(self):
-        # @TODO -- just a note: comments before a function aren't "part of python" in any really meaningful ways.
+        # just a note: comments before a function aren't "part of python" in any really meaningful ways.
         # if you do it like this -- called a docstring -- then you can actually access this information while you're
         # using a python interpreter and such, which can be very convenient.
         #
