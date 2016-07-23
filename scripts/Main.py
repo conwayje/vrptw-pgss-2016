@@ -119,4 +119,11 @@ do_plot = args.plot
 truck_capacity = args.truck_capacity
 
 init(problem_file)
-doAStar(initial_state(init_solution_file))
+state = doAStar(initial_state(init_solution_file), do_plot)
+if(do_plot):
+    state.plot()
+    for truck in state.trucks:
+        for Customer in truck.path.route:
+            print Customer.number,
+
+        print
