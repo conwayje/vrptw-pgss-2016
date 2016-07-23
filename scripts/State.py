@@ -45,7 +45,6 @@ class State():
             Visual.plot_customers(Depot(0,0), truck.path.is_valid())
             Visual.show()
 
-    # @TODO -- point to heuristic score
     def get_score(self):
         # missed_customer_penalty = 10**6
         #
