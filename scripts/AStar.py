@@ -58,7 +58,6 @@ def doAStar(initial_state, world_record = 591.55 ):
                 if(priority - prev_scores[0] < 10000000):
                     children = state.get_children(True, True, True)
                 else:
-                    queue = []
                     children = state.get_children(True, True, False)
 
             if counter != 0:
