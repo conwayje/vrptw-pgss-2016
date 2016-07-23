@@ -46,7 +46,6 @@ def doAStar(initial_state, world_record = 591.55 ):
                 world_record_not_broken = False
                 break
 
-            children = state.get_children( False, True, True )
 
             prev_scores.insert(0, priority)
 
@@ -54,8 +53,13 @@ def doAStar(initial_state, world_record = 591.55 ):
                 to_remove = prev_scores.pop()
                 diff = priority - to_remove
 
+            children = []
             if len(prev_scores)>1:
-                rate = priority - prev_scores[1]
+                if(priority - prev_scores[0] < 10000000):
+                    children = state.get_children(True, True, True)
+                else:
+                    queue = []
+                    children = state.get_children(True, True, False)
 
             if counter != 0:
                 average_rate = (rate + average_rate * (counter-1))/counter
