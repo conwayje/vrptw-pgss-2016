@@ -54,7 +54,7 @@ def doAStar(initial_state, world_record = 591.55 ):
                 diff = priority - to_remove
 
             children = []
-            if len(prev_scores)>1:
+            if len(prev_scores)>=1:
                 if(priority - prev_scores[0] < 10000000):
                     children = state.get_children(True, True, True)
                 else:
