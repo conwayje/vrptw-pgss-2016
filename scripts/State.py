@@ -7,6 +7,7 @@ from Path import Path
 from Depot import Depot
 from ClusterStore import ClusterStore
 from random import randint, randrange, choice
+from Distances import Distances
 import random
 try:
     import ipdb
@@ -289,7 +290,7 @@ class State():
             # gets two random customers, if the first is farther then the secondthen swap
             customer_a = randint(0, len(path.route) - 1)
             customer_b = randint(customer_a, len(path.route) - 1)
-            if path.route[customer_a].distance() > path.route[customer_b].distance():
+            if Distances.get_distance(0, path.route[customer_a].number) > Distances.get_distance(0, path.route[customer_a].number):
                 path.route[customer_a], path.route[customer_b] = path.route[customer_b], path.route[customer_a]
             children.append(new_paths)
         return children

@@ -42,22 +42,16 @@ def init(filename):
 
     depot = Depot(0,0)
 
-    # plot the problem
-    # Visual.plot_customers(depot, customers)
-    # Visual.show()
-
 def initial_state(filename):
     global customers
 
-
-    # @TODO -- just for testing, write init solutions to file
     if filename == "nearest_neighbors":
         print "Generating nearest neighbors solution..."
         depot_c = Customer(0, 0, 0, 0, 0, 0, 0)
         c = [depot_c]
         for cust in customers:
             c.append(cust)
-            
+
         paths = Dijsktra.get_nearest_neighbors_all_trucks(c, depot_c, num_trucks)
 
         trucks = []
@@ -66,10 +60,10 @@ def initial_state(filename):
             trucks.append(t)
 
         state = State( trucks, parent = None )
-        
+
         if do_plot:
             state.plot()
-        
+
     #doesn't work yet, don't use
     elif filename == "split_nearest_neighbors":
         paths = []
@@ -77,7 +71,7 @@ def initial_state(filename):
         route1 = [depot_c]
         route2 = [depot_c]
         route3 = [depot_c]
-        customers_by_distance = sorted(customers, key=lambda customer: customer.distance()*customer.timewindow())
+        customers_by_distance = sorted(customers, key=lambda customer: Distances.get_distance(depot_c.number, customer.number) * customer.timewindow())
         for customer in customers_by_distance:
                 if customer.x < 0 and customer.y > -15:
                     route1.append(customer)
@@ -92,10 +86,10 @@ def initial_state(filename):
 
         if do_plot:
             state.plot()
-        
+
     else:
         state = import_solution(filename  + ".txt")
-        
+
         if do_plot:
             state.plot()
 
