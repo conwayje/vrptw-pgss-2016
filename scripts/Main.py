@@ -27,7 +27,8 @@ except:
 
 customers = None
 depot = None
-num_trucks = 0
+num_trucks = None
+truck_capacity = None
 
 def init(filename):
     global customers, depot
@@ -111,7 +112,7 @@ problem_file = args.problem_file
 init_solution_file = args.init_solution_file
 num_trucks = int(args.num_trucks)
 do_plot = args.plot
-truck_capacity = args.truck_capacity
+truck_capacity = int(args.truck_capacity)
 
 init(problem_file)
 state = doAStar(initial_state(init_solution_file), do_plot)
