@@ -21,6 +21,10 @@ class Visual():
         plt.scatter(depot.x, depot.y, color = 'r')
         plt.scatter(x, y, color = color, marker = marker)
         if connect:
+            x.insert(0, depot.x)
+            y.insert(0, depot.y)
+            x.append(depot.x)
+            y.append(depot.y)
             plt.plot(x, y, color = color, linewidth = linewidth)
 
     @staticmethod

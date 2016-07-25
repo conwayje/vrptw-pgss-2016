@@ -5,6 +5,7 @@
 
 import math
 from Distances import Distances
+from Customer import Customer
 
 class Path():
 
@@ -136,21 +137,23 @@ class Path():
         return None
 
     def intersects_self(self):
-        """Returns whether the path intersects itself"""
-        # start at -1 because it always counts the return to the depot as an intersection, which is "unfair"
-        intersects = -1
-        points = [(0, 0)]
-        for c in self.route:
-            points.append((c.x, c.y))
+        """Returns where the path intersects itself"""
+        intersecting_segments = []
+        points = [(None, 0, 0)]
 
-        points.append((0,0))
+        for c in self.route:
+            points.append((c, c.x, c.y))
+
+        points.append((None, 0, 0))
 
         for i in range(0, len(points) - 2):
             for j in range(i + 2, len(points) - 1 ):
                 if (Path.lines_intersect(points[i], points[i+1], points[j], points[j+1])):
-                    intersects += 1
+                    intersecting_segments.append([points[i][0], points[i+1][0], points[j][0], points[j+1][0]])
+        return intersecting_segments
 
-        return intersects
+    def number_intersections(self):
+        return len(self.intersects_self())
 
     # Will probably be used for inserting in completed solutions for clusters
     def append(self, toAppend):
@@ -176,9 +179,9 @@ class Path():
         #
         # might want to add a docstring describing the structure of the arguments; it's not
         # immediately obvious what it's expecting
-        (Ax, Ay) = A
-        (Bx, By) = B
-        (Cx, Cy) = C
+        (Ac, Ax, Ay) = A
+        (Bc, Bx, By) = B
+        (Cc, Cx, Cy) = C
         return (Cy - Ay) * (Bx - Ax) > (By - Ay) * (Cx - Ax)
 
     def distance_to_previous(self, customer):
@@ -253,6 +256,24 @@ class Path():
             time += c.service_time
 
         return wait_time
+
+    def intersects_with_other(self, path):
+        points_1 = [(None, 0, 0)]
+        points_2 = [(None, 0, 0)]
+        for c in self.route:
+            points_1.append((c, c.x, c.y))
+        for c in path.route:
+            points_2.append((c, c.x, c.y))
+        points_1.append((None, 0,0))
+        points_2.append((None, 0,0))
+
+        intersecting_segments = []
+        for i in range(len(points_1)-1):
+            for j in range(len(points_2) - 1):
+                if Path.lines_intersect(points_1[i], points_1[i+1], points_2[j], points_2[j+1]):
+                    intersecting_segments.append([points_1[i][0], points_1[i+1][0], points_2[j][0], points_2[j+1][0]])
+        return intersecting_segments
+
 
     def insert_customer( self, anchor_id, inserted_id, customer_list ):
         """ Args: ( ID of a customer; ID of a customer to be inserted onto the path after anchor; list of customers to choose from )"""
