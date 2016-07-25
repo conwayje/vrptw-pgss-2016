@@ -441,6 +441,7 @@ class State():
             new_path = []
             new_path = copy.deepcopy(path)
             r = randint(0, len(new_path.route) - 2)
+
             neighbor = new_path.route[r]
             new_path.route[r] = new_path.route[r+1]
             new_path.route[r+1] = neighbor
