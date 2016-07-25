@@ -5,8 +5,6 @@ from Customer import Customer
 from Truck import Truck
 
 ## STILL NEED PENALTIES FOR COMING OUT OF CLUSTERS AND OUTRAGEOUS ANGLE OF TURNING
-
-        
 def score(state):
     score = 0
     paths = state.paths

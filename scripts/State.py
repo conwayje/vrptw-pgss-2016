@@ -23,6 +23,8 @@ class State():
 
         self.distance = None
         self.parent = parent
+
+        #  @TODO -- update get_children sub-methods to include parent
         #  @TODO -- should we also maintain children...?
 
         #  @TODO -- similar to reason above:  maintain score(?)
@@ -55,25 +57,30 @@ class State():
 
         if big:
             #good
-            children_paths += State.shuffle( paths, 5 )
+            #children_paths += State.shuffle( paths, 5 )
             #might be good or not, we've never used it
-            children_paths += State.alternating_shuffle_within_path( paths )
-            children_paths += State.large_reconstruction( paths, 1000 if extra_big_move_children else 200 )
+            #children_paths += State.alternating_shuffle_within_path( paths )
+            #children_paths += State.large_reconstruction( paths, 1000 if extra_big_move_children else 200 )
+            pass
         if medium:
             #not that good
             #children_paths += State.cycle(paths, 4)
             #might be good, never used
             #children_paths += State.five_section_swap(paths)
             #children_paths += State.random_nearest_neighbors(paths)
-            children_paths += State.use_clusters( paths, 10 )
+            
+            # @DEBUG
+            pass
+            #children_paths += State.use_clusters( paths, 10 )
         if small:
             #not that good
-            children_paths += State.redistribute_more_evenly(paths)
+            #children_paths += State.redistribute_more_evenly(paths)
             #good
-            children_paths += State.sort_paths(paths)
-            children_paths += State.path_swap( paths )
-            children_paths += State.distance_swap( paths )
-            children_paths += State.switch_between_paths( paths, 15 )
+            # @TODO -- add a move that reversed the path (nothing else clever, JUST REVERSE IT ^.^)
+            children_paths += State.sort_paths( paths )
+            #children_paths += State.path_swap( paths, 15 )
+            #children_paths += State.distance_swap( paths )
+            children_paths += State.switch_between_paths( paths, 100 )
         # child_paths should be a list containing three paths per entry (as a list)
         for child_paths in children_paths:
             trucks = []
@@ -83,7 +90,7 @@ class State():
                 trucks.append(Truck(i, 0, 0, 700, child))
                 i += 1
 
-            children.append(State(trucks))
+            children.append(State(trucks, self))
         return children
 
     @staticmethod
@@ -251,10 +258,10 @@ class State():
         return children
 
     @staticmethod #small move
-    def path_swap(paths):
+    def path_swap(paths, n_children ):
         new_path_sets = []
 
-        for i in range( 15 ):
+        for i in range( n_children ):
             new_paths = copy.deepcopy( paths )
             # get two unique random paths
             path_a_index = randint(0, len(paths)-1)
@@ -341,7 +348,7 @@ class State():
             while(len(temp_route) > 0):
                 cust = temp_route.pop(0)
                 new_route.append(cust)
-                temp_route = sorted(temp_route, key = lambda customer: customer.distance_to_customer(cust))
+                temp_route = sorted(temp_route, key = lambda customer: Distances.get_distance( customer.number, cust.number ) )
 
             new_paths = copy.deepcopy(paths)
             new_paths[j] = Path(new_route)
@@ -384,9 +391,9 @@ class State():
     def switch_between_paths(paths, numtoswap):
         new_path_lists = []
 
-        p = copy.deepcopy(paths)
-
         for i in range(numtoswap):
+            p = copy.deepcopy(paths)
+
             path_a = randint(0, len(paths)-1)
             path_b = randint(0, len(paths)-1)
 

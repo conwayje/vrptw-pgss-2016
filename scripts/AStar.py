@@ -12,12 +12,12 @@ def doAStar(initial_state, world_record = 591.55 ):
 
     generation = 0
 
-    STATE_QUEUE_MAX_LENGTH = 10000
+    STATE_QUEUE_MAX_LENGTH = 1000
 
-    QUEUE_LENGTH_EARLY_GAME = 30 # also acts as the # of generations before a reset is triggered
+    QUEUE_LENGTH_EARLY_GAME = 500 # also acts as the # of generations before a reset is triggered
     RESET_TRIGGER_DIFFERENTIAL_SCORE_EARLY_GAME = 1000000
 
-    QUEUE_LENGTH_LATE_GAME = 1000 # same; also acts as # of gen. before a reset
+    QUEUE_LENGTH_LATE_GAME = 500 # same; also acts as # of gen. before a reset
     RESET_TRIGGER_DIFFERENTIAL_SCORE_LATE_GAME = 3
 
     IS_EARLY_GAME = True # set this to false whenever the score drops below threshold
@@ -74,7 +74,6 @@ def doAStar(initial_state, world_record = 591.55 ):
                 queue = []
                 previous_scores.clear()
                 children = state.get_children( True, False, False, True )
-                triggered = True
 
         else:
             if previous_scores[0] - previous_scores[-1] > RESET_TRIGGER_DIFFERENTIAL_SCORE_LATE_GAME or len(previous_scores) < QUEUE_LENGTH_LATE_GAME:
@@ -91,14 +90,18 @@ def doAStar(initial_state, world_record = 591.55 ):
             heappush(queue, ( score(c), c) )
 
         # is this useful?
-        # while len(queue) > 0 and not done:
-        #     (next, next_state) = queue[0]
-        #     if next == priority:
-        #         heappop(queue)
-        #     else:
-        #         done = True
+        done = False
+        while len(queue) > 0 and not done:
+            (next, next_state) = queue[0]
+            if next == priority:
+                heappop(queue)
+            else:
+                done = True
 
         generation += 1
+
+        if generation % 10 == 0:
+            state.plot()
 
     return state
 

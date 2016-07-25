@@ -34,7 +34,7 @@ def init(filename):
     global customers, depot
 
     print "Importing customers..."
-    customers = import_customers(filename + ".txt")
+    customers = import_customers(filename + ".txt", test_environment )
     print "Calculating distances..."
     Distances.calculate_matrix(customers)
     print "Storing clusters..."
@@ -128,6 +128,7 @@ parser.add_argument("num_trucks")
 parser.add_argument("truck_capacity")
 parser.add_argument("world_record_score")
 parser.add_argument("--plot", help="plot the map before the main loop engages", action = "store_true")
+parser.add_argument("--test", help="looks into the test directory rather than main directory", action = "store_true")
 args = parser.parse_args()
 problem_file = args.problem_file
 init_solution_file = args.init_solution_file
@@ -135,6 +136,7 @@ num_trucks = int(args.num_trucks)
 do_plot = args.plot
 truck_capacity = int(args.truck_capacity)
 world_record_score = float( args.world_record_score )
+test_environment = args.test
 
 init(problem_file)
 state = doAStar(initial_state(init_solution_file), do_plot)

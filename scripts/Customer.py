@@ -26,4 +26,4 @@ class Customer():
         return ((customer.y - self.y)**2 + (customer.x - self.x)**2)**0.5
 
     def timewindow(self):
-        return (self.open_time)
+        return self.open_time

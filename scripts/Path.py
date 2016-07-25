@@ -18,6 +18,9 @@ class Path():
     def calculate_distance(self):
         """Returns the total distance in the route"""
 
+        if len( self ) == 0:
+            return 0
+
         prev_customer = self.route[0]
         distance = Distances.get_distance(0, prev_customer.number)
 
@@ -42,6 +45,8 @@ class Path():
         if prev_customer == cust:
             return time
 
+        time += prev_customer.service_time
+
         for c in self.route[1:]:
 
             time += Distances.get_distance(prev_customer.number, c.number)
@@ -61,6 +66,9 @@ class Path():
     def missed_customers(self):
         """Formerly isValid().  Returns whether the truck makes it on time to every customer by returning
         an array of the customers missed. If the path is valid, an empty array will be returned"""
+
+        if len( self ) == 0:
+            return []
 
         prev_customer = self.route[0]
         time = Distances.get_distance(prev_customer.number,0)
@@ -129,16 +137,17 @@ class Path():
 
     def intersects_self(self):
         """Returns whether the path intersects itself"""
-        intersects = 0
+        # start at -1 because it always counts the return to the depot as an intersection, which is "unfair"
+        intersects = -1
         points = [(0, 0)]
         for c in self.route:
             points.append((c.x, c.y))
 
         points.append((0,0))
 
-        for i in range(1, len(points)):
-            for j in range(i + 1, len(self.route)):
-                if (Path.lines_intersect(points[i - 1], points[i], points[j], points[j - 1])):
+        for i in range(0, len(points) - 2):
+            for j in range(i + 2, len(points) - 1 ):
+                if (Path.lines_intersect(points[i], points[i+1], points[j], points[j+1])):
                     intersects += 1
 
         return intersects
@@ -218,6 +227,9 @@ class Path():
         return {customer.number for customer in self.route}
 
     def get_wait_time(self):
+        if len( self ) == 0:
+            return 0
+
         wait_time = 0
         prev_customer = self.route[0]
         time = Distances.get_distance(prev_customer.number, 0)
@@ -225,6 +237,8 @@ class Path():
         if time < prev_customer.open_time:
             wait_time += prev_customer.open_time - time
             time = prev_customer.open_time
+
+        time += prev_customer.service_time
 
         for c in self.route[1:]:
 

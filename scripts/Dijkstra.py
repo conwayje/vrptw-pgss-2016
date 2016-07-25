@@ -13,28 +13,6 @@ from Path import Path
 class Dijsktra():
 
     @staticmethod
-    # may use this
-    def create_graph(customers):
-        g = {}
-        for c in customers:
-            g[c] = {}
-            for d in customers:
-                g[c][d] = d.distance_to_customer(c)
-        return g
-
-    @staticmethod
-    def dijkstra(customers, source):
-        d = {}
-        unvisited = []
-        for c in customers:
-            d[c] = float('inf')
-            unvisited.append(c)
-        d[source] = 0
-        for c in unvisited:
-            d[c] = c.distance_to_customer(source)
-            # @TODO -- what is the deal with this thing ((o_O))
-
-    @staticmethod
     def get_nearest_neighbors_all_trucks(customers, source, num_trucks):
         l = len(customers)
         plen = 1
@@ -46,17 +24,6 @@ class Dijsktra():
                 if plen < l:
                     path.append(Dijsktra.get_next(path[-1], customers, paths))
                     plen += 1
-                # unvisited.pop(source)
-
-        # One truck at a time
-        # for path in paths:
-        #     plen = 1
-        #     while (plen < l / numtrucks):
-        #         plen += 1
-        #         path.append(get_next(path[-1], customers, paths))
-
-        #for path in paths: print path
-        #for path in paths: print len(path)
 
         return paths
 
@@ -82,7 +49,6 @@ class Dijsktra():
 
     @staticmethod
     def get_next_one_path(source, customers, path):
-
         min = float('inf')
         next = source
         for i in range(len(customers)):

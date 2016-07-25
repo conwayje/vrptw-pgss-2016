@@ -17,3 +17,8 @@
 - add cleverness to cluster move
 - case move choices and child numbers on situation in AStar / etc.
 - use deque
+- detect path/path intersections; store information about them based on path number or truck number (?)
+- make move to specifically fix intersections
+- up the penalty on intersections
+- focus more on close moves
+- catch keyboard interrupts?????

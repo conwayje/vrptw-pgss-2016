@@ -3,11 +3,15 @@ from Visual import Visual
 from Depot import Depot
 #from ClusterSolution import ClusterSolution
 
-path = '../standard_instances/'
 
 customers = []
 
-def import_customers(filename):
+def import_customers(filename, is_test):
+    
+    if is_test:
+        path = '../test_instances/'
+    else:
+        path = '../standard_instances/'
     with open(path + filename) as f:
         for i in xrange(5):
             f.next()

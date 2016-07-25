@@ -63,7 +63,3 @@ class Cluster():
         cluster_radius_final = new_farthest_distance
 
         return cluster_radius_final
-
-    # personal request:  keep clusters small so that [cluster].get_solution() is useful more often
-    # than not =)
-    
