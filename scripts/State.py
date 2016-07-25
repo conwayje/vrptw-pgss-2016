@@ -59,7 +59,7 @@ class State():
         return score
 
     # @TODO -- still lots to do here, of course ;)
-    def get_children(self, big = True, medium = True, small = True):
+    def get_children(self, big = True, medium = True, small = True, extra_big_move_children = False ):
         children = [] # list of states
         children_paths = []
         paths = self.paths
@@ -69,7 +69,7 @@ class State():
             children_paths += State.shuffle( paths, 5 )
             #might be good or not, we've never used it
             children_paths += State.alternating_shuffle_within_path( paths )
-            children_paths += State.large_reconstruction( paths )
+            children_paths += State.large_reconstruction( paths, 1000 if extra_big_move_children else 200 )
         if medium:
             #not that good
             #children_paths += State.cycle(paths, 4)
@@ -361,7 +361,7 @@ class State():
         return children
 
     @staticmethod
-    def large_reconstruction(paths, min_percentage = 25, max_percentage = 75, n_children = 200):
+    def large_reconstruction(paths, n_children = 200, min_percentage = 25, max_percentage = 75 ):
         children = []
         n_customers = sum([len(path.route) for path in paths])
         n_paths = len(paths)

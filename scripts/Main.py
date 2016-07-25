@@ -22,8 +22,8 @@ except:
 # 				RC208.txt, RC208_wr_solution.txt
 
 # sample calls (made from inside the scripts directory):
-# python Main.py C201 C201_wr_solution 3 700
-# python Main.py RC208 RC208_wr_solution 3 1000 --plot
+# python Main.py C201 C201_wr_solution 3 700 591.55
+# python Main.py RC208 RC208_wr_solution 3 1000 891.65 --plot
 
 customers = None
 depot = None
@@ -78,6 +78,25 @@ def initial_state(filename):
     elif filename == "split_nearest_neighbors":
         paths = []
         depot_c = Customer(0, 0, 0, 0, 0, 0, 0)
+
+        ##################################################
+        ##################################################
+        ##################################################
+        ##################################################
+        ##################################################
+        ##################################################
+        ##################################################
+        ##################################################
+        # PLEASE DON'T MAKE ANY CHANGES TO THIS PART BELOW
+        # UNLESS YOU FIX THE TRUCK NUMBER DEPENDENCY
+        # WHILE YOU'RE DOING IT.  THANKS TEAM ;) ;) ;)
+        ##################################################
+        ##################################################
+        ##################################################
+        ##################################################
+        ##################################################
+        ##################################################
+        ##################################################
         route1 = [depot_c]
         route2 = [depot_c]
         route3 = [depot_c]
@@ -89,6 +108,19 @@ def initial_state(filename):
                     route2.append(customer)
                 else:
                     route3.append(customer)
+        ##################################################
+        ##################################################
+        ##################################################
+        ##################################################
+        ##################################################
+        ##################################################
+        ##################################################
+        ##################################################
+        ##################################################
+        ##################################################
+        ##################################################
+        ##################################################
+
 
         # @TODO truck number dependency
         routes = [ Dijsktra.get_nearest_neighbors( [depot_c], [depot_c][0] ) for x in range( num_trucks ) ]
@@ -110,6 +142,7 @@ parser.add_argument("problem_file")
 parser.add_argument("init_solution_file")
 parser.add_argument("num_trucks")
 parser.add_argument("truck_capacity")
+parser.add_argument("world_record_score")
 parser.add_argument("--plot", help="plot the map before the main loop engages", action = "store_true")
 args = parser.parse_args()
 problem_file = args.problem_file
@@ -117,6 +150,7 @@ init_solution_file = args.init_solution_file
 num_trucks = int(args.num_trucks)
 do_plot = args.plot
 truck_capacity = args.truck_capacity
+world_record_score = float( args.world_record_score )
 
 init(problem_file)
-doAStar(initial_state(init_solution_file))
+doAStar(initial_state(init_solution_file), world_record_score)
