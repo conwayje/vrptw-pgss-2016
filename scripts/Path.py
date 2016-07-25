@@ -274,7 +274,21 @@ class Path():
                     intersecting_segments.append([points_1[i][0], points_1[i+1][0], points_2[j][0], points_2[j+1][0]])
         return intersecting_segments
 
+    def num_unreasonable_distnaces(self):
+        threshhold = max(Distances.matrix[0])/3.5
+        num = 0
 
+        prev_customer = self.route[0]
+        distance = Distances.get_distance(0, prev_customer.number)
+
+        if distance > threshhold:
+            num += 1
+
+        for c in self.route[1:]:
+            if(Distances.get_distance(prev_customer.number, c.number) > threshhold):
+                num += 1
+            prev_customer = c
+        return num
     def insert_customer( self, anchor_id, inserted_id, customer_list ):
         """ Args: ( ID of a customer; ID of a customer to be inserted onto the path after anchor; list of customers to choose from )"""
         anchor_index = self.get_customer_index( anchor_id )
