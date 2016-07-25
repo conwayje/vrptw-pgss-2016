@@ -81,6 +81,7 @@ class State():
             children_paths += State.time_swap(paths)
             children_paths += State.reverse(paths)
             children_paths += State.fix_intersections(paths)
+            children_paths += State.fix_inter_path_intersections(paths)
             children_paths += State.sort_paths( paths )
             #children_paths += State.path_swap( paths, 15 )
             #children_paths += State.distance_swap( paths )
@@ -168,11 +169,13 @@ class State():
             new_paths = copy.deepcopy(paths)
             path = new_paths[i]
             intersections = path.intersects_self()
-            for intersection in intersections:
+            if(len(intersections) > 0):
+                k = randint(0, len(intersections) - 1)
+                intersection = intersections[k]
                 i1 = path.route.index(intersection[1])
                 i2 = path.route.index(intersection[2])
                 path.route[i1], path.route[i2] = path.route[i2], path.route[i1]
-            children.append(new_paths)
+                children.append(new_paths)
         return children
 
     @staticmethod #medium move
@@ -384,7 +387,7 @@ class State():
         children.append(new_paths)
         return children
             
-                
+
         
     @staticmethod #large move
     def alternating_shuffle_within_path(paths):
@@ -506,6 +509,28 @@ class State():
 
         return children
 
+    @staticmethod
+    def fix_inter_path_intersections(paths):
+        children = []
+        for i in range(len(paths)):
+            for j in range(i+1, len(paths)):
+                new_paths = copy.deepcopy(paths)
+                intersections = new_paths[i].intersects_with_other(new_paths[j])
+
+                k = randint(0,len(intersections)-1)
+                points = intersections[k]
+                cust1 = points[randint(0,1)]
+                cust2 = points[randint(2,3)]
+                if not(cust1 == None or cust2 == None):
+                    index1 = new_paths[i].route.index(cust1)
+                    index2 = new_paths[j].route.index(cust2)
+                    new_paths[i].route[index1] = cust2
+                    new_paths[j].route[index2] = cust1
+
+                children.append(new_paths)
+        return children
+
+
 
     def __repr__(self):
         str = "\n<State: "
@@ -513,6 +538,3 @@ class State():
             str += "Truck {0}: {1}".format(i, self.trucks[i].path.route)
         str += ">"
         return str
-
-
-
