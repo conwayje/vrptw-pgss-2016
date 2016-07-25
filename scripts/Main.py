@@ -63,9 +63,10 @@ def initial_state(filename):
 
     #doesn't work yet, don't use
     elif filename == "split_nearest_neighbors":
+        print "Generating split nearest neighbors solution..."
         paths = []
         depot_c = Customer(0, 0, 0, 0, 0, 0, 0)
-
+        
         ##################################################
         ##################################################
         ##################################################
@@ -112,7 +113,7 @@ def initial_state(filename):
         # @TODO truck number dependency
         routes = [ Dijsktra.get_nearest_neighbors( [depot_c], [depot_c][0] ) for x in range( num_trucks ) ]
         state = State( [Truck( k + 1, 0, 0, truck_capacity, path=routes[k] ) for k in range( num_trucks ) ], parent = None)
-
+        state.plot()
     else:
         state = import_solution(filename  + ".txt")
 
