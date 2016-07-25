@@ -11,17 +11,17 @@ def score(state):
     cargo = state.trucks[0].cargo
 
     # Add the distance (benchmark score) from paths
-    # score += state.calculate_distance()
+    score += state.calculate_distance()
 
     for path in paths:
-    #     # Missed customers by time
-    #     score += 1000000 * path.number_missed_by_time()
-    #     # Intersecting self
+        # Missed customers by time
+        score += 1000000 * path.number_missed_by_time()
+        # Intersecting self
         score += 10 * path.number_intersections()
-    #     # Missed customers by cargo
-    #     score += 5000 * path.number_missed_by_cargo(cargo)
-    #     # Total wait time
-    #     score += 5 * path.get_wait_time()
+        # Missed customers by cargo
+        score += 5000 * path.number_missed_by_cargo(cargo)
+        # Total wait time
+        score += 5 * path.get_wait_time()
 
     for i in range(len(paths)):
         for j in range(i+1, len(paths)):
