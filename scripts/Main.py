@@ -13,11 +13,6 @@ from Dijkstra import Dijsktra
 from ClusterStore import ClusterStore
 import copy
 import argparse
-try:
-    import ipdb
-except:
-    print "import ipdb skipped because Dan's school is full of jerks"
-
 # Filenames:    C201.txt, C201_wr_solution.txt
 # 				RC208.txt, RC208_wr_solution.txt
 
