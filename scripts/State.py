@@ -81,7 +81,8 @@ class State():
             #children_paths += State.path_swap( paths, 15 )
             #children_paths += State.distance_swap( paths )
             children_paths += State.switch_between_paths( paths, 100 )
-            children_paths += State.swap_neighbors( paths )
+            #children_paths += State.swap_neighbors( paths )
+            children_paths += State.insert( paths, 8 )
         # child_paths should be a list containing three paths per entry (as a list)
         for child_paths in children_paths:
             trucks = []
@@ -179,7 +180,27 @@ class State():
             children.append(new_paths)
             return children
     
+    @staticmethod
+    def insert(paths, numtimes):
+        children = []
+        new_paths = copy.deepcopy(paths)
+        for i in range(numtimes):
+            rp = randint(0, len(paths)-1)
+            path = new_paths[rp]
+            rstart = randint(0, len(path)-1)
+            rend = randint(0, len(path)-2)
+            while rend == rstart:
+                rend = randint(0, len(path))
+                
+            c = path.route[rstart]
+            path.route.pop(path.route.index(path.route[rstart]))
+            path.route.insert(rend, c)
+        
+            children.append(new_paths)
+        
+        return children
             
+        
     @staticmethod #small move
     def redistribute_more_evenly(paths):
         """ For ex, with 100 customers and 3 trucks, we expect 33 per truck.  Siphon off the
@@ -404,7 +425,9 @@ class State():
         for path in paths:
             new_path = []
             new_path = copy.deepcopy(path)
-            r = randint(0, len(new_path.route))
+            #print new_path
+            #print new_path.route
+            r = randint(0, len(new_path))
             neighbor = new_path.route[r]
             new_path.route[r] = new_path.route[r+1]
             new_path.route[r+1] = neighbor
