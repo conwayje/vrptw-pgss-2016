@@ -8,6 +8,7 @@ from Depot import Depot
 from ClusterStore import ClusterStore
 from random import randint, randrange, choice
 from Distances import Distances
+from Customer import Customer
 import random
 try:
     import ipdb
@@ -76,6 +77,8 @@ class State():
             #not that good
             #children_paths += State.redistribute_more_evenly(paths)
             #good
+       
+            children_paths += State.time_swap(paths)
             children_paths += State.reverse(paths)
             children_paths += State.fix_intersections(paths)
             children_paths += State.sort_paths( paths )
@@ -83,7 +86,7 @@ class State():
             #children_paths += State.distance_swap( paths )
             children_paths += State.switch_between_paths( paths, 100 )
             #children_paths += State.swap_neighbors( paths )
-            children_paths += State.insert( paths, 8 )
+            children_paths += State.move_customer( paths, 8 )
         # child_paths should be a list containing three paths per entry (as a list)
         for child_paths in children_paths:
             trucks = []
@@ -196,7 +199,7 @@ class State():
             return children
     
     @staticmethod
-    def insert(paths, numtimes):
+    def move_customer(paths, numtimes):
         children = []
         new_paths = copy.deepcopy(paths)
         for i in range(numtimes):
@@ -480,10 +483,36 @@ class State():
                 if customer.number == customer_id:
                     return path
 
+    @staticmethod
+    ## Swaps late
+    def time_swap (paths, n_children = 15):
+        children = []
+        for i in range( n_children ):
+            new_paths = copy.deepcopy(paths)
+            path = new_paths[randrange( len( paths ) ) ]
+            # gets two random customers, if the first is farther then the secondthen swap
+            index_a = randrange( len( path ) )
+            index_b = randrange( len( path ) )
+            customer1 = path.route[ index_a ]
+            customer2 = path.route[ index_b ]
+            ## WE CAN ALSO DO THIS BASED ON SERVICE TIMES
+
+            if (index_a < index_b and customer1.close_time > customer2.close_time):
+                ## if the closing time of cust1 is later than that of cust2, swap 1 and 2
+                path.route[index_a], path.route[index_b] = path.route[index_b], path.route[index_a]
+            elif (index_a > index_b and customer1.close_time < customer2.close_time):
+                path.route[index_a], path.route[index_b] = path.route[index_b], path.route[index_a]
+            children.append(new_paths)
+
+        return children
+
+
     def __repr__(self):
         str = "\n<State: "
         for i in range(len(self.trucks)):
             str += "Truck {0}: {1}".format(i, self.trucks[i].path.route)
         str += ">"
         return str
+
+
 
