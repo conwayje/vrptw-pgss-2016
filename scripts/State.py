@@ -55,6 +55,7 @@ class State():
         children = [] # list of states
         children_paths = []
         paths = self.paths
+        trucks = self.trucks
 
         if big:
             #good
@@ -77,7 +78,7 @@ class State():
             #not that good
             #children_paths += State.redistribute_more_evenly(paths)
             #good
-       
+            children_paths += State.cargo_swap(paths, trucks)
             children_paths += State.time_swap(paths)
             children_paths += State.reverse(paths)
             children_paths += State.fix_intersections(paths)
@@ -341,9 +342,11 @@ class State():
         return children    
     
     @staticmethod #small move
-    def cargo_swap(paths):
+    def cargo_swap(paths, trucks):
         children = []
         for i in range( 15 ):
+            truck = trucks
+            print (truck)
             new_paths = [copy.deepcopy(element) for element in paths]
             ipdb.set_trace()
             path_index = randint(0, len(paths)-1)
@@ -353,7 +356,7 @@ class State():
             remaining_paths = new_paths.remove[path_a]
             path_b = randint(0, len(remaining_paths)-1)
             # gets two random customers, if the first is farther then the secondthen swap
-            if (path_a.cargo_used > truck.cargo):
+            if (path_a.cargo_used > trucks.cargo):
                 customer_a = randint(0, len(path_a.route) - 1)
                 customer_b = randint(0, len(path_b.route) - 1)
                 path.route[customer_a], path.route[customer_b] = path.route[customer_b], path.route[customer_a]
