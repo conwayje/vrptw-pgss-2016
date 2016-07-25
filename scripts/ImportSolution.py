@@ -15,7 +15,7 @@ path = '../standard_instances/'
 
 def import_solution(filename):
     with open(path + filename) as f:
-        customers = import_customers(filename.split("_")[0] + ".txt")
+        customers = import_customers(filename.split("_")[0] + ".txt", False)
         lines = f.readlines()
 
         ids = []
