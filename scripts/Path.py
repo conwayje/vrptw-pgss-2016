@@ -139,12 +139,12 @@ class Path():
     def intersects_self(self):
         """Returns where the path intersects itself"""
         intersecting_segments = []
-        points = [(Customer(0,0,0,0,0,0,0), 0, 0)]
+        points = [(None, 0, 0)]
 
         for c in self.route:
             points.append((c, c.x, c.y))
 
-        points.append((Customer(0,0,0,0,0,0,0), 0, 0))
+        points.append((None, 0, 0))
 
         for i in range(0, len(points) - 2):
             for j in range(i + 2, len(points) - 1 ):
@@ -259,10 +259,21 @@ class Path():
 
     def intersects_with_other(self, path):
         points_1 = [(None, 0, 0)]
-        points_2 = [(0, 0)]
+        points_2 = [(None, 0, 0)]
         for c in self.route:
-            points_1.append((c.x, c.y))
-        points_1.append((0,0))
+            points_1.append((c, c.x, c.y))
+        for c in path.route:
+            points_2.append((c, c.x, c.y))
+        points_1.append((None, 0,0))
+        points_2.append((None, 0,0))
+
+        intersecting_segments = []
+        for i in range(len(points_1)-1):
+            for j in range(len(points_2) - 1):
+                if Path.lines_intersect(points_1[i], points_1[i+1], points_2[j], points_2[j+1]):
+                    intersecting_segments.append([points_1[i][0], points_1[i+1][0], points_2[j][0], points_2[j+1][0]])
+        return intersecting_segments
+
 
     def insert_customer( self, anchor_id, inserted_id, customer_list ):
         """ Args: ( ID of a customer; ID of a customer to be inserted onto the path after anchor; list of customers to choose from )"""
