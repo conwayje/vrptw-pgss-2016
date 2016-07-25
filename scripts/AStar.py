@@ -7,7 +7,7 @@ try:
 except:
     print "Skipping import of ipdb because Dan's school is full of jerks"
 
-def doAStar(initial_state, world_record = 591.55):
+def doAStar(initial_state, world_record = 591.55 ):
     queue = []
 
     generation = 0
@@ -90,22 +90,35 @@ def doAStar(initial_state, world_record = 591.55):
         for c in children:
             heappush(queue, ( score(c), c) )
 
+        # is this useful?
+        # while len(queue) > 0 and not done:
+        #     (next, next_state) = queue[0]
+        #     if next == priority:
+        #         heappop(queue)
+        #     else:
+        #         done = True
+
         generation += 1
 
     return state
 
 def handle_world_record( state ):
-    for x in range(5):
-        print "###############################################"
-    print "### World record solution was found"
-    for x in range(5):
-        print "###############################################"
+    try:
+        for x in range(5):
+            print "###############################################"
+        print "### World record solution was found"
+        for x in range(5):
+            print "###############################################"
 
-    print state
-    print state.get_score()
+        print state
+        print state.get_score()
 
-    for truck in state.trucks:
-        for c in truck.path.route:
-            print c.number,
-        print
+        for truck in state.trucks:
+            for c in truck.path.route:
+                print c.number,
+            print
 
+    except KeyboardInterrupt as e:
+        print "Stopping"
+    
+    return state

@@ -9,14 +9,15 @@ from Distances import Distances
 class Path():
 
     def __init__(self, route):
-        self.route = route #list of customers
+        self.route = route # list of customers
         self.distance = self.calculate_distance()
 
     def __len__(self):
         return len( self.route )
 
-    # returns the total distance
     def calculate_distance(self):
+        """Returns the total distance in the route"""
+
         prev_customer = self.route[0]
         distance = Distances.get_distance(0, prev_customer.number)
 
@@ -25,7 +26,6 @@ class Path():
             prev_customer = c
 
         distance += Distances.get_distance(prev_customer.number, 0)
-
 
         return distance
 
@@ -38,7 +38,6 @@ class Path():
 
         if time < prev_customer.open_time:
             time = prev_customer.open_time
-
 
         if prev_customer == cust:
             return time
@@ -57,16 +56,10 @@ class Path():
 
             time += c.service_time
 
-
         return -1
 
-    def is_valid(self):
-        # @TODO -- just a note: comments before a function aren't "part of python" in any really meaningful ways.
-        # if you do it like this -- called a docstring -- then you can actually access this information while you're
-        # using a python interpreter and such, which can be very convenient.
-        #
-        # you don't need to do anything here; just a note for the future
-        """returns whether the truck makes it on time to every customer by returning
+    def missed_customers(self):
+        """Formerly isValid().  Returns whether the truck makes it on time to every customer by returning
         an array of the customers missed. If the path is valid, an empty array will be returned"""
 
         prev_customer = self.route[0]
@@ -74,7 +67,7 @@ class Path():
 
         missedCustomers = []
 
-        # if truck arrives before customer is open, assume truck waitds
+        # if truck arrives before customer is open, assume truck waits
         if time < prev_customer.open_time:
             time = prev_customer.open_time
 
@@ -88,9 +81,8 @@ class Path():
             time += Distances.get_distance(prev_customer.number, c.number)
             prev_customer = c
 
-            # if truck arrives before customer is open, assume truck waitds
+            # if truck arrives before customer is open, assume truck waits
             if time < c.open_time:
-                #
                 time = c.open_time
 
             # if truck arrives late, add to missedCustomers
@@ -98,13 +90,11 @@ class Path():
                 missedCustomers.append(c)
 
             time += c.service_time
-        # @TODO -- the name is_valid makes me expect this would return at least a boolean value
-        # [and perhaps something else in addition]
-        # maybe we should return True/False, missedCustomers instead?
+
         return missedCustomers
 
-    # gets the customer the truck was last at
     def get_last_customer_visited(self, current_time):
+        """Gets the customer the truck was last at"""
         prev_customer = self.route[0]
 
         time = Distances.get_distance(prev_customer.number, 0)
@@ -137,8 +127,8 @@ class Path():
             prev_customer = c
         return None
 
-    # returns whether the path intersects itself
     def intersects_self(self):
+        """Returns whether the path intersects itself"""
         intersects = 0
         points = [(0, 0)]
         for c in self.route:
@@ -163,17 +153,15 @@ class Path():
             self.insert(index, c)
             index += 1
 
-
-    # Given two lines AB and CD, determines if they intersect
-    # If
-    # source http://bryceboe.com/2006/10/23/line-segment-intersection-algorithm/
+    # Credit: http://bryceboe.com/2006/10/23/line-segment-intersection-algorithm/
     @staticmethod
     def lines_intersect(A, B, C, D):
+        """Given two lines AB and CD, determines if they intersect"""
         return Path.ccw(A,C,D) != Path.ccw(B,C,D) and Path.ccw(A,B,C) != Path.ccw(A,B,D)
 
-    # helper method for lines_intersect()
     @staticmethod
     def ccw(A, B, C):
+        """Helper method for lines_intersect()"""
         # @TODO -- there's a liiiiittle bit too much magic happening here.  so what is
         # "A" exactly, and what does the assignment do?
         #
@@ -206,16 +194,20 @@ class Path():
                 return result
         return result
 
-    def get_indice_customer_missed(self, cargo):
-        ''':return the indice of the first customer missed, will return -1 if makes it '''
-        indice = 0
+    def number_missed_by_time(self):
+        return len(self.missed_customers())
+
+    #@TODO -- Please check... was always return 0 before
+    def number_missed_by_cargo(self, cargo):
+        '''Return the number of customers missed by cargo'''
+        index = 0
         cargo_used = 0
         for cust in self.route:
-            if cargo_used > cargo:
-                return indice
             cargo_used += cust.demand
-            indice += 1
-        return -1
+            if cargo_used > cargo:
+                return len(self.route) - index
+            index += 1
+        return 0
 
     def customer_ids(self):
         """Returns a *SET* of customer IDs based on the route of this path.
@@ -225,7 +217,6 @@ class Path():
         """
         return {customer.number for customer in self.route}
 
-
     def get_wait_time(self):
         wait_time = 0
         prev_customer = self.route[0]
@@ -234,7 +225,6 @@ class Path():
         if time < prev_customer.open_time:
             wait_time += prev_customer.open_time - time
             time = prev_customer.open_time
-
 
         for c in self.route[1:]:
 

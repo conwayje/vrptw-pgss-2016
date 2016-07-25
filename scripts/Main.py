@@ -27,7 +27,8 @@ except:
 
 customers = None
 depot = None
-num_trucks = 0
+num_trucks = None
+truck_capacity = None
 
 def init(filename):
     global customers, depot
@@ -41,27 +42,16 @@ def init(filename):
 
     depot = Depot(0,0)
 
-    # plot the problem
-    # Visual.plot_customers(depot, customers)
-    # Visual.show()
-
 def initial_state(filename):
     global customers
 
-    # @TODO -- this seems a little bit more naive than we want for an initial solution =/
-    # maybe try to do something along these lines but also implement dijkstra or something like that?
-    # as in:  partition into three sets, and then for each set, go to the closest remaining unserved customer
-    # until there are no customers remaining.
-    # just a suggestion; y'all can be as creative as you want
-
-    # @TODO -- just for testing, write init solutions to file
     if filename == "nearest_neighbors":
         print "Generating nearest neighbors solution..."
         depot_c = Customer(0, 0, 0, 0, 0, 0, 0)
         c = [depot_c]
         for cust in customers:
             c.append(cust)
-            
+
         paths = Dijsktra.get_nearest_neighbors_all_trucks(c, depot_c, num_trucks)
 
         trucks = []
@@ -70,10 +60,7 @@ def initial_state(filename):
             trucks.append(t)
 
         state = State( trucks, parent = None )
-        
-        if do_plot:
-            state.plot()
-        
+
     #doesn't work yet, don't use
     elif filename == "split_nearest_neighbors":
         paths = []
@@ -100,7 +87,7 @@ def initial_state(filename):
         route1 = [depot_c]
         route2 = [depot_c]
         route3 = [depot_c]
-        customers_by_distance = sorted(customers, key=lambda customer: customer.distance()*customer.timewindow())
+        customers_by_distance = sorted(customers, key=lambda customer: Distances.get_distance(depot_c.number, customer.number) * customer.timewindow())
         for customer in customers_by_distance:
                 if customer.x < 0 and customer.y > -15:
                     route1.append(customer)
@@ -126,14 +113,11 @@ def initial_state(filename):
         routes = [ Dijsktra.get_nearest_neighbors( [depot_c], [depot_c][0] ) for x in range( num_trucks ) ]
         state = State( [Truck( k + 1, 0, 0, truck_capacity, path=routes[k] ) for k in range( num_trucks ) ], parent = None)
 
-        if do_plot:
-            state.plot()
-        
     else:
         state = import_solution(filename  + ".txt")
-        
-        if do_plot:
-            state.plot()
+
+    if do_plot:
+        state.plot()
 
     return state
 
@@ -149,8 +133,15 @@ problem_file = args.problem_file
 init_solution_file = args.init_solution_file
 num_trucks = int(args.num_trucks)
 do_plot = args.plot
-truck_capacity = args.truck_capacity
+truck_capacity = int(args.truck_capacity)
 world_record_score = float( args.world_record_score )
 
 init(problem_file)
-doAStar(initial_state(init_solution_file), world_record_score)
+state = doAStar(initial_state(init_solution_file), do_plot)
+if(do_plot):
+    state.plot()
+    for truck in state.trucks:
+        for Customer in truck.path.route:
+            print Customer.number,
+
+        print

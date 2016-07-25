@@ -1,12 +1,13 @@
 from Visual import Visual
 from Truck import Truck
 import copy
-import math
+from HeuristicScore import score
 from Dijkstra import Dijsktra
 from Path import Path
 from Depot import Depot
 from ClusterStore import ClusterStore
 from random import randint, randrange, choice
+from Distances import Distances
 import random
 try:
     import ipdb
@@ -40,23 +41,11 @@ class State():
 
     def plot_missed(self):
         for truck in self.trucks:
-            Visual.plot_customers(Depot(0,0), truck.path.is_valid())
-            Visual.plot_customers(Depot(0,0), truck.truckpath.is_valid())
-            Visual.plot_customers(Depot(0,0), truck.path.is_valid())
-            Visual.show()
+            Visual.plot_customers(Depot(0,0), truck.path.missed_customers())
+        Visual.show()
 
-    # @TODO -- point to heuristic score
     def get_score(self):
-        missed_customer_penalty = 10**6
-
-        paths = self.paths
-
-        score = sum( [path.distance for path in paths] )
-
-        for path in paths:
-            score += len( path.is_valid() ) * missed_customer_penalty
-
-        return score
+        return score(self)
 
     # @TODO -- still lots to do here, of course ;)
     def get_children(self, big = True, medium = True, small = True, extra_big_move_children = False ):
@@ -290,7 +279,7 @@ class State():
             # gets two random customers, if the first is farther then the secondthen swap
             customer_a = randint(0, len(path.route) - 1)
             customer_b = randint(customer_a, len(path.route) - 1)
-            if path.route[customer_a].distance() > path.route[customer_b].distance():
+            if Distances.get_distance(0, path.route[customer_a].number) > Distances.get_distance(0, path.route[customer_a].number):
                 path.route[customer_a], path.route[customer_b] = path.route[customer_b], path.route[customer_a]
             children.append(new_paths)
         return children
@@ -425,3 +414,4 @@ class State():
             str += "Truck {0}: {1}".format(i, self.trucks[i].path.route)
         str += ">"
         return str
+

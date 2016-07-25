@@ -9,31 +9,20 @@ from Truck import Truck
         
 def score(state):
     score = 0
-
-    # placeholder paths until state is generated
     paths = state.paths
-    # get the distance (benchmark score) from paths
-    distance = state.calculate_distance()
+    cargo = state.trucks[0].cargo
 
-    score += distance
+    # Add the distance (benchmark score) from paths
+    score += state.calculate_distance()
+
     for path in paths:
-
-        # ya done goofed
-        # The following is for not hitting a customer 
-
-        score += 1000000 * len(path.is_valid())
-        #If the path ever crosses itself 
+        # Missed customers by time
+        score += 1000000 * path.number_missed_by_time()
+        # Intersecting self
         score += 10 * path.intersects_self()
-
-        score += 5000 * ( len(path.route ) - path.get_indice_customer_missed(state.trucks[0].cargo))
-
-        #The following is for hitting a customer, but not having enough cargo 
-        score += 5000 * ( len(path.route ) - path.get_indice_customer_missed(state.trucks[0].cargo))
-        # The following is a penalty for each minute spent waiting 
-
-        score += 5000 * ( len(path.route ) - path.get_indice_customer_missed(state.trucks[0].cargo))
+        # Missed customers by cargo
+        score += 5000 * path.number_missed_by_cargo(cargo)
+        # Total wait time
         score += 5 * path.get_wait_time()
+
     return score
-
-    
-

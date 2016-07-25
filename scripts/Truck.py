@@ -26,5 +26,5 @@ class Truck():
             return self.cargo - self.path.cargo_used()
         return 0
 
-    def get_indice_customer_missed(self, cargo):
-        return self.path.get_indice_customer_missed(self.cargo)
+    def get_index_customer_missed(self, cargo):
+        return self.path.get_index_customer_missed(self.cargo)
