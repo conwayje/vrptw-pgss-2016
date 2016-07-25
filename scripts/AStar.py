@@ -114,8 +114,8 @@ def doAStar(initial_state, do_plot, world_record, plot_kill):
                     for Customer in truck.path.route:
                         print Customer.number,
                     print
-            #if raw_input("Enter to Continue, anything else to quit") != "":
-            #    terminated = True
+            if raw_input("Enter to Continue, anything else to quit") != "":
+               terminated = True
     return state
 
 
