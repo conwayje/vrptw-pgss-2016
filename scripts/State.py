@@ -81,6 +81,7 @@ class State():
             #children_paths += State.path_swap( paths, 15 )
             #children_paths += State.distance_swap( paths )
             children_paths += State.switch_between_paths( paths, 100 )
+            children_paths += State.swap_neighbors( paths )
         # child_paths should be a list containing three paths per entry (as a list)
         for child_paths in children_paths:
             trucks = []
@@ -395,6 +396,25 @@ class State():
             children.append( new_paths )
 
         return children
+    
+    @staticmethod
+    def swap_neighbors(paths):
+        children = []
+        new_paths = []
+        for path in paths:
+            new_path = []
+            new_path = copy.deepcopy(path)
+            r = randint(0, len(new_path.route))
+            neighbor = new_path.route[r]
+            new_path.route[r] = new_path.route[r+1]
+            new_path.route[r+1] = neighbor
+            new_paths.append(new_path)
+        
+        children.append(new_paths)
+        
+        return children
+            
+        
 
     @staticmethod
     def switch_between_paths(paths, numtoswap):
