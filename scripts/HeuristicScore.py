@@ -23,4 +23,8 @@ def score(state):
         # Total wait time
         score += 5 * path.get_wait_time()
 
+    for i in range(len(paths)):
+        for j in range(i+1, len(paths)):
+            score += 10 * len(paths[i].intersects_with_other(paths[j]))
+
     return score
