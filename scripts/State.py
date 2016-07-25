@@ -298,6 +298,26 @@ class State():
             if Distances.get_distance(0, path.route[customer_a].number) > Distances.get_distance(0, path.route[customer_a].number):
                 path.route[customer_a], path.route[customer_b] = path.route[customer_b], path.route[customer_a]
             children.append(new_paths)
+        return children    
+    
+    @staticmethod #small move
+    def cargo_swap(paths):
+        children = []
+        for i in range( 15 ):
+            new_paths = [copy.deepcopy(element) for element in paths]
+            ipdb.set_trace()
+            path_index = randint(0, len(paths)-1)
+            #this gets two random paths that are not the same path. There is definitely a better way to to do this.
+            #feel free to make this not suck
+            path_a = new_paths[path_index]
+            remaining_paths = new_paths.remove[path_a]
+            path_b = randint(0, len(remaining_paths)-1)
+            # gets two random customers, if the first is farther then the secondthen swap
+            if (path_a.cargo_used > truck.cargo):
+                customer_a = randint(0, len(path_a.route) - 1)
+                customer_b = randint(0, len(path_b.route) - 1)
+                path.route[customer_a], path.route[customer_b] = path.route[customer_b], path.route[customer_a]
+            children.append(new_paths)
         return children
 
     @staticmethod #medium move, 3 children
