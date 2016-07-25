@@ -254,6 +254,13 @@ class Path():
 
         return wait_time
 
+    def intersects_with_other(self, path):
+        points_1 = [(None, 0, 0)]
+        points_2 = [(0, 0)]
+        for c in self.route:
+            points_1.append((c.x, c.y))
+        points_1.append((0,0))
+
     def insert_customer( self, anchor_id, inserted_id, customer_list ):
         """ Args: ( ID of a customer; ID of a customer to be inserted onto the path after anchor; list of customers to choose from )"""
         anchor_index = self.get_customer_index( anchor_id )
