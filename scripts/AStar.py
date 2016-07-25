@@ -9,7 +9,7 @@ except:
     print "Skipping import of ipdb because Dan's school is full of jerks"
 
 
-def doAStar(initial_state, do_plot, world_record):
+def doAStar(initial_state, do_plot, world_record, plot_kill):
     queue = []
 
     generation = 0
@@ -107,14 +107,15 @@ def doAStar(initial_state, do_plot, world_record):
             generation += 1
 
         except KeyboardInterrupt:
-            if(do_plot):
+            print "checking interrupt"
+            if plot_kill:
                 state.plot()
                 for truck in state.trucks:
                     for Customer in truck.path.route:
                         print Customer.number,
                     print
             if raw_input("Enter to Continue, anything else to quit") != "":
-                terminated = True
+               terminated = True
     return state
 
 

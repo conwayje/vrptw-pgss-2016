@@ -153,8 +153,7 @@ class Path():
         return intersecting_segments
 
     def number_intersections(self):
-        # subtract 1 because it always counts the return to the depot as an intersection, which is "unfair"
-        return len(self.intersects_self()) - 1
+        return len(self.intersects_self())
 
     # Will probably be used for inserting in completed solutions for clusters
     def append(self, toAppend):
