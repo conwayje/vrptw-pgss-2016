@@ -58,7 +58,9 @@ def doAStar(initial_state, do_plot, world_record, plot_kill):
             print "Gen {0:>6}: Score: {1:<25,} Distance: {2:<25}".format(generation, priority,
                                                                          state.calculate_distance(), grouping=True)
 
-            if state.calculate_distance() < world_record:
+            if state.calculate_distance() < world_record and score < 1000000:
+                ## if distance is below wr and the heuristic score is below 1000000 (i.e. no customers missed)
+                ## hard coded, if heuristic score is changed, then change this!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                 handle_world_record(state)
                 world_record_not_broken = False
                 queue = []

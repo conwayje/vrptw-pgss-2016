@@ -67,7 +67,7 @@ class State():
             #not that good
             #children_paths += State.cycle(paths, 4)
             #might be good, never used
-            #children_paths += State.five_section_swap(paths)
+            children_paths += State.five_section_swap(paths)
             #children_paths += State.random_nearest_neighbors(paths)
             
             # @DEBUG
@@ -353,8 +353,8 @@ class State():
             index = randint(0, len(path)-6)
             for i in range(index, index+5):
                 section_to_swap.append(path.route[i])
-                new_route.remove(new_route[i]) #@FIXME
-
+                new_route.remove(new_route[i - (len(path) - len(new_route))]) #i think this is fixed
+                #object at index of old path => index of new: subtract how much its shorter
             to_insert = randint(0, len(new_route) - 1)
             for k in range(to_insert, to_insert+5):
                 new_route.insert(k, path.route[to_insert])
@@ -363,7 +363,8 @@ class State():
             new_paths[j] = Path(new_route)
             children.append(new_paths)
         return children
-
+            
+        
     #@FIXME
     @staticmethod #medium move? , takes random set of 10 and does nearest neighbors on it
     def random_nearest_neighbors(paths):
@@ -447,6 +448,7 @@ class State():
             new_path = []
             new_path = copy.deepcopy(path)
             r = randint(0, len(new_path.route) - 2)
+
             neighbor = new_path.route[r]
             new_path.route[r] = new_path.route[r+1]
             new_path.route[r+1] = neighbor
