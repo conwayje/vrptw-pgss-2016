@@ -47,11 +47,11 @@ class ClusterStore():
           64, 61, 72, 91, 90, 88, 86, 84, 83, 82, 81, 76, 71, 
           79, 73, 70, 80]
     elif filename == "RC208":
-       rc1 = ClusterSolution(1, [customers[i - 1] for i in [17, 47, 14, 12, 16, 15, 11, 10, 13, 9]])
-       rc2 = ClusterSolution(2, [customers[i - 1] for i in [5, 3, 1, 45, 8, 46, 4, 7, 6, 2]])
-       rc3 = ClusterSolution(3, [customers[i - 1] for i in [43, 44, 42, 40, 39, 38, 41, 36, 35, 37]])
-       rc4 = ClusterSolution(4, [customers[i - 1] for i in [34, 31, 29, 27, 32, 30, 28, 26, 33]])
-       rc5 = ClusterSolution(5, [customers[i - 1] for i in [24, 22, 20, 49, 19, 25, 23, 21, 48, 18]])
+       rc1 = ClusterSolution(1, [customers[i - 1] for i in [17, 47, 14, 12, 16, 15, 11, 10, 13, 9]], Path([customers[i-1] for i in [12, 14, 47, 17, 16, 15, 13, 9, 11, 10]]), 200.0, 7.81024967591, (-35.0, -9.0), False )
+       rc2 = ClusterSolution(2, [customers[i - 1] for i in [5, 3, 1, 45, 8, 46, 4, 7, 6, 2]], Path([customers[i-1] for i in [1, 3, 5, 45, 4, 46, 8, 7, 6, 2]]), 190.0, 7.3, (-20.5, 30.2), False )
+       rc3 = ClusterSolution(3, [customers[i - 1] for i in [43, 44, 42, 40, 39, 38, 41, 36, 35, 37]], Path([customers[i-1] for i in [42, 44, 43, 40, 36, 35, 37, 38, 39, 41]]), 200.0, 7.47328575661, (20.2, 31.9), False )
+       rc4 = ClusterSolution(4, [customers[i - 1] for i in [34, 31, 29, 27, 32, 30, 28, 26, 33]], Path([customers[i-1] for i in [34, 31, 29, 27, 26, 28, 30, 32, 33]]), 150.0, 8.0123361677, (49.44444444444444, -18.333333333333332), False )
+       rc5 = ClusterSolution(5, [customers[i - 1] for i in [24, 22, 20, 49, 19, 25, 23, 21, 48, 18]], Path([customers[i-1] for i in [24, 25, 23, 21, 48, 18, 19, 49, 20, 22]]), 200.0, 6.76239602508, (0.3, -40.8), False )
        ClusterStore.clusters.append(rc1)
        ClusterStore.clusters.append(rc2)
        ClusterStore.clusters.append(rc3)
