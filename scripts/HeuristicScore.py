@@ -17,7 +17,7 @@ def score(state):
         # Missed customers by time
         score += 1000000 * path.number_missed_by_time()
         # Intersecting self
-        score += 10 * path.intersects_self()
+        score += 10 * path.number_intersections()
         # Missed customers by cargo
         score += 5000 * path.number_missed_by_cargo(cargo)
         # Total wait time

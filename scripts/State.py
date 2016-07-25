@@ -80,10 +80,13 @@ class State():
        
             children_paths += State.time_swap(paths)
             children_paths += State.reverse(paths)
+            children_paths += State.fix_intersections(paths)
             children_paths += State.sort_paths( paths )
             #children_paths += State.path_swap( paths, 15 )
             #children_paths += State.distance_swap( paths )
             children_paths += State.switch_between_paths( paths, 100 )
+            #children_paths += State.swap_neighbors( paths )
+            children_paths += State.insert( paths, 8 )
         # child_paths should be a list containing three paths per entry (as a list)
         for child_paths in children_paths:
             trucks = []
@@ -158,6 +161,20 @@ class State():
             children.append(new_paths)
         return children
 
+    @staticmethod
+    def fix_intersections(paths):
+        children = []
+        for i in range(len(paths)):
+            new_paths = copy.deepcopy(paths)
+            path = new_paths[i]
+            intersections = path.intersects_self()
+            for intersection in intersections:
+                i1 = path.route.index(intersection[1])
+                i2 = path.route.index(intersection[2])
+                path.route[i1], path.route[i2] = path.route[i2], path.route[i1]
+            children.append(new_paths)
+        return children
+
     @staticmethod #medium move
     # @TODO -- truck number dependency (entire function)
     def cycle(paths, times):
@@ -181,7 +198,27 @@ class State():
             children.append(new_paths)
             return children
     
+    @staticmethod
+    def insert(paths, numtimes):
+        children = []
+        new_paths = copy.deepcopy(paths)
+        for i in range(numtimes):
+            rp = randint(0, len(paths)-1)
+            path = new_paths[rp]
+            rstart = randint(0, len(path)-1)
+            rend = randint(0, len(path)-2)
+            while rend == rstart:
+                rend = randint(0, len(path))
+                
+            c = path.route[rstart]
+            path.route.pop(path.route.index(path.route[rstart]))
+            path.route.insert(rend, c)
+        
+            children.append(new_paths)
+        
+        return children
             
+        
     @staticmethod #small move
     def redistribute_more_evenly(paths):
         """ For ex, with 100 customers and 3 trucks, we expect 33 per truck.  Siphon off the
@@ -398,6 +435,25 @@ class State():
             children.append( new_paths )
 
         return children
+    
+    @staticmethod
+    def swap_neighbors(paths):
+        children = []
+        new_paths = []
+        for path in paths:
+            new_path = []
+            new_path = copy.deepcopy(path)
+            r = randint(0, len(new_path.route) - 2)
+            neighbor = new_path.route[r]
+            new_path.route[r] = new_path.route[r+1]
+            new_path.route[r+1] = neighbor
+            new_paths.append(new_path)
+        
+        children.append(new_paths)
+        
+        return children
+            
+        
 
     @staticmethod
     def switch_between_paths(paths, numtoswap):
