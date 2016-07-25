@@ -77,6 +77,7 @@ class State():
             #children_paths += State.redistribute_more_evenly(paths)
             #good
             children_paths += State.reverse(paths)
+            children_paths += State.fix_intersections(paths)
             children_paths += State.sort_paths( paths )
             #children_paths += State.path_swap( paths, 15 )
             #children_paths += State.distance_swap( paths )
@@ -154,6 +155,20 @@ class State():
         for i in range(len(paths)):
             new_paths = copy.deepcopy(paths)
             new_paths[i].route.reverse()
+            children.append(new_paths)
+        return children
+
+    @staticmethod
+    def fix_intersections(paths):
+        children = []
+        for i in range(len(paths)):
+            new_paths = copy.deepcopy(paths)
+            path = new_paths[i]
+            intersections = path.intersects_self()
+            for intersection in intersections:
+                i1 = path.route.index(intersection[1])
+                i2 = path.route.index(intersection[2])
+                path.route[i1], path.route[i2] = path.route[i2], path.route[i1]
             children.append(new_paths)
         return children
 
@@ -425,9 +440,7 @@ class State():
         for path in paths:
             new_path = []
             new_path = copy.deepcopy(path)
-            #print new_path
-            #print new_path.route
-            r = randint(0, len(new_path))
+            r = randint(0, len(new_path.route) - 2)
             neighbor = new_path.route[r]
             new_path.route[r] = new_path.route[r+1]
             new_path.route[r+1] = neighbor
