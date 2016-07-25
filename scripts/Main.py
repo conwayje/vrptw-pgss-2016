@@ -61,9 +61,6 @@ def initial_state(filename):
 
         state = State( trucks, parent = None )
 
-        if do_plot:
-            state.plot()
-
     #doesn't work yet, don't use
     elif filename == "split_nearest_neighbors":
         paths = []
@@ -84,14 +81,11 @@ def initial_state(filename):
         routes = [ Dijsktra.get_nearest_neighbors( [depot_c], [depot_c][0] ) for x in range( num_trucks ) ]
         state = State( [Truck( k + 1, 0, 0, truck_capacity, path=routes[k] ) for k in range( num_trucks ) ], parent = None)
 
-        if do_plot:
-            state.plot()
-
     else:
         state = import_solution(filename  + ".txt")
 
-        if do_plot:
-            state.plot()
+    if do_plot:
+        state.plot()
 
     return state
 

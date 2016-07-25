@@ -41,10 +41,8 @@ class State():
 
     def plot_missed(self):
         for truck in self.trucks:
-            Visual.plot_customers(Depot(0,0), truck.path.is_valid())
-            Visual.plot_customers(Depot(0,0), truck.truckpath.is_valid())
-            Visual.plot_customers(Depot(0,0), truck.path.is_valid())
-            Visual.show()
+            Visual.plot_customers(Depot(0,0), truck.path.missed_customers())
+        Visual.show()
 
     def get_score(self):
         # missed_customer_penalty = 10**6
@@ -54,7 +52,7 @@ class State():
         # score = sum( [path.distance for path in paths] )
         #
         # for path in paths:
-        #     score += len( path.is_valid() ) * missed_customer_penalty
+        #     score += len( path.missed_customers() ) * missed_customer_penalty
 
         return score(self)
 

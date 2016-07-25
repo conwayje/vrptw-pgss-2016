@@ -19,7 +19,6 @@ def import_solution(filename):
         lines = f.readlines()
 
         ids = []
-        # @TODO -- truck number dependency (from here until the end of the function)
         for line in lines[5:]:
             ids.append(line.split()[3:])
 
@@ -50,6 +49,3 @@ if __name__ == "__main__":
 
     # plot missed customers
     # state.plot_missed()
-
-    # print number of missed customers
-    # print len(state.truck1.path.is_valid()) + len(state.truck2.path.is_valid()) + len(state.truck3.path.is_valid())
