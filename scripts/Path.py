@@ -5,6 +5,7 @@
 
 import math
 from Distances import Distances
+from Customer import Customer
 
 class Path():
 
@@ -136,21 +137,24 @@ class Path():
         return None
 
     def intersects_self(self):
-        """Returns whether the path intersects itself"""
-        # start at -1 because it always counts the return to the depot as an intersection, which is "unfair"
-        intersects = -1
-        points = [(0, 0)]
-        for c in self.route:
-            points.append((c.x, c.y))
+        """Returns where the path intersects itself"""
+        intersecting_segments = []
+        points = [(Customer(0,0,0,0,0,0,0), 0, 0)]
 
-        points.append((0,0))
+        for c in self.route:
+            points.append((c, c.x, c.y))
+
+        points.append((Customer(0,0,0,0,0,0,0), 0, 0))
 
         for i in range(0, len(points) - 2):
             for j in range(i + 2, len(points) - 1 ):
                 if (Path.lines_intersect(points[i], points[i+1], points[j], points[j+1])):
-                    intersects += 1
+                    intersecting_segments.append([points[i][0], points[i+1][0], points[j][0], points[j+1][0]])
+        return intersecting_segments
 
-        return intersects
+    def number_intersections(self):
+        # subtract 1 because it always counts the return to the depot as an intersection, which is "unfair"
+        return len(self.intersects_self()) - 1
 
     # Will probably be used for inserting in completed solutions for clusters
     def append(self, toAppend):
@@ -176,9 +180,9 @@ class Path():
         #
         # might want to add a docstring describing the structure of the arguments; it's not
         # immediately obvious what it's expecting
-        (Ax, Ay) = A
-        (Bx, By) = B
-        (Cx, Cy) = C
+        (Ac, Ax, Ay) = A
+        (Bc, Bx, By) = B
+        (Cc, Cx, Cy) = C
         return (Cy - Ay) * (Bx - Ax) > (By - Ay) * (Cx - Ax)
 
     def distance_to_previous(self, customer):
