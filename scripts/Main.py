@@ -139,11 +139,4 @@ world_record_score = float( args.world_record_score )
 test_environment = args.test
 
 init(problem_file)
-state = doAStar(initial_state(init_solution_file), do_plot)
-if(do_plot):
-    state.plot()
-    for truck in state.trucks:
-        for Customer in truck.path.route:
-            print Customer.number,
-
-        print
+state = doAStar(initial_state(init_solution_file), do_plot, world_record_score)
