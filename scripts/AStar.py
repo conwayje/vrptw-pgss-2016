@@ -107,12 +107,11 @@ def doAStar(initial_state, do_plot, world_record):
             generation += 1
 
         except KeyboardInterrupt:
-            if(do_plot):
-                state.plot()
-                for truck in state.trucks:
-                    for Customer in truck.path.route:
-                        print Customer.number,
-                    print
+            state.plot()
+            for truck in state.trucks:
+                for Customer in truck.path.route:
+                    print Customer.number,
+                print
             if raw_input("Enter to Continue, anything else to quit") != "":
                 terminated = True
     return state
