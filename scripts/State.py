@@ -86,7 +86,7 @@ class State():
             #children_paths += State.distance_swap( paths )
             children_paths += State.switch_between_paths( paths, 100 )
             #children_paths += State.swap_neighbors( paths )
-            children_paths += State.insert( paths, 8 )
+            children_paths += State.move_customer( paths, 8 )
         # child_paths should be a list containing three paths per entry (as a list)
         for child_paths in children_paths:
             trucks = []
@@ -199,7 +199,7 @@ class State():
             return children
     
     @staticmethod
-    def insert(paths, numtimes):
+    def move_customer(paths, numtimes):
         children = []
         new_paths = copy.deepcopy(paths)
         for i in range(numtimes):
