@@ -49,16 +49,19 @@ def doAStar(initial_state, world_record = 591.55 ):
 
             prev_scores.insert(0, priority)
 
-            if (not len(prev_scores) <= 10):
+
+            children = []
+            if len(prev_scores)>=10:
                 to_remove = prev_scores.pop()
                 diff = priority - to_remove
 
-            children = []
-            if len(prev_scores)>=1:
-                if(priority - prev_scores[0] < 10000000):
+                if(diff > -1000000):
                     children = state.get_children(True, True, True)
+                    print("big move")
                 else:
                     children = state.get_children(True, True, False)
+            else:
+                children = state.get_children(True, True, False)
 
             if counter != 0:
                 average_rate = (rate + average_rate * (counter-1))/counter
