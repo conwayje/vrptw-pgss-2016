@@ -76,7 +76,7 @@ class State():
             #not that good
             #children_paths += State.redistribute_more_evenly(paths)
             #good
-            # @TODO -- add a move that reversed the path (nothing else clever, JUST REVERSE IT ^.^)
+            children_paths += State.reverse(paths)
             children_paths += State.sort_paths( paths )
             #children_paths += State.path_swap( paths, 15 )
             #children_paths += State.distance_swap( paths )
@@ -144,6 +144,15 @@ class State():
 
             children.append( new_paths )
 
+        return children
+
+    @staticmethod
+    def reverse(paths):
+        children = []
+        for i in range(len(paths)):
+            new_paths = copy.deepcopy(paths)
+            new_paths[i].route.reverse()
+            children.append(new_paths)
         return children
 
     @staticmethod #medium move
