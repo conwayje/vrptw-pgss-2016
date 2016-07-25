@@ -194,17 +194,20 @@ class Path():
                 return result
         return result
 
+    def number_missed_by_time(self):
+        return len(self.missed_customers())
+
     #@TODO -- Please check... was always return 0 before
-    def get_index_customer_missed(self, cargo):
-        '''Return the index of the first customer missed, will return -1 if makes it'''
+    def number_missed_by_cargo(self, cargo):
+        '''Return the number of customers missed by cargo'''
         index = 0
         cargo_used = 0
         for cust in self.route:
             cargo_used += cust.demand
             if cargo_used > cargo:
-                return index
+                return len(self.route) - index
             index += 1
-        return -1
+        return 0
 
     def customer_ids(self):
         """Returns a *SET* of customer IDs based on the route of this path.
@@ -214,7 +217,6 @@ class Path():
         """
         return {customer.number for customer in self.route}
 
-
     def get_wait_time(self):
         wait_time = 0
         prev_customer = self.route[0]
@@ -223,7 +225,6 @@ class Path():
         if time < prev_customer.open_time:
             wait_time += prev_customer.open_time - time
             time = prev_customer.open_time
-
 
         for c in self.route[1:]:
 

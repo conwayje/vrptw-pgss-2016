@@ -45,15 +45,6 @@ class State():
         Visual.show()
 
     def get_score(self):
-        # missed_customer_penalty = 10**6
-        #
-        # paths = self.paths
-        #
-        # score = sum( [path.distance for path in paths] )
-        #
-        # for path in paths:
-        #     score += len( path.missed_customers() ) * missed_customer_penalty
-
         return score(self)
 
     # @TODO -- still lots to do here, of course ;)
