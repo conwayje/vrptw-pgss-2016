@@ -376,11 +376,13 @@ class State():
             index = randint(0, len(path)-6)
             for i in range(index, index+5):
                 section_to_swap.append(path.route[i])
-                new_route.remove(new_route[i - (len(path) - len(new_route))]) #i think this is fixed
-                #object at index of old path => index of new: subtract how much its shorter
+                for a in range(len(new_route)-1):
+                    if new_route[a].number == path.route[i].number:
+                        new_route.remove(new_route[a])
+
             to_insert = randint(0, len(new_route) - 1)
-            for k in range(to_insert, to_insert+5):
-                new_route.insert(k, path.route[to_insert])
+            for k in range(0, 5):
+                new_route.insert(to_insert+k, section_to_swap[k])
 
             new_paths = copy.deepcopy(paths)
             new_paths[j] = Path(new_route)
