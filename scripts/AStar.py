@@ -4,6 +4,7 @@ from collections import deque
 from random import random
 from KeyPoller import KeyPoller
 from ImportSolution import write_solution
+from time import time
 import datetime
 
 try:

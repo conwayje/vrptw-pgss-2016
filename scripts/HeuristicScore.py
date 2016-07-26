@@ -4,6 +4,7 @@ from Path import Path
 from Customer import Customer
 from Truck import Truck
 from Distances import Distances
+from time import time
 try:
     import ipdb
 except:
@@ -34,7 +35,6 @@ def score(state):
         score += 5 * path.number_missed_by_cargo(cargo)
         # Total wait time
         score += 10 * path.get_wait_time()
-        # ipdb.set_trace()
         # Excessive waiting
         score += 100 * path.get_number_of_excessive_waits()
         # extra penalty for large distance between two computers
@@ -45,35 +45,10 @@ def score(state):
         score += 200 * ( num_intersections - ( n_customers / 10 ) )
 
     for i in range(len(paths)):
-        for j in range(i+1, len(paths)):
-            score += 50 * len(paths[i].intersects_with_other(paths[j]))
+       for j in range(i+1, len(paths)):
+           score += 50 * len(paths[i].intersects_with_other(paths[j]))
 
     return score
-#
-# Possible Heuristic score to use
-# for path in paths:
-#     # run the intersecting paths algorithm once, which saves it on the instance,
-#     # preventing you from having to run it several times
-#     path.intersects_self()
-#
-#     # Missed customers by time
-#     score += 1000 * path.number_missed_by_time()
-#     # Intersecting self
-#     num_intersections += 100 * len( path.intersecting_segments )
-#     # Missed customers by cargo
-#     score += 1000 * path.number_missed_by_cargo(cargo)
-#     # Total wait time
-#     score += path.get_wait_time()
-#     # extra penalty for large distance between two computers
-#     score += 50 * path.num_unreasonable_distances()
-#
-# for i in range(len(paths)):
-#     for j in range(i + 1, len(paths)):
-#         score += 50 * len(paths[i].intersects_with_other(paths[j]))
-#
-# if (num_intersections > 10):
-#     score += num_intersections * 50
-
 
 def print_score_vals(state):
     missed_time = 0
