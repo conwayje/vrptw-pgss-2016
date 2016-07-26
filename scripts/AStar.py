@@ -127,7 +127,12 @@ def doAStar(initial_state, do_plot, world_record):
                     for Customer in truck.path.route:
                         print Customer.number,
                     print
+
+                while state.parent != None:
+                    state.plot()
+                    state = state.parent
                 break
+
 
             poll = keyPoller.poll()
             if not poll is None:
