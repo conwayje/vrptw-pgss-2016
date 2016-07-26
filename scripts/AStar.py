@@ -19,6 +19,7 @@ def doAStar(initial_state, do_plot, world_record):
     display_customer_nums = False
     display_vals = False
 
+    set_score_mode(DEFAULT)
 
     generation = 0
 
@@ -129,9 +130,6 @@ def doAStar(initial_state, do_plot, world_record):
                         print Customer.number,
                     print
 
-                while state.parent != None:
-                    state.plot()
-                    state = state.parent
                 break
 
 
@@ -151,6 +149,9 @@ def doAStar(initial_state, do_plot, world_record):
                     display_customer_nums = False
                 if poll == "p":
                     raw_input("Hit Enter to continue")
+
+                if poll.isdigit():
+                    set_score_mode(int(poll))
 
                 if poll == "n":
                     print "Nuking children"
