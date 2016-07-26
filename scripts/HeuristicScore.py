@@ -3,10 +3,15 @@
 from Path import Path
 from Customer import Customer
 from Truck import Truck
+try:
+    import ipdb
+except:
+    print "Skipping ipdb import because Dan's school is full of jerks"
 
 ## STILL NEED PENALTIES FOR COMING OUT OF CLUSTERS AND OUTRAGEOUS ANGLE OF TURNING
 def score(state):
     score = 0
+    missed_cust_penalty = 1000000
     paths = state.paths
     cargo = state.trucks[0].cargo
 
@@ -17,15 +22,20 @@ def score(state):
         # run the intersecting paths algorithm once, which saves it on the instance,
         # preventing you from having to run it several times
         path.intersects_self()
+        
 
         # Missed customers by time
-        score += 1000000 * path.number_missed_by_time()
+        ## The missed_cust_penalty variable is to avoid a number dependency in the AStar.py method handle_world_record
+        score += missed_cust_penalty * path.number_missed_by_time()
         # Intersecting self
         num_intersections += len( path.intersecting_segments )
         # Missed customers by cargo
         score += 5000 * path.number_missed_by_cargo(cargo)
         # Total wait time
         score += 5 * path.get_wait_time()
+        ipdb.set_trace()
+        # Excessive waiting
+        score += 10 * path.get_number_of_excessive_waits()
         # extra penalty for large distance between two computers
         score += path.num_unreasonable_distances()
 
@@ -78,6 +88,8 @@ def print_score_vals(state):
         missed_cargo +=  path.number_missed_by_cargo(state.trucks[0].cargo)
         # Total wait time
         wait_time += path.get_wait_time()
+        # Penalize excessive waiting
+        excessive_wait += path.get_number_of_excessive_waits()
         # extra penalty for large distance between two computers
         num_unreasonable_distances +=  path.num_unreasonable_distances()
 

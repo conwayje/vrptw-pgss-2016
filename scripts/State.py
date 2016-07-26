@@ -314,9 +314,9 @@ class State():
             index = randint(0, len(new_route)-6)
             for i in range(index, index+5):
                 section_to_swap.append(path.route[i])
-<<<<<<< HEAD
+
                 new_route.remove(new_route[i]) #@FIXME
-=======
+
                 cs.append(path.route[i].number)
             
             for n in range(len(cs)-1):
@@ -324,7 +324,6 @@ class State():
                     if n == new_route[a].number:
                         new_route.remove(new_route[a])
                 
->>>>>>> fd406dcf50fad961ce266383e75e1bfec2d49753
 
             to_insert = randint(0, len(new_route) - 1)
             for k in range(to_insert, to_insert+5):
