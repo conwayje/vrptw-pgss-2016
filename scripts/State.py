@@ -627,7 +627,7 @@ class State():
     def fix_inter_path_intersections(paths):
         children = []
         for i in range(len(paths)):
-            for j in range(i+1, len(paths)):
+            for j in range(i, len(paths)):
                 new_paths = copy.deepcopy(paths)
                 intersections = new_paths[i].intersects_with_other(new_paths[j])
 
