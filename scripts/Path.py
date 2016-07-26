@@ -340,7 +340,10 @@ class Path():
 
     def get_customer_index( self, customer_id ):
         """ Finds the customer's index in the path's route given a customer's ID """
-        return self.route.index( filter( lambda c: c.number == customer_id, self.route )[0] )
+        for c in range(len(self.route)):
+            if self.route[c].number == customer_id:
+                return c
+        return -1
 
     def __repr__(self):
         # return "<Path: {0}>".format(self.route)

@@ -60,26 +60,21 @@ class State():
 
         if big:
             #good
-            # children_paths += State.shuffle( paths, 5 ) 
+            #children_paths += State.shuffle( paths, 5 )
             #might be good or not, we've never used it
-            # children_paths += State.alternating_shuffle_within_path( paths ) 
-            # children_paths += State.large_reconstruction( paths, 1000 if extra_big_move_children else 200 )
-            pass
+            #children_paths += State.alternating_shuffle_within_path( paths )
+            children_paths += State.large_reconstruction( paths, 1000 if extra_big_move_children else 200 )
         if medium:
-            #not that good
-            #children_paths += State.cycle(paths, 4)
-            #might be good, never used
-            #children_paths += State.five_section_swap(paths)
-            #children_paths += State.random_nearest_neighbors(paths)
+            children_paths += State.random_nearest_neighbors(paths, 5, 25)
             children_paths += State.use_clusters( paths, 10 )
         if small:
-            # not that good
-            # children_paths += State.redistribute_more_evenly(paths)
             # good
+            # @TODO -- check that they are right
             # children_paths += State.wait_time_swap(paths)
             # children_paths += State.cargo_swap(paths, trucks)
+
             children_paths += State.time_swap(paths)
-            
+
             children_paths += State.reverse(paths)
 
             children_paths += State.line_segment_insertion( paths, int( n_customers / 5 ), 4.0 )
@@ -88,9 +83,9 @@ class State():
 
             children_paths += State.fix_group_unreasonable( paths )
 
-            #children_paths += State.path_swap( paths, 15 )
-            #children_paths += State.distance_swap( paths )
             children_paths += State.switch_between_paths( paths, 20 )
+
+            children_paths += State.path_swap( paths, 20 )
         # child_paths should be a list containing three paths per entry (as a list)
         for child_paths in children_paths:
             trucks = []
@@ -517,23 +512,25 @@ class State():
         return children
 
     #works
-    @staticmethod #medium move? , takes random set of 10 and does nearest neighbors on it
-    def random_nearest_neighbors(paths, num): #paths, number to do nearest neighbors on
+    @staticmethod #medium move? , takes random set and does nearest neighbors on it
+    def random_nearest_neighbors(paths, n_children, n_touched): #paths, number to do nearest neighbors on
         children = []
         new_paths = []
-        for i in range(len(paths)):
-            path = paths[i]
-            new_path = copy.deepcopy(path.route)
-            customers = [] #customers to do nearest neighbors
-            r = random.randint(0, len(new_path) - num)
-            for l in range(r, r+num):
-                customers.append(new_path[l])
-                
-            customers = Dijsktra.get_nearest_neighbors(customers, customers[0])
-            for x in range(0, num):
-                new_path.insert(r+x, customers.route[x])
 
-            new_paths.append(Path(new_path))
+        for k in range(n_children):
+            for i in range(len(paths)):
+                path = paths[i]
+                new_path = copy.deepcopy(path.route)
+                customers = [] #customers to do nearest neighbors
+                r = random.randint(0, len(new_path) - n_touched)
+                for l in range(r, r+n_touched):
+                    customers.append(new_path[l])
+                    
+                customers = Dijsktra.get_nearest_neighbors(customers, customers[0])
+                for x in range(0, n_touched):
+                    new_path.insert(r+x, customers.route[x])
+
+                new_paths.append(Path(new_path))
     
         children.append(new_paths)
         return children
@@ -563,28 +560,39 @@ class State():
     def large_reconstruction(paths, n_children = 200, min_percentage = 25, max_percentage = 75 ):
         children = []
         n_customers = sum([len(path.route) for path in paths])
+        customers = []
+        for path in paths:
+            for customer in path.route:
+                customers.append(customer)
         n_paths = len(paths)
 
         for i in range( n_children ):
+            # print i
             new_paths = copy.deepcopy( paths )
 
             # choose a percentage between your min and max; multiply it and take it based on n_customers
             n_changes_to_make = int( n_customers * ( random.randint(min_percentage, max_percentage) / 100.0 ) )
+            # print n_changes_to_make
+            counter = 0
 
             removed_customers = []
             for k in range( n_changes_to_make ):
                 # remove #[n_changes_to_make] customers
                 path_a = new_paths[ randint( 0, n_paths - 1 ) ]
-                if len(path_a) > 0:
+                if len(path_a) > 1:
                     cust_a = path_a.route.pop( randint( 0, len( path_a.route ) - 1 ) )
                     removed_customers.append( cust_a )
 
-            for cust_a in removed_customers:
-                path_a = new_paths[ randint( 0, n_paths - 1 ) ]
-                if len(path_a) > 0:
-                    path_a.route.insert( randrange( len(path_a.route) ), cust_a )
-                else:
-                    path_a.route.insert( 0, cust_a )
+            num_removed = len(removed_customers)
+            while len(removed_customers) > 0:
+                cust_a = removed_customers[0]
+                closest = Dijsktra.get_next_random(cust_a, customers, [removed_customers], 3)
+                removed_customers.remove(cust_a)
+                for path in new_paths:
+                    closest_index = path.get_customer_index(closest.number)
+                    if closest_index != -1:
+                        counter += 1
+                        path.route.insert(closest_index, cust_a)
 
             children.append( new_paths )
 
@@ -645,7 +653,7 @@ class State():
     def fix_inter_path_intersections(paths):
         children = []
         for i in range(len(paths)):
-            for j in range(i+1, len(paths)):
+            for j in range(i, len(paths)):
                 new_paths = copy.deepcopy(paths)
                 intersections = new_paths[i].intersects_with_other(new_paths[j])
 

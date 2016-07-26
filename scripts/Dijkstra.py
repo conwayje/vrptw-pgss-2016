@@ -74,12 +74,14 @@ class Dijsktra():
             path = paths[p]
             for c in range(len(path)):
                 all_paths.append(path[c])
-        
+
         closest = sorted(customers, key=lambda customer: Distances.get_distance(source.number, customer.number))
         closest_good = []
-        
+
+        all_path_ids = [c.number for c in all_paths]
+
         for c in closest:
-            if c in all_paths:
+            if c.number in all_path_ids:
                 pass
             else:
                 closest_good.append(c)
