@@ -14,13 +14,18 @@ penalty_weights = {}
 
 DEFAULT = 0
 FIX_INTERSECTIONS = 1
+FIX_UNREASONABLE_DISTANCES = 2
 
 def set_score_mode(mode = DEFAULT):
-    if(mode == 1):
+    if mode == 1:
+        set_score_mode(DEFAULT)
         penalty_weights["Missed Time"] = 10000
         penalty_weights["Interintersections"] = 500
         penalty_weights["Intraintersections"] = 2000
-
+    if mode == 2:
+        set_score_mode(DEFAULT)
+        penalty_weights["Missed Time"] = 10000
+        penalty_weights["Unreasonable Distances"] = 5000
     else:
         penalty_weights["Distance"] = 3000
         penalty_weights["Missed Time"] = 1000000
