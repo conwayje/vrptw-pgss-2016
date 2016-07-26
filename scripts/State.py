@@ -25,11 +25,6 @@ class State():
         self.distance = None
         self.parent = parent
 
-        #  @TODO -- update get_children sub-methods to include parent
-        #  @TODO -- should we also maintain children...?
-
-        #  @TODO -- similar to reason above:  maintain score(?)
-
     def calculate_distance(self):
         self.distance = 0
         for truck in self.trucks:
@@ -69,11 +64,9 @@ class State():
             #children_paths += State.cycle(paths, 4)
             #might be good, never used
             children_paths += State.five_section_swap(paths) 
-            children_paths += State.random_nearest_neighbors(paths, 7)
+            children_paths += State.random_nearest_neighbors(paths, 7) #works but makes it kinda slow
             
-            # @DEBUG
-            pass
-            #children_paths += State.use_clusters( paths, 10 )
+            children_paths += State.use_clusters( paths, 10 )
         if small:
             #not that good
             #children_paths += State.redistribute_more_evenly(paths)
@@ -82,8 +75,9 @@ class State():
             children_paths += State.time_swap(paths)
             children_paths += State.reverse(paths)
             children_paths += State.line_segment_insertion( paths, int( n_customers / 5 ), 4.0 )
-            children_paths += State.fix_double_unreasonable( paths )
-            #children_paths += State.unreasonable_distance_before_after(paths)
+            children_paths += State.fix_single_unreasonable( paths )
+            children_paths += State.random_nearest_neighbors( paths, 4 )
+
             #children_paths += State.path_swap( paths, 15 )
             #children_paths += State.distance_swap( paths )
             children_paths += State.switch_between_paths( paths, 100 )
@@ -405,8 +399,8 @@ class State():
         return children
 
     @staticmethod
-    def fix_double_unreasonable( paths ):
-        """If you travel an unreasonable distance both to and from a customer,
+    def fix_single_unreasonable( paths ):
+        """If you travel an unreasonable distance at least to or from a customer,
             try moving it somewhere else closer???"""
         children = []
         threshold = max(Distances.matrix[0])/4.5
@@ -414,16 +408,16 @@ class State():
         path_number = 0
         for path in paths:
             # check depot to first customer
-            if Distances.get_distance(0, path.route[0].number) > threshold and Distances.get_distance(path.route[0].number, path.route[1].number) > threshold:
+            if Distances.get_distance(0, path.route[0].number) > threshold or Distances.get_distance(path.route[0].number, path.route[1].number) > threshold:
                 children += State.remove_and_insert_closer( 0, paths, path_number )
                 
             # check all regular customers to e/o
             for i in range(0, len(path) - 2):
-                if Distances.get_distance(path.route[i].number, path.route[i+1].number) > threshold and Distances.get_distance(path.route[i+1].number, path.route[i+2].number) > threshold:
+                if Distances.get_distance(path.route[i].number, path.route[i+1].number) > threshold or Distances.get_distance(path.route[i+1].number, path.route[i+2].number) > threshold:
                     children += State.remove_and_insert_closer( i+1, paths, path_number )
 
             # check last customer to depot
-            if Distances.get_distance(path.route[-2].number, path.route[-1].number) > threshold and Distances.get_distance(path.route[-1].number, 0) > threshold:
+            if Distances.get_distance(path.route[-2].number, path.route[-1].number) > threshold or Distances.get_distance(path.route[-1].number, 0) > threshold:
                 children += State.remove_and_insert_closer( -1, paths, path_number )
 
             path_number += 1
@@ -452,7 +446,6 @@ class State():
             children.append( new_paths )
 
         return children
-
 
     # @staticmethod
     # def unreasonable_distance_before_after(paths):
