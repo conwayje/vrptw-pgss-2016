@@ -33,7 +33,7 @@ def init(filename):
     print "Calculating distances..."
     Distances.calculate_matrix(customers)
     print "Storing clusters..."
-    #ClusterStore.store_clusters(filename, customers)
+    ClusterStore.store_clusters(filename, customers)
 
     depot = Depot(0,0)
 
@@ -63,7 +63,7 @@ def initial_state(problem, filename):
         for cust in customers:
             c.append(cust)
 
-        paths = Dijsktra.get_nearest_neighbors_random(c, depot_c, num_trucks)
+        paths = Dijsktra.get_nearest_neighbors_random(c, depot_c, num_trucks, 2)
 
         trucks = []
         for k in range(1, num_trucks + 1):
@@ -71,6 +71,8 @@ def initial_state(problem, filename):
             trucks.append(t)
 
         state = State( trucks, parent = None )
+        state.plot()
+        print state
 
     #doesn't work yet, don't use
     elif filename == "split_nearest_neighbors":

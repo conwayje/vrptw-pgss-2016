@@ -79,9 +79,14 @@ def print_score_vals(state):
     missed_time = 0
     missed_cargo = 0
     wait_time = 0
+    excessive_waits = 0
     num_intersections = 0
     num_unreasonable_distances = 0
+    num_customers = 0
+
     for path in state.paths:
+        # Number Customers
+        num_customers += len(path.route)
         # Missed customers by time
         missed_time += path.number_missed_by_time()
         # Intersecting self
@@ -91,7 +96,7 @@ def print_score_vals(state):
         # Total wait time
         wait_time += path.get_wait_time()
         # Penalize excessive waiting
-        excessive_wait += path.get_number_of_excessive_waits()
+        excessive_waits += path.get_number_of_excessive_waits()
         # extra penalty for large distance between two computers
         num_unreasonable_distances +=  path.num_unreasonable_distances()
 
@@ -99,8 +104,9 @@ def print_score_vals(state):
         for j in range(i+1, len(state.paths)):
             num_intersections += len(state.paths[i].intersects_with_other(state.paths[j]))
 
+    print "Number Customers:         {0:>4}".format(num_customers)
     print "Missed customers (time):  {0:>4} \nMissed customers (cargo): {1:>4} \nNumIntersections:         {2:>4} \n" \
-          "Wait time:                {3:>4} \nNumUnreasonable:          {0:>4}"\
+          "Wait time:                {3:>4} \nNumUnreasonable:          {0:>4} \nExcessive Waits:          {2:>4}"\
           .format(missed_time, missed_cargo, num_intersections, int(wait_time), num_unreasonable_distances)
 
 

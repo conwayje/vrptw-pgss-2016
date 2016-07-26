@@ -82,7 +82,7 @@ def doAStar(initial_state, do_plot, world_record):
                     if previous_scores[0] - previous_scores[-1] > RESET_TRIGGER_DIFFERENTIAL_SCORE_EARLY_GAME or len(
                             previous_scores) < QUEUE_LENGTH_EARLY_GAME:
                         # keep operating as usual
-                        children = state.get_children(True, True, True, random() > 0.9)
+                        children = state.get_children(False, True, True, random() > 0.9)
                     else:
                         # uh oh, fucked up and didn't make progress in 300 moves in the early game.
                         # time to clear the queues and start over from the current state.
@@ -94,7 +94,7 @@ def doAStar(initial_state, do_plot, world_record):
                 else:
                     if previous_scores[0] - previous_scores[-1] > RESET_TRIGGER_DIFFERENTIAL_SCORE_LATE_GAME or len(
                             previous_scores) < QUEUE_LENGTH_LATE_GAME:
-                        children = state.get_children(True, True, True, random() > 0.9)
+                        children = state.get_children(False, True, True, random() > 0.9)
                     else:
                         # uh oh, fucked up and didn't make progress in 1000 moves in the late game.
                         # time to clear the queues and start over from the current state.
@@ -127,7 +127,12 @@ def doAStar(initial_state, do_plot, world_record):
                     for Customer in truck.path.route:
                         print Customer.number,
                     print
+
+                while state.parent != None:
+                    state.plot()
+                    state = state.parent
                 break
+
 
             poll = keyPoller.poll()
             if not poll is None:
