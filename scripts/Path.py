@@ -311,7 +311,7 @@ class Path():
             ######## THE WAIT TIME VALUE IS ARBITRARILY PICKED, CAN CHANGE IF NECESSARY
             if wait_time > 20:
                 num_waits += 1
-
+                
             time += c.service_time
         
         return num_waits

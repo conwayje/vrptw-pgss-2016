@@ -48,9 +48,6 @@ class Dijsktra():
                 if plen < l:
                     path.append(Dijsktra.get_next_random(path[-1], customers, paths, numrandom))
                     plen += 1
-        
-        print paths
-        
         return paths
         
     @staticmethod
