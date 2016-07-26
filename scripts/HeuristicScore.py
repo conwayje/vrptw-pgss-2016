@@ -15,9 +15,8 @@ penalty_weights = {}
 DEFAULT = 0
 FIX_INTERSECTIONS = 1
 
-#problems
 def set_score_mode(mode = DEFAULT):
-    if(mode == 1 and False):
+    if(mode == 1):
         penalty_weights["Missed Time"] = 10000
         penalty_weights["Interintersections"] = 500
         penalty_weights["Intraintersections"] = 2000
