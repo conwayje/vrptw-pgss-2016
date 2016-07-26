@@ -22,3 +22,7 @@
 - up the penalty on intersections
 - focus more on close moves
 - catch keyboard interrupts?????
+- new moves:
+---- remove customers that are preceded & followed by unreasonable distances
+---- switch customers into paths that are near a line segment between two existing guys
+---- interpath + intrapath switching

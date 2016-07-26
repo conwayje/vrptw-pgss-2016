@@ -60,6 +60,22 @@ def initial_state(filename):
             trucks.append(t)
 
         state = State( trucks, parent = None )
+    
+    elif filename == "nn_random":
+        print "Generating nearest neighbors random solution..."
+        depot_c = Customer(0, 0, 0, 0, 0, 0, 0)
+        c = [depot_c]
+        for cust in customers:
+            c.append(cust)
+
+        paths = Dijsktra.get_nearest_neighbors_random(c, depot_c, num_trucks)
+
+        trucks = []
+        for k in range(1, num_trucks + 1):
+            t = Truck(k, 0, 0, truck_capacity, path = Path(paths[k-1][1:]))
+            trucks.append(t)
+
+        state = State( trucks, parent = None )
 
     #doesn't work yet, don't use
     elif filename == "split_nearest_neighbors":
