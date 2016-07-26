@@ -8,8 +8,8 @@ from Path import Path
 
 class Visual():
 
-    width = 500
-    height = 500
+    width = 700
+    height = 700
     root = Tk()
     canvas = Canvas(root, width=width, height=height)
     canvas.pack()
@@ -17,10 +17,10 @@ class Visual():
 
     @staticmethod
     def scale_x(x):
-        return x * 4 + Visual.width/2
+        return x * 5 + Visual.width/2
     @staticmethod
     def scale_y(y):
-        return y * 4 + Visual.height/2
+        return -y * 5 + Visual.height/2
     @staticmethod
     def scale(item):
         return Visual.scale_x(item.x), Visual.scale_y(item.y)
