@@ -3,14 +3,13 @@ from HeuristicScore import *
 from collections import deque
 from random import random
 from KeyPoller import KeyPoller
+from ImportSolution import write_solution
+import datetime
 
 try:
     import ipdb
 except:
     print "Skipping import of ipdb because Dan's school is full of jerks"
-
-
-
 
 def doAStar(initial_state, do_plot, world_record):
     queue = []
@@ -122,19 +121,20 @@ def doAStar(initial_state, do_plot, world_record):
                 generation += 1
 
             except KeyboardInterrupt:
-                # if you use Ctrl+C, perhaps plot; also, print out all the truck info
+                # if you use Ctrl+C, print out all the truck info
                 # and then legitimately kill the program
-                if plot_kill:
-                    state.plot()
-                    for truck in state.trucks:
-                        for Customer in truck.path.route:
-                            print Customer.number,
-                        print
+                for truck in state.trucks:
+                    for Customer in truck.path.route:
+                        print Customer.number,
+                    print
                 break
 
-            # hit "p" at any time to plot at the end of the generation
             poll = keyPoller.poll()
             if not poll is None:
+                if poll == "s":
+                    filename = datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
+                    print "Saving state to " + filename + ".txt"
+                    write_solution(state, filename)
                 if poll == "v":
                     display_vals = True
                 if poll == "c":
@@ -143,6 +143,8 @@ def doAStar(initial_state, do_plot, world_record):
                     display_customer_nums = True
                 if poll == "x":
                     display_customer_nums = False
+                if poll == "p":
+                    raw_input("Hit Enter to continue")
 
                 if poll == "n":
                     print "Nuking children"
@@ -173,6 +175,7 @@ def handle_world_record(state):
         print state.get_score()
 
         for truck in state.trucks:
+            print "T: ",
             for c in truck.path.route:
                 print c.number,
             print
