@@ -3,6 +3,8 @@ from HeuristicScore import *
 from collections import deque
 from random import random
 from KeyPoller import KeyPoller
+from ImportSolution import write_solution
+import datetime
 
 try:
     import ipdb
@@ -131,9 +133,12 @@ def doAStar(initial_state, do_plot, world_record):
                         print
                 break
 
-            # hit "p" at any time to plot at the end of the generation
             poll = keyPoller.poll()
             if not poll is None:
+                if poll == "s":
+                    filename = datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
+                    print "Saving state to " + filename + ".txt"
+                    write_solution(state, filename)
                 if poll == "v":
                     display_vals = True
                 if poll == "c":

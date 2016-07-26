@@ -13,9 +13,9 @@ import argparse
 
 path = '../standard_instances/'
 
-def import_solution(filename):
+def import_solution(problem, filename):
     with open(path + filename) as f:
-        customers = import_customers(filename.split("_")[0] + ".txt", False)
+        customers = import_customers(problem, False)
         lines = f.readlines()
 
         ids = []
@@ -34,6 +34,17 @@ def import_solution(filename):
         trucks.append(Truck(i, 0, 0, len(routes), Path(routes[i])))
 
     return State(trucks)
+
+def write_solution(state, filename):
+    with open(path + filename + ".txt", 'w') as f:
+        for x in range(5):
+            f.write('\n')
+        for x in range(len(state.trucks)):
+            line = "Route {0} : ".format(x + 1)
+            for customer in state.trucks[x].path.route:
+                line += str(customer.number)
+                line += " "
+            f.write(line + "\n")
 
 
 if __name__ == "__main__":
