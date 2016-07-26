@@ -59,27 +59,18 @@ class State():
         trucks = self.trucks
 
         if big:
-            #good
-            # children_paths += State.shuffle( paths, 5 ) 
-            #might be good or not, we've never used it
-            # children_paths += State.alternating_shuffle_within_path( paths ) 
-            # children_paths += State.large_reconstruction( paths, 1000 if extra_big_move_children else 200 )
-            pass
+            children_paths += State.large_reconstruction( paths, 1000 if extra_big_move_children else 200 )
         if medium:
-            #not that good
-            #children_paths += State.cycle(paths, 4)
-            #might be good, never used
-            #children_paths += State.five_section_swap(paths)
-            #children_paths += State.random_nearest_neighbors(paths)
+            children_paths += State.random_nearest_neighbors(paths, 5, 25)
             children_paths += State.use_clusters( paths, 10 )
         if small:
-            # not that good
-            # children_paths += State.redistribute_more_evenly(paths)
             # good
+            # @TODO -- check that they are right
             # children_paths += State.wait_time_swap(paths)
             # children_paths += State.cargo_swap(paths, trucks)
+
             children_paths += State.time_swap(paths)
-            
+
             children_paths += State.reverse(paths)
 
             children_paths += State.line_segment_insertion( paths, int( n_customers / 5 ), 4.0 )
@@ -88,9 +79,9 @@ class State():
 
             children_paths += State.fix_group_unreasonable( paths )
 
-            #children_paths += State.path_swap( paths, 15 )
-            #children_paths += State.distance_swap( paths )
             children_paths += State.switch_between_paths( paths, 20 )
+
+            children_paths += State.path_swap( paths, 20 )
         # child_paths should be a list containing three paths per entry (as a list)
         for child_paths in children_paths:
             trucks = []
@@ -517,23 +508,25 @@ class State():
         return children
 
     #works
-    @staticmethod #medium move? , takes random set of 10 and does nearest neighbors on it
-    def random_nearest_neighbors(paths, num): #paths, number to do nearest neighbors on
+    @staticmethod #medium move? , takes random set and does nearest neighbors on it
+    def random_nearest_neighbors(paths, n_children, n_touched): #paths, number to do nearest neighbors on
         children = []
         new_paths = []
-        for i in range(len(paths)):
-            path = paths[i]
-            new_path = copy.deepcopy(path.route)
-            customers = [] #customers to do nearest neighbors
-            r = random.randint(0, len(new_path) - num)
-            for l in range(r, r+num):
-                customers.append(new_path[l])
-                
-            customers = Dijsktra.get_nearest_neighbors(customers, customers[0])
-            for x in range(0, num):
-                new_path.insert(r+x, customers.route[x])
 
-            new_paths.append(Path(new_path))
+        for k in range(n_children):
+            for i in range(len(paths)):
+                path = paths[i]
+                new_path = copy.deepcopy(path.route)
+                customers = [] #customers to do nearest neighbors
+                r = random.randint(0, len(new_path) - n_touched)
+                for l in range(r, r+n_touched):
+                    customers.append(new_path[l])
+                    
+                customers = Dijsktra.get_nearest_neighbors(customers, customers[0])
+                for x in range(0, n_touched):
+                    new_path.insert(r+x, customers.route[x])
+
+                new_paths.append(Path(new_path))
     
         children.append(new_paths)
         return children
