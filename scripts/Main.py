@@ -101,3 +101,8 @@ test_environment = args.test
 
 init(problem_file)
 state = doAStar(initial_state(problem_file, init_solution_file), do_plot, world_record_score)
+
+while state.parent != None:
+    raw_input("\nEnter to see parent")
+    state.plot()
+    state = state.parent

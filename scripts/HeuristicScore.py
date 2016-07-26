@@ -10,43 +10,71 @@ try:
 except:
     print "Skipping ipdb import because Dan's school is full of jerks"
 
+penalty_weights = {}
+
+DEFAULT = 0
+FIX_INTERSECTIONS = 1
+
+def set_score_mode(mode = DEFAULT):
+    if(mode == 1):
+        penalty_weights["Missed Time"] = 10000
+        penalty_weights["Interintersections"] = 500
+        penalty_weights["Intraintersections"] = 2000
+
+    else:
+        penalty_weights["Distance"] = 3000
+        penalty_weights["Missed Time"] = 1000000
+        penalty_weights["Missed Cargo"] = 5
+        penalty_weights["Wait Time"] = 10
+        penalty_weights["Excessive Weights"] = 100
+        penalty_weights["Unreasonable Distances"] = 500
+        penalty_weights["Intraintersections"] = 200
+        penalty_weights["Interintersections"] = 50
+
+
+
+
 ## STILL NEED PENALTIES FOR COMING OUT OF CLUSTERS AND OUTRAGEOUS ANGLE OF TURNING
 def score(state):
-    score = 0
-    missed_cust_penalty = 1000000
+
     paths = state.paths
     n_customers = len( Distances.matrix[0] ) - 1
     cargo = state.trucks[0].cargo
 
-    # Add the distance (benchmark score) from paths
-    score += state.calculate_distance() * 3000
-    num_intersections = 0;
-    for path in paths:
-        # run the intersecting paths algorithm once, which saves it on the instance,
-        # preventing you from having to run it several times
-        path.intersects_self()
+    num_intersections = 0
 
+    # Add the distance (benchmark score) from paths
+    score = state.calculate_distance() * penalty_weights["Distance"]
+
+
+    for path in paths:
         # Missed customers by time
         ## The missed_cust_penalty variable is to avoid a number dependency in the AStar.py method handle_world_record
-        score += missed_cust_penalty * path.number_missed_by_time()
+        score += penalty_weights["Missed Time"] * path.number_missed_by_time()
+
         # Intersecting self
+        path.intersects_self()
         num_intersections += len( path.intersecting_segments )
+
         # Missed customers by cargo
-        score += 5 * path.number_missed_by_cargo(cargo)
+        score += penalty_weights["Missed Cargo"] * path.number_missed_by_cargo(cargo)
+
         # Total wait time
-        score += 10 * path.get_wait_time()
+        score += penalty_weights["Wait Time"] * path.get_wait_time()
+
         # Excessive waiting
-        score += 100 * path.get_number_of_excessive_waits()
+        score += penalty_weights["Excessive Weights"] * path.get_number_of_excessive_waits()
+
         # extra penalty for large distance between two computers
-        score += 500 * path.num_unreasonable_distances()
+        score += penalty_weights["Unreasonable Distances"] * path.num_unreasonable_distances()
 
     # for every 8 customers, you get 1 intersection for free.  after that, it costs you.
     if (num_intersections > ( n_customers / 10 ) ):
-        score += 200 * ( num_intersections - ( n_customers / 10 ) )
+        score += penalty_weights["Intraintersections"] * ( num_intersections - ( n_customers / 10 ) )
 
     for i in range(len(paths)):
        for j in range(i+1, len(paths)):
-           score += 50 * len(paths[i].intersects_with_other(paths[j]))
+           score += penalty_weights["Interintersections"] * len(paths[i].intersects_with_other(paths[j]))
 
     return score
 
@@ -58,6 +86,7 @@ def print_score_vals(state):
     num_intersections = 0
     num_unreasonable_distances = 0
     num_customers = 0
+
 
     for path in state.paths:
         # Number Customers

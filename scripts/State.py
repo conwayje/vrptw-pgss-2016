@@ -59,6 +59,10 @@ class State():
         trucks = self.trucks
 
         if big:
+            #good
+            #children_paths += State.shuffle( paths, 5 )
+            #might be good or not, we've never used it
+            #children_paths += State.alternating_shuffle_within_path( paths )
             children_paths += State.large_reconstruction( paths, 1000 if extra_big_move_children else 200 )
         if medium:
             children_paths += State.random_nearest_neighbors(paths, 5, 20) #don't make n_touched bigger than 20 or else it won't work
@@ -556,28 +560,39 @@ class State():
     def large_reconstruction(paths, n_children = 200, min_percentage = 25, max_percentage = 75 ):
         children = []
         n_customers = sum([len(path.route) for path in paths])
+        customers = []
+        for path in paths:
+            for customer in path.route:
+                customers.append(customer)
         n_paths = len(paths)
 
         for i in range( n_children ):
+            # print i
             new_paths = copy.deepcopy( paths )
 
             # choose a percentage between your min and max; multiply it and take it based on n_customers
             n_changes_to_make = int( n_customers * ( random.randint(min_percentage, max_percentage) / 100.0 ) )
+            # print n_changes_to_make
+            counter = 0
 
             removed_customers = []
             for k in range( n_changes_to_make ):
                 # remove #[n_changes_to_make] customers
                 path_a = new_paths[ randint( 0, n_paths - 1 ) ]
-                if len(path_a) > 0:
+                if len(path_a) > 1:
                     cust_a = path_a.route.pop( randint( 0, len( path_a.route ) - 1 ) )
                     removed_customers.append( cust_a )
 
-            for cust_a in removed_customers:
-                path_a = new_paths[ randint( 0, n_paths - 1 ) ]
-                if len(path_a) > 0:
-                    path_a.route.insert( randrange( len(path_a.route) ), cust_a )
-                else:
-                    path_a.route.insert( 0, cust_a )
+            num_removed = len(removed_customers)
+            while len(removed_customers) > 0:
+                cust_a = removed_customers[0]
+                closest = Dijsktra.get_next_random(cust_a, customers, [removed_customers], 3)
+                removed_customers.remove(cust_a)
+                for path in new_paths:
+                    closest_index = path.get_customer_index(closest.number)
+                    if closest_index != -1:
+                        counter += 1
+                        path.route.insert(closest_index, cust_a)
 
             children.append( new_paths )
 
@@ -638,7 +653,7 @@ class State():
     def fix_inter_path_intersections(paths):
         children = []
         for i in range(len(paths)):
-            for j in range(i+1, len(paths)):
+            for j in range(i, len(paths)):
                 new_paths = copy.deepcopy(paths)
                 intersections = new_paths[i].intersects_with_other(new_paths[j])
 

@@ -19,6 +19,7 @@ def doAStar(initial_state, do_plot, world_record):
     display_customer_nums = False
     display_vals = False
 
+    set_score_mode(DEFAULT)
 
     generation = 0
 
@@ -104,6 +105,34 @@ def doAStar(initial_state, do_plot, world_record):
                         previous_scores.clear()
                         children = state.get_children(True, False, False, True)
 
+
+                poll = keyPoller.poll()
+                if not poll is None:
+                    if poll == "s":
+                        filename = datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
+                        print "Saving state to " + filename + ".txt"
+                        write_solution(state, filename)
+                    if poll == "v":
+                        display_vals = True
+                    if poll == "c":
+                        display_vals = False
+                    if poll == "z":
+                        display_customer_nums = True
+                    if poll == "x":
+                        display_customer_nums = False
+                    if poll == "p":
+                        raw_input("Hit Enter to continue")
+
+                    if poll.isdigit():
+                        set_score_mode(int(poll))
+                        queue = []
+
+                    if poll == "n":
+                        print "Nuking children"
+                        if (len(queue) > 100):
+                            queue = queue[-100:]
+
+
                 for c in children:
                     heappush(queue, (score(c), c))
 
@@ -129,33 +158,8 @@ def doAStar(initial_state, do_plot, world_record):
                         print Customer.number,
                     print
 
-                while state.parent != None:
-                    state.plot()
-                    state = state.parent
                 break
 
-
-            poll = keyPoller.poll()
-            if not poll is None:
-                if poll == "s":
-                    filename = datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
-                    print "Saving state to " + filename + ".txt"
-                    write_solution(state, filename)
-                if poll == "v":
-                    display_vals = True
-                if poll == "c":
-                    display_vals = False
-                if poll == "z":
-                    display_customer_nums = True
-                if poll == "x":
-                    display_customer_nums = False
-                if poll == "p":
-                    raw_input("Hit Enter to continue")
-
-                if poll == "n":
-                    print "Nuking children"
-                    if(len(queue) > 100):
-                        queue = queue[-100:]
 
 
             if (display_vals):
