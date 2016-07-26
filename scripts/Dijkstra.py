@@ -38,7 +38,7 @@ class Dijsktra():
         return Path(path)
         
     @staticmethod
-    def get_nearest_neighbors_random(customers, source, num_trucks):
+    def get_nearest_neighbors_random(customers, source, num_trucks, numrandom):
         l = len(customers)
         plen = 1
         paths = [[source] for t in range(num_trucks)]
@@ -46,8 +46,10 @@ class Dijsktra():
         while (plen < l):
             for path in paths:
                 if plen < l:
-                    path.append(Dijsktra.get_next_random(path[-1], customers, paths))
+                    path.append(Dijsktra.get_next_random(path[-1], customers, paths, numrandom))
                     plen += 1
+        
+        print paths
         
         return paths
         
@@ -69,21 +71,23 @@ class Dijsktra():
         return next
         
     @staticmethod
-    def get_next_random(source, customers, paths):
-        
+    def get_next_random(source, customers, paths, numrandom):
         all_paths = []
         for p in range(len(paths)):
             path = paths[p]
             for c in range(len(path)):
                 all_paths.append(path[c])
         
-        closest = sorted(customers, key=lambda customer: Distances.get_distance(source.number - 1, customer.number - 1))
+        closest = sorted(customers, key=lambda customer: Distances.get_distance(source.number, customer.number))
+        closest_good = []
         
         for c in closest:
             if c in all_paths:
-                closest.remove(c)
+                pass
+            else:
+                closest_good.append(c)
         
-        closest_few = closest[:3]
+        closest_few = closest_good[:numrandom]
         r = randint(0, len(closest_few)-1)
         return closest_few[r]
 
