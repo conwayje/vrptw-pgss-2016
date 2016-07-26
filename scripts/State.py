@@ -56,8 +56,8 @@ class State():
             #good
             children_paths += State.shuffle( paths, 5 ) 
             #might be good or not, we've never used it
-            #children_paths += State.alternating_shuffle_within_path( paths )
-            #children_paths += State.large_reconstruction( paths, 1000 if extra_big_move_children else 200 )
+            children_paths += State.alternating_shuffle_within_path( paths ) 
+            children_paths += State.large_reconstruction( paths, 1000 if extra_big_move_children else 200 )
             pass
         if medium:
             #not that good
@@ -71,7 +71,7 @@ class State():
             #not that good
             #children_paths += State.redistribute_more_evenly(paths)
             #good
-            # children_paths += State.cargo_swap(paths, trucks)
+            #children_paths += State.cargo_swap(paths, trucks)
             children_paths += State.time_swap(paths)
             children_paths += State.reverse(paths)
             children_paths += State.line_segment_insertion( paths, int( n_customers / 5 ), 4.0 )
