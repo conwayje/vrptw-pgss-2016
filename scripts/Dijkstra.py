@@ -77,7 +77,7 @@ class Dijsktra():
         
         closest = sorted(customers, key=lambda customer: Distances.get_distance(source.number, customer.number))
         closest_good = []
-        
+
         for c in closest:
             if c in all_paths:
                 pass
