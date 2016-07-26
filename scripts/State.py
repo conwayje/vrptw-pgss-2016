@@ -61,7 +61,7 @@ class State():
         if big:
             children_paths += State.large_reconstruction( paths, 1000 if extra_big_move_children else 200 )
         if medium:
-            children_paths += State.random_nearest_neighbors(paths, 5, 25)
+            children_paths += State.random_nearest_neighbors(paths, 5, 20) #don't make n_touched bigger than 20 or else it won't work
             children_paths += State.use_clusters( paths, 10 )
         if small:
             # good
