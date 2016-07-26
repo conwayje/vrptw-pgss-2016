@@ -5,6 +5,7 @@ from HeuristicScore import score
 from Dijkstra import Dijsktra
 from Path import Path
 from Depot import Depot
+##from ImportCustomers import ImportCustomers
 from ClusterStore import ClusterStore
 from random import randint, randrange, choice
 from Distances import Distances
@@ -14,6 +15,9 @@ try:
     import ipdb
 except:
     print "Skipping ipdb import because Dan's school is full of jerks"
+import argparse
+
+path = '../standard_instances/'
 
 class State():
 
@@ -76,7 +80,7 @@ class State():
             #not that good
             #children_paths += State.redistribute_more_evenly(paths)
             #good
-       
+           ## children_paths += State.wait_time_swap(paths)
             children_paths += State.time_swap(paths)
             children_paths += State.reverse(paths)
             children_paths += State.sort_paths( paths )
@@ -314,22 +318,18 @@ class State():
             index = randint(0, len(new_route)-6)
             for i in range(index, index+5):
                 section_to_swap.append(path.route[i])
-<<<<<<< HEAD
+
 
                 new_route.remove(new_route[i]) #@FIXME
 
-=======
->>>>>>> 62aa3d86efd883f93e4b682395fb00339ea5ebeb
+
                 cs.append(path.route[i].number)
 
             for n in range(len(cs)-1):
                 for a in range(len(new_route)-1):
                     if n == new_route[a].number:
                         new_route.remove(new_route[a])
-<<<<<<< HEAD
                 
-=======
->>>>>>> 62aa3d86efd883f93e4b682395fb00339ea5ebeb
 
             to_insert = randint(0, len(new_route) - 1)
             for k in range(to_insert, to_insert+5):
@@ -512,7 +512,6 @@ class State():
 
         return children
 
-
     def __repr__(self):
         str = "\n<State: "
         for i in range(len(self.trucks)):
@@ -520,5 +519,70 @@ class State():
         str += ">"
         return str
 
+
+
+"""
+
+    ## helper method for wait_time_swap
+    def get_closest_customer (filename, customer):
+        with open(path + filename) as f:
+        customers = import_customers(filename.split("_")[0] + ".txt", False)
+        lines = f.readlines()
+
+        ids = []
+        for line in lines[5:]:
+            ids.append(line.split()[3:])
+
+    @staticmethod
+    ## if the truck is being a little shit and waiting too long, change the path to include another customer in the meantime
+    def wait_time_swap (paths, n_children = 15):
+        children = []
+        for i in range (n_children):
+            customers = []
+            new_paths = copy.deepcopy(paths)
+            path = new_paths[i]
+
+            wait_time = 0
+            prev_customer = path.route[0]
+            time = Distances.get_distance(prev_customer.number, 0)
+
+            if time < prev_customer.open_time:
+             wait_time += prev_customer.open_time - time
+             time = prev_customer.open_time
+
+            time += prev_customer.service_time
+
+            for c in path.route:
+
+                time += Distances.get_distance(prev_customer.number, c.number)
+                prev_customer = c
+
+                if time < c.open_time:
+                    wait_time += prev_customer.open_time - time
+                    time = c.open_time
+
+                ## wait time is arbitrarily picked, can change
+                if wait_time > 20:
+                    customers = get_closest_customer(c)
+                    ## generates nearest customers
+                    for x in customers:
+                        ## if the truck has to wait long at some new customers too, forget em
+                        ## time+5 can be changed
+                        if (time+5) < x.open_time:
+                            customers = customers.remove(x)
+                        else:
+                            pass
+                time += c.service_time
+                if len (customers) != 0:
+                    ##choose the first customer (cause it doesn't really matter) as the add-in
+                    replacement_customer = customers.pop(0)
+                    ## adds replacement customer into path.route
+                    path.route.append(replacement_customer)
+
+                children.append(new_paths)
+
+        return children
+
+"""
 
 
