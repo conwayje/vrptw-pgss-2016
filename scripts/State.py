@@ -82,11 +82,8 @@ class State():
             #not that good
             #children_paths += State.redistribute_more_evenly(paths)
             #good
-<<<<<<< HEAD
            ## children_paths += State.wait_time_swap(paths)
-=======
             # children_paths += State.cargo_swap(paths, trucks)
->>>>>>> 816961b3e69e8502f2ca3a1682de4d78b1d2e1ff
             children_paths += State.time_swap(paths)
             children_paths += State.reverse(paths)
             children_paths += State.line_segment_insertion( paths, int( n_customers / 5 ), 4.0 )
@@ -397,25 +394,19 @@ class State():
             index = randint(0, len(new_route)-6)
             for i in range(index, index+5):
                 section_to_swap.append(path.route[i])
-<<<<<<< HEAD
 
 
                 new_route.remove(new_route[i]) #@FIXME
 
 
-=======
->>>>>>> 816961b3e69e8502f2ca3a1682de4d78b1d2e1ff
                 cs.append(path.route[i].number)
 
             for n in range(len(cs)-1):
                 for a in range(len(new_route)-1):
                     if n == new_route[a].number:
                         new_route.remove(new_route[a])
-<<<<<<< HEAD
                 
 
-=======
->>>>>>> 816961b3e69e8502f2ca3a1682de4d78b1d2e1ff
             to_insert = randint(0, len(new_route) - 1)
             for k in range(to_insert, to_insert+5):
                 new_route.insert(k, path.route[to_insert])
@@ -644,8 +635,6 @@ class State():
 
         return children
 
-<<<<<<< HEAD
-=======
     @staticmethod
     def fix_inter_path_intersections(paths):
         children = []
@@ -668,7 +657,6 @@ class State():
                     children.append(new_paths)
         return children
 
->>>>>>> 816961b3e69e8502f2ca3a1682de4d78b1d2e1ff
     def __repr__(self):
         str = "\n<State: "
         for i in range(len(self.trucks)):
