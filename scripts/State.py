@@ -37,15 +37,14 @@ class State():
         return self.distance
 
     def plot(self):
-        colors = ['g', 'c', 'm', 'b', 'y', 'r']
+        Visual.clear()
+        colors = ['blue', 'red', 'green', 'orange', 'gold']
         for i in range(len(self.trucks)):
             Visual.plot_path(self.trucks[i].path, color = colors[i % len(colors)])
-        Visual.show()
 
     def plot_missed(self):
         for truck in self.trucks:
             Visual.plot_customers(Depot(0,0), truck.path.missed_customers())
-        Visual.show()
 
     def get_score(self):
         return score(self)
