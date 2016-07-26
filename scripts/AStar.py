@@ -68,8 +68,9 @@ def doAStar(initial_state, do_plot, world_record):
                                                                              state.calculate_distance(), grouping=True)
 
                 if state.calculate_distance() < world_record and score < 1000000:
-                    ## if distance is below wr and the heuristic score is below 1000000 (i.e. no customers missed)
-                    ## hard coded, if heuristic score is changed, then change this!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    ## the score value is dependent on the value in heuristic score, change to 'missed_cust_penalty'
+                    ## if the score is less than the penalty for missing a customer, then the solution is valid
+                    ## the world record is broken and the solution is valid
                     handle_world_record(state)
                     world_record_not_broken = False
                     queue = []
