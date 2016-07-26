@@ -38,7 +38,7 @@ class Visual():
             for i in range(len(list) - 1):
                 Visual.canvas.create_line(Visual.scale(list[i]), Visual.scale(list[i+1]), fill = color, width = 2)
         if label:
-            for c in list[1:-1]:
+            for c in customers:
                 Visual.canvas.create_text(Visual.scale(c), text=str(c.number))
 
         Visual.root.update()

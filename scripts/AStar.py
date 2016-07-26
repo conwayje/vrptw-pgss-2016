@@ -12,10 +12,10 @@ except:
 
 
 
-def doAStar(initial_state, do_plot, world_record, plot_kill):
+def doAStar(initial_state, do_plot, world_record):
     queue = []
 
-    #options for ouptut
+    #options for output
     display_customer_nums = False
     display_vals = False
 
@@ -67,8 +67,6 @@ def doAStar(initial_state, do_plot, world_record, plot_kill):
                 print "Gen {0:>6}: Score: {1:<25,} Distance: {2:<25}".format(generation, priority,
                                                                              state.calculate_distance(), grouping=True)
 
-                state.plot()
-
                 if state.calculate_distance() < world_record and score < 1000000:
                     ## if distance is below wr and the heuristic score is below 1000000 (i.e. no customers missed)
                     ## hard coded, if heuristic score is changed, then change this!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -117,6 +115,9 @@ def doAStar(initial_state, do_plot, world_record, plot_kill):
                     else:
                         done = True
 
+                if do_plot:
+                    state.plot()
+
                 generation += 1
 
             except KeyboardInterrupt:
@@ -133,8 +134,6 @@ def doAStar(initial_state, do_plot, world_record, plot_kill):
             # hit "p" at any time to plot at the end of the generation
             poll = keyPoller.poll()
             if not poll is None:
-                if poll == "p":
-                    state.plot()
                 if poll == "v":
                     display_vals = True
                 if poll == "c":
