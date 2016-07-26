@@ -15,6 +15,8 @@ try:
 except:
     print "Skipping ipdb import because Dan's school is full of jerks"
 
+from time import time
+
 class State():
 
     def __init__(self, trucks, parent = None):
@@ -49,7 +51,7 @@ class State():
         children = [] # list of states
         children_paths = []
         paths = self.paths
-        n_customers = sum( [ len( path ) for path in paths ] )
+        n_customers = len( Distances.matrix[0] )
         trucks = self.trucks
 
         if big:
@@ -65,21 +67,25 @@ class State():
             #might be good, never used
             #children_paths += State.five_section_swap(paths)
             #children_paths += State.random_nearest_neighbors(paths)
-            
             children_paths += State.use_clusters( paths, 10 )
         if small:
             #not that good
             #children_paths += State.redistribute_more_evenly(paths)
             #good
             # children_paths += State.cargo_swap(paths, trucks)
-            children_paths += State.time_swap(paths)
+            children_paths += State.time_swap(paths, 30)
+
             children_paths += State.reverse(paths)
+
             children_paths += State.line_segment_insertion( paths, int( n_customers / 5 ), 4.0 )
+
             children_paths += State.fix_single_unreasonable( paths )
+
+            children_paths += State.fix_group_unreasonable( paths )
 
             #children_paths += State.path_swap( paths, 15 )
             #children_paths += State.distance_swap( paths )
-            children_paths += State.switch_between_paths( paths, 100 )
+            children_paths += State.switch_between_paths( paths, 20 )
         # child_paths should be a list containing three paths per entry (as a list)
         for child_paths in children_paths:
             trucks = []
@@ -124,7 +130,10 @@ class State():
                     x2, y2 = points[j+1][0], points[j+1][1]
                     px, py = path_a.route[customer_a_index-1].x, path_a.route[customer_a_index-1].y
                     nx, ny = path_a.route[customer_a_index+1].x, path_a.route[customer_a_index+1].y
-                    distance = abs( (y2-y1)*x0 + (x1-x2)*y0 + ( x1*y2 - x2*y1 ) )  / ( ( ( (y2-y1)**2 ) + ( (x1-x2)**2 ) )**0.5 )
+                    try:
+                        distance = abs( (y2-y1)*x0 + (x1-x2)*y0 + ( x1*y2 - x2*y1 ) )  / ( ( ( (y2-y1)**2 ) + ( (x1-x2)**2 ) )**0.5 )
+                    except:
+                        distance = 0 # divide by 0 == it's on the line == distance is 0
                     # make a chance if (a) the segment is close, (b) the next point is far, (c) the prior point is far
                     if distance <= reasonable_distance or ((px-x0)**2 + (py-y0)**2)**0.5 > max_radius_to_keep or ((nx-x0)**2 + (ny-y0)**2)**0.5 > max_radius_to_keep:
                         # hey, it's close to the line segment! remove the customer
@@ -420,6 +429,55 @@ class State():
                 children += State.remove_and_insert_closer( -1, paths, path_number )
 
             path_number += 1
+
+        return children
+
+    @staticmethod
+    def fix_group_unreasonable( paths ):
+        """Suppose the distances in order are like [a]unreasonable[b]reasonable[c]reasonable[d]reasonable[e]unreasonable[f].
+           Then move b, c, d, and e into a different path based on a near neighbor"""
+        children = []
+        threshold = max(Distances.matrix[0])/3.5
+        path_number = 0
+        for path in paths:
+            # check depot to first customer
+            if Distances.get_distance(0, path.route[0].number) > threshold:
+                for j in range( 1, len(path) - 1 ):
+                    if Distances.get_distance( path.route[j].number, path.route[j+1].number ) > threshold:
+                        children += State.remove_and_insert_closer_as_group( 1, j, paths, path_number )
+                
+            # check all regular customers to e/o
+            for i in range(0, len(path) - 1):
+                if Distances.get_distance(path.route[i].number, path.route[i+1].number) > threshold:
+                    for j in range( i + 1, len(path) - 1 ):
+                        if Distances.get_distance( path.route[j].number, path.route[j+1].number ) > threshold:
+                            children += State.remove_and_insert_closer_as_group( i+1, j, paths, path_number)
+
+            path_number += 1
+        return children
+
+    @staticmethod
+    def remove_and_insert_closer_as_group( first_removal_index, last_removal_index, paths, interesting_path_index ):
+        children = []
+
+        for i in range(1, 5):
+            new_paths = copy.deepcopy(paths)
+            path = new_paths[interesting_path_index]
+            route = path.route
+            customers_to_insert = []
+            for k in range(first_removal_index, last_removal_index + 1):
+                # the indexes will shift beneath our feet, so always remove at the same place
+                customers_to_insert.append( route.pop(first_removal_index) )
+
+            # range starts at 1 because 0 refers to itself and that's stupid and bad
+            closest_customer_id = Distances.get_closest_customers( customers_to_insert[0] )[i]
+            containing_path = State.find_path_containing_customer( new_paths, closest_customer_id )
+            if containing_path:
+                close_customer_index = containing_path.get_customer_index( closest_customer_id )
+                for customer in customers_to_insert:
+                    containing_path.route.insert( close_customer_index + 1, customer )
+                    close_customer_index += 1
+                children.append( new_paths )
 
         return children
 

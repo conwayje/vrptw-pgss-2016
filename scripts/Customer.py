@@ -16,7 +16,7 @@ class Customer():
     def __repr__(self):
         #return "<Customer {0}: ({1}, {2}), open_time = {3}, close_time = {4}, service_time = {5}, demand = {6}>".format(self.number, self.x, self.y, self.open_time, self.close_time, self.service_time, self.demand)
         #return "<Customer {0}: ({1}, {2}), [{3}, {4}]>".format(self.number, self.x, self.y, self.open_time, self.close_time)
-        return "{0}".format(self.number)
+        return "C#{0}".format(self.number)
     # @TODO -- this is fine because we need an initial way to get the distance from c1 to c2,
     # but otherwise we need either...
     # a) to never use this and refer only to the distance matrix, or
