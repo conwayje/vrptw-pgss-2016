@@ -55,6 +55,7 @@ class State():
         children = [] # list of states
         children_paths = []
         paths = self.paths
+        n_customers = sum( [ len( path ) for path in paths ] )
 
         if big:
             #good
@@ -83,6 +84,7 @@ class State():
             children_paths += State.fix_intersections(paths)
             children_paths += State.fix_inter_path_intersections(paths)
             children_paths += State.sort_paths( paths )
+            children_paths += State.line_segment_insertion( paths, int( n_customers / 5 ), 4.0 )
             #children_paths += State.path_swap( paths, 15 )
             #children_paths += State.distance_swap( paths )
             children_paths += State.switch_between_paths( paths, 100 )
@@ -98,6 +100,50 @@ class State():
                 i += 1
 
             children.append(State(trucks, self))
+        return children
+
+    @staticmethod
+    def line_segment_insertion( paths, n_children, reasonable_distance ):
+        children = []
+
+        for k in range( n_children ):
+            new_paths = copy.deepcopy( paths )
+
+            # pick a path to look at
+            path_a_index = randint(0, len(paths)-1)
+            path_a = new_paths[path_a_index]
+            # pick some customer on that path
+            customer_a_index = randint(0, len(path_a.route) - 1)
+            customer_a = path_a.route[customer_a_index]
+            x0, y0 = customer_a.x, customer_a.y
+
+            second_break = False
+
+            # go through every line segment on all paths and check if this one is close to that one
+            for path in new_paths:
+                points = [[0, 0]] + [[c.x, c.y] for c in path.route] + [[0, 0]]
+
+                for j in range(0, len(points) - 1):
+                    # x0, y0 = the point
+                    # x1, y1 = the line end
+                    # x2, y2 = the other line end
+                    x1, y1 = points[j][0], points[j][1]
+                    x2, y2 = points[j+1][0], points[j+1][1]
+                    distance = abs( (y2-y1)*x0 + (x1-x2)*y0 + ( x1*y2 - x2*y1 ) )  / ( ( ( (y2-y1)**2 ) + ( (x1-x2)**2 ) )**0.5 )
+                    if distance <= reasonable_distance:
+                        # hey, it's close to the line segment! remove the customer
+                        # from it's original path and insert it after the customer at index j+1
+                        path_a.route.remove( customer_a )
+                        path.route.insert( j+1, customer_a )
+
+                        children.append( new_paths )
+
+                        # you're finished for this child; kill both of these for loops (allow third to continue)
+                        second_break = True
+                        break
+                if second_break:
+                    break
+
         return children
 
     @staticmethod
@@ -526,17 +572,18 @@ class State():
                 new_paths = copy.deepcopy(paths)
                 intersections = new_paths[i].intersects_with_other(new_paths[j])
 
-                k = randint(0,len(intersections)-1)
-                points = intersections[k]
-                cust1 = points[randint(0,1)]
-                cust2 = points[randint(2,3)]
-                if not(cust1 == None or cust2 == None):
-                    index1 = new_paths[i].route.index(cust1)
-                    index2 = new_paths[j].route.index(cust2)
-                    new_paths[i].route[index1] = cust2
-                    new_paths[j].route[index2] = cust1
+                if len(intersections) > 0:
+                    k = randint(0,len(intersections)-1)
+                    points = intersections[k]
+                    cust1 = points[randint(0,1)]
+                    cust2 = points[randint(2,3)]
+                    if not(cust1 == None or cust2 == None):
+                        index1 = new_paths[i].route.index(cust1)
+                        index2 = new_paths[j].route.index(cust2)
+                        new_paths[i].route[index1] = cust2
+                        new_paths[j].route[index2] = cust1
 
-                children.append(new_paths)
+                    children.append(new_paths)
         return children
 
 
