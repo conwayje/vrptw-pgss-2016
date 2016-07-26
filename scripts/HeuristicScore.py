@@ -17,24 +17,46 @@ FIX_INTERSECTIONS = 1
 FIX_UNREASONABLE_DISTANCES = 2
 
 def set_score_mode(mode = DEFAULT):
-    if mode == 1:
-        set_score_mode(DEFAULT)
-        penalty_weights["Missed Time"] = 10000
-        penalty_weights["Interintersections"] = 500
-        penalty_weights["Intraintersections"] = 2000
-    if mode == 2:
-        set_score_mode(DEFAULT)
-        penalty_weights["Missed Time"] = 10000
-        penalty_weights["Unreasonable Distances"] = 5000
-    else:
+    if mode == 0:
+        # base scoring mode
         penalty_weights["Distance"] = 3000
         penalty_weights["Missed Time"] = 1000000
         penalty_weights["Missed Cargo"] = 5
         penalty_weights["Wait Time"] = 10
-        penalty_weights["Excessive Weights"] = 100
+        penalty_weights["Excessive Waits"] = 100
         penalty_weights["Unreasonable Distances"] = 500
         penalty_weights["Intraintersections"] = 200
         penalty_weights["Interintersections"] = 50
+    elif mode == 1:
+        # focus a lot on intersections
+        penalty_weights["Distance"] = 3000
+        penalty_weights["Missed Cargo"] = 5
+        penalty_weights["Wait Time"] = 10
+        penalty_weights["Excessive Waits"] = 100
+        penalty_weights["Unreasonable Distances"] = 500
+        penalty_weights["Missed Time"] = 10000
+        penalty_weights["Interintersections"] = 500
+        penalty_weights["Intraintersections"] = 2000
+    elif mode == 2:
+        # focus a lot on distance and nothing else
+        penalty_weights["Distance"] = 3000
+        penalty_weights["Missed Cargo"] = 5
+        penalty_weights["Wait Time"] = 10
+        penalty_weights["Excessive Waits"] = 10
+        penalty_weights["Unreasonable Distances"] = 50
+        penalty_weights["Missed Time"] = 1000
+        penalty_weights["Interintersections"] = 50
+        penalty_weights["Intraintersections"] = 20
+    elif mode == 3:
+        # focus a lot on unreasonable distance and nothing else
+        penalty_weights["Distance"] = 100
+        penalty_weights["Missed Cargo"] = 5
+        penalty_weights["Wait Time"] = 10
+        penalty_weights["Excessive Waits"] = 10
+        penalty_weights["Unreasonable Distances"] = 100000
+        penalty_weights["Missed Time"] = 100
+        penalty_weights["Interintersections"] = 50
+        penalty_weights["Intraintersections"] = 20
 
 
 
@@ -68,7 +90,7 @@ def score(state):
         score += penalty_weights["Wait Time"] * path.get_wait_time()
 
         # Excessive waiting
-        score += penalty_weights["Excessive Weights"] * path.get_number_of_excessive_waits()
+        score += penalty_weights["Excessive Waits"] * path.get_number_of_excessive_waits()
 
         # extra penalty for large distance between two computers
         score += penalty_weights["Unreasonable Distances"] * path.num_unreasonable_distances()

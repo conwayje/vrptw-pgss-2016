@@ -72,7 +72,6 @@ def initial_state(problem, filename):
 
         state = State( trucks, parent = None )
         state.plot()
-        print state
 
     else:
         state = import_solution(problem + ".txt", filename  + ".txt")
