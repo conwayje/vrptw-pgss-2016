@@ -1,5 +1,5 @@
 from heapq import *
-from HeuristicScore import score
+from HeuristicScore import *
 from collections import deque
 from random import random
 from KeyPoller import KeyPoller
@@ -10,8 +10,15 @@ except:
     print "Skipping import of ipdb because Dan's school is full of jerks"
 
 
+
+
 def doAStar(initial_state, do_plot, world_record, plot_kill):
     queue = []
+
+    #options for ouptut
+    display_customer_nums = False
+    display_vals = False
+
 
     generation = 0
 
@@ -59,6 +66,7 @@ def doAStar(initial_state, do_plot, world_record, plot_kill):
 
                 print "Gen {0:>6}: Score: {1:<25,} Distance: {2:<25}".format(generation, priority,
                                                                              state.calculate_distance(), grouping=True)
+
 
                 if state.calculate_distance() < world_record and score < 1000000:
                     ## if distance is below wr and the heuristic score is below 1000000 (i.e. no customers missed)
@@ -126,6 +134,28 @@ def doAStar(initial_state, do_plot, world_record, plot_kill):
             if not poll is None:
                 if poll == "p":
                     state.plot()
+                if poll == "v":
+                    display_vals = True
+                if poll == "c":
+                    display_vals = False
+                if poll == "z":
+                    display_customer_nums = True
+                if poll == "x":
+                    display_customer_nums = False
+
+                if poll == "n":
+                    print "Nuking children"
+                    if(len(queue) > 100):
+                        queue = queue[-100:]
+
+
+            if (display_vals):
+                print_score_vals(state)
+            if (display_customer_nums):
+                for truck in state.trucks:
+                    for Customer in truck.path.route:
+                        print Customer.number,
+                    print
 
     return state
 
