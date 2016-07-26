@@ -23,9 +23,13 @@ def doAStar(initial_state, do_plot, world_record):
 
     generation = 0
 
+    # if you see something with an identical score as before, 99% chance it's the same state.  keep a set
+    # of these guys and don't go in loops considering them again
+    SEEN_SCORES = set()
+
     STATE_QUEUE_MAX_LENGTH = 1000
 
-    QUEUE_LENGTH_EARLY_GAME = 500  # also acts as the # of generations before a reset is triggered
+    QUEUE_LENGTH_EARLY_GAME = 150  # also acts as the # of generations before a reset is triggered
     RESET_TRIGGER_DIFFERENTIAL_SCORE_EARLY_GAME = 1000000
 
     QUEUE_LENGTH_LATE_GAME = 500  # same; also acts as # of gen. before a reset
@@ -50,6 +54,9 @@ def doAStar(initial_state, do_plot, world_record):
 
                 # get the score and state from the heap
                 (priority, state) = heappop(queue)
+                while priority in SEEN_SCORES:
+                    del state
+                    (priority, state) = heappop(queue)
 
                 if priority < EARLY_GAME_SCORE_THRESHOLD and IS_EARLY_GAME:
                     # if we go from early game to late game, update some shit
@@ -64,6 +71,9 @@ def doAStar(initial_state, do_plot, world_record):
 
                 # shove the score into the FIFO queue
                 previous_scores.append(priority)
+
+                # also update the set of seen scores
+                SEEN_SCORES.add( priority )
 
                 print "Gen {0:>6}: Score: {1:<25,} Distance: {2:<25}".format(generation, priority,
                                                                              state.calculate_distance(), grouping=True)
@@ -122,6 +132,10 @@ def doAStar(initial_state, do_plot, world_record):
                         display_customer_nums = False
                     if poll == "p":
                         raw_input("Hit Enter to continue")
+                    if poll == "q":
+                        print "Quitting due to q button press"
+                        import sys
+                        sys.exit(0)
 
                     if poll.isdigit():
                         set_score_mode(int(poll))

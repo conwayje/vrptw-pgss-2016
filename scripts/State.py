@@ -63,10 +63,12 @@ class State():
             #children_paths += State.shuffle( paths, 5 )
             #might be good or not, we've never used it
             #children_paths += State.alternating_shuffle_within_path( paths )
-            children_paths += State.large_reconstruction( paths, 1000 if extra_big_move_children else 200 )
+            children_paths += State.large_reconstruction( paths, 333 if extra_big_move_children else 50 )
         if medium:
-            children_paths += State.random_nearest_neighbors(paths, 5, 20) #don't make n_touched bigger than 20 or else it won't work
-            children_paths += State.use_clusters( paths, 10 )
+            if random.random() > 0.8:
+                children_paths += State.random_nearest_neighbors(paths, 5, 20) #don't make n_touched bigger than 20 or else it won't work
+                children_paths += State.use_clusters( paths, 10 )
+                children_paths += State.move_central_customers_to_path_starts_and_ends( paths, n_customers // 8 )
         if small:
             # good
             # @TODO -- check that they are right
@@ -85,7 +87,8 @@ class State():
 
             children_paths += State.switch_between_paths( paths, 20 )
 
-            children_paths += State.path_swap( paths, 20 )
+            if random.random() > 0.8:
+                children_paths += State.path_swap( paths, 20 )
         # child_paths should be a list containing three paths per entry (as a list)
         for child_paths in children_paths:
             trucks = []
@@ -96,6 +99,31 @@ class State():
                 i += 1
 
             children.append(State(trucks, self))
+        return children
+
+    @staticmethod
+    def move_central_customers_to_path_starts_and_ends( paths, n_children ):
+        children = []
+        nearest_neighbor_ids = sorted(range(1, 101), key = lambda cust: Distances.matrix[0][cust])[:n_children]
+
+        for customer_id in nearest_neighbor_ids:
+            path_number = 0
+            for path_to_modify in paths:
+                for index in [0, len(path_to_modify)]:
+                    # first, copy the paths and get the customer from the path (pop out)
+                    new_paths = copy.deepcopy( paths )
+                    containing_path = State.find_path_containing_customer( new_paths, customer_id )
+                    customer_index_in_path = containing_path.get_customer_index( customer_id )
+                    customer = containing_path.route.pop( customer_index_in_path )
+
+                    # now that we've got the customer, push it into position on the current path
+                    path_to_insert_into = new_paths[path_number]
+                    path_to_insert_into.route.insert( index, customer )
+
+                    children.append( new_paths )
+
+                path_number += 1
+
         return children
 
     @staticmethod
@@ -502,38 +530,43 @@ class State():
             new_path = new_paths[interesting_path_index]
             customer = new_path.route.pop( customer_index )
             containing_path = State.find_path_containing_customer( new_paths, customer_id )
-            close_customer_index = containing_path.get_customer_index( customer_id )
-            if random.random() > 0.5:
-                containing_path.route.insert( close_customer_index + 1, customer )
-            else:
-                containing_path.route.insert( close_customer_index, customer )
-            children.append( new_paths )
+
+            if containing_path:
+                close_customer_index = containing_path.get_customer_index( customer_id )
+                if random.random() > 0.5:
+                    containing_path.route.insert( close_customer_index + 1, customer )
+                else:
+                    containing_path.route.insert( close_customer_index, customer )
+                children.append( new_paths )
 
         return children
 
     #works
     @staticmethod #medium move? , takes random set and does nearest neighbors on it
     def random_nearest_neighbors(paths, n_children, n_touched): #paths, number to do nearest neighbors on
-        children = []
-        new_paths = []
+        try:
+            children = []
+            new_paths = []
 
-        for k in range(n_children):
-            for i in range(len(paths)):
-                path = paths[i]
-                new_path = copy.deepcopy(path.route)
-                customers = [] #customers to do nearest neighbors
-                r = random.randint(0, len(new_path) - n_touched)
-                for l in range(r, r+n_touched):
-                    customers.append(new_path[l])
-                    
-                customers = Dijsktra.get_nearest_neighbors(customers, customers[0])
-                for x in range(0, n_touched):
-                    new_path.insert(r+x, customers.route[x])
+            for k in range(n_children):
+                for i in range(len(paths)):
+                    path = paths[i]
+                    new_path = copy.deepcopy(path.route)
+                    customers = [] #customers to do nearest neighbors
+                    r = random.randint(0, len(new_path) - n_touched)
+                    for l in range(r, r+n_touched):
+                        customers.append(new_path[l])
+                        
+                    customers = Dijsktra.get_nearest_neighbors(customers, customers[0])
+                    for x in range(0, n_touched):
+                        new_path.insert(r+x, customers.route[x])
 
-                new_paths.append(Path(new_path))
-    
-        children.append(new_paths)
-        return children
+                    new_paths.append(Path(new_path))
+        
+            children.append(new_paths)
+            return children
+        except:
+            return []
             
                 
         
@@ -594,7 +627,8 @@ class State():
                         counter += 1
                         path.route.insert(closest_index, cust_a)
 
-            children.append( new_paths )
+            if sum( [len(path) for path in new_paths] ) == n_customers:
+                children.append( new_paths )
 
         return children
 
