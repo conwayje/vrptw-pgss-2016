@@ -12,6 +12,7 @@ class Path():
     def __init__(self, route):
         self.route = route # list of customers
         self.distance = self.calculate_distance()
+        self.intersecting_segments = []
 
     def __len__(self):
         return len( self.route )
@@ -150,10 +151,14 @@ class Path():
             for j in range(i + 2, len(points) - 1 ):
                 if (Path.lines_intersect(points[i], points[i+1], points[j], points[j+1])):
                     intersecting_segments.append([points[i][0], points[i+1][0], points[j][0], points[j+1][0]])
+
+        # save the intersecting segments on the instance
+        self.intersecting_segments = intersecting_segments
+
         return intersecting_segments
 
     def number_intersections(self):
-        return len(self.intersects_self())
+        return len( self.intersecting_segments )
 
     # Will probably be used for inserting in completed solutions for clusters
     def append(self, toAppend):
@@ -274,7 +279,7 @@ class Path():
                     intersecting_segments.append([points_1[i][0], points_1[i+1][0], points_2[j][0], points_2[j+1][0]])
         return intersecting_segments
 
-    def num_unreasonable_distnaces(self):
+    def num_unreasonable_distances(self):
         threshhold = max(Distances.matrix[0])/3.5
         num = 0
 
@@ -289,6 +294,7 @@ class Path():
                 num += 1
             prev_customer = c
         return num
+
     def insert_customer( self, anchor_id, inserted_id, customer_list ):
         """ Args: ( ID of a customer; ID of a customer to be inserted onto the path after anchor; list of customers to choose from )"""
         anchor_index = self.get_customer_index( anchor_id )

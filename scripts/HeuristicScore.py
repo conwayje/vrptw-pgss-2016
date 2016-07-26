@@ -11,19 +11,23 @@ def score(state):
     cargo = state.trucks[0].cargo
 
     # Add the distance (benchmark score) from paths
-    score += state.calculate_distance()
+    score += state.calculate_distance() * 3000
     num_intersections = 0;
     for path in paths:
+        # run the intersecting paths algorithm once, which saves it on the instance,
+        # preventing you from having to run it several times
+        path.intersects_self()
+
         # Missed customers by time
         score += 1000000 * path.number_missed_by_time()
         # Intersecting self
-        num_intersections += path.number_intersections()
+        num_intersections += len( path.intersecting_segments )
         # Missed customers by cargo
         score += 5000 * path.number_missed_by_cargo(cargo)
         # Total wait time
         score += 5 * path.get_wait_time()
         # extra penalty for large distance between two computers
-        score += 50 * path.num_unreasonable_distnaces()
+        score += path.num_unreasonable_distances()
 
     if (num_intersections > 10):
         score += num_intersections * 50
@@ -36,16 +40,20 @@ def score(state):
 #
 # Possible Heuristic score to use
 # for path in paths:
+#     # run the intersecting paths algorithm once, which saves it on the instance,
+#     # preventing you from having to run it several times
+#     path.intersects_self()
+#
 #     # Missed customers by time
 #     score += 1000 * path.number_missed_by_time()
 #     # Intersecting self
-#     num_intersections += path.number_intersections()
+#     num_intersections += 100 * len( path.intersecting_segments )
 #     # Missed customers by cargo
 #     score += 1000 * path.number_missed_by_cargo(cargo)
 #     # Total wait time
 #     score += path.get_wait_time()
 #     # extra penalty for large distance between two computers
-#     score += 50 * path.num_unreasonable_distnaces()
+#     score += 50 * path.num_unreasonable_distances()
 #
 # for i in range(len(paths)):
 #     for j in range(i + 1, len(paths)):
@@ -71,7 +79,7 @@ def print_score_vals(state):
         # Total wait time
         wait_time += path.get_wait_time()
         # extra penalty for large distance between two computers
-        num_unreasonable_distances +=  path.num_unreasonable_distnaces()
+        num_unreasonable_distances +=  path.num_unreasonable_distances()
 
     for i in range(len(state.paths)):
         for j in range(i+1, len(state.paths)):
