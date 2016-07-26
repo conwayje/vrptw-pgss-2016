@@ -13,11 +13,6 @@ from Dijkstra import Dijsktra
 from ClusterStore import ClusterStore
 import copy
 import argparse
-try:
-    import ipdb
-except:
-    print "import ipdb skipped because Dan's school is full of jerks"
-
 # Filenames:    C201.txt, C201_wr_solution.txt
 # 				RC208.txt, RC208_wr_solution.txt
 
@@ -42,7 +37,7 @@ def init(filename):
 
     depot = Depot(0,0)
 
-def initial_state(filename):
+def initial_state(problem, filename):
     global customers
 
     if filename == "nearest_neighbors":
@@ -131,7 +126,7 @@ def initial_state(filename):
         state = State( [Truck( k + 1, 0, 0, truck_capacity, path=routes[k] ) for k in range( num_trucks ) ], parent = None)
         state.plot()
     else:
-        state = import_solution(filename  + ".txt")
+        state = import_solution(problem + ".txt", filename  + ".txt")
 
     if do_plot:
         state.plot()
@@ -156,4 +151,4 @@ world_record_score = float( args.world_record_score )
 test_environment = args.test
 
 init(problem_file)
-state = doAStar(initial_state(init_solution_file), do_plot, world_record_score)
+state = doAStar(initial_state(problem_file, init_solution_file), do_plot, world_record_score)

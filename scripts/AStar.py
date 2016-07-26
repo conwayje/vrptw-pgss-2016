@@ -3,6 +3,8 @@ from HeuristicScore import *
 from collections import deque
 from random import random
 from KeyPoller import KeyPoller
+from ImportSolution import write_solution
+import datetime
 
 try:
     import ipdb
@@ -65,8 +67,9 @@ def doAStar(initial_state, do_plot, world_record):
                                                                              state.calculate_distance(), grouping=True)
 
                 if state.calculate_distance() < world_record and score < 1000000:
-                    ## if distance is below wr and the heuristic score is below 1000000 (i.e. no customers missed)
-                    ## hard coded, if heuristic score is changed, then change this!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    ## the score value is dependent on the value in heuristic score, change to 'missed_cust_penalty'
+                    ## if the score is less than the penalty for missing a customer, then the solution is valid
+                    ## the world record is broken and the solution is valid
                     handle_world_record(state)
                     world_record_not_broken = False
                     queue = []
@@ -126,9 +129,12 @@ def doAStar(initial_state, do_plot, world_record):
                     print
                 break
 
-            # hit "p" at any time to plot at the end of the generation
             poll = keyPoller.poll()
             if not poll is None:
+                if poll == "s":
+                    filename = datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
+                    print "Saving state to " + filename + ".txt"
+                    write_solution(state, filename)
                 if poll == "v":
                     display_vals = True
                 if poll == "c":

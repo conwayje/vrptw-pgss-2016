@@ -55,6 +55,7 @@ class State():
         children_paths = []
         paths = self.paths
         n_customers = sum( [ len( path ) for path in paths ] )
+        trucks = self.trucks
 
         if big:
             #good
@@ -77,7 +78,7 @@ class State():
             #not that good
             #children_paths += State.redistribute_more_evenly(paths)
             #good
-       
+            # children_paths += State.cargo_swap(paths, trucks)
             children_paths += State.time_swap(paths)
             children_paths += State.reverse(paths)
             children_paths += State.line_segment_insertion( paths, int( n_customers / 5 ), 4.0 )
@@ -101,15 +102,16 @@ class State():
     @staticmethod
     def line_segment_insertion( paths, n_children, reasonable_distance ):
         children = []
+        max_radius_to_keep = max(Distances().matrix[0]) / 8
 
         for k in range( n_children ):
             new_paths = copy.deepcopy( paths )
 
             # pick a path to look at
-            path_a_index = randint(0, len(paths)-1)
+            path_a_index = randrange(len(paths))
             path_a = new_paths[path_a_index]
             # pick some customer on that path
-            customer_a_index = randint(0, len(path_a.route) - 1)
+            customer_a_index = randrange(len(path_a.route) - 1)
             customer_a = path_a.route[customer_a_index]
             x0, y0 = customer_a.x, customer_a.y
 
@@ -123,10 +125,15 @@ class State():
                     # x0, y0 = the point
                     # x1, y1 = the line end
                     # x2, y2 = the other line end
+                    # px, py = the previous point in the path
+                    # nx, ny = the next point in the path
                     x1, y1 = points[j][0], points[j][1]
                     x2, y2 = points[j+1][0], points[j+1][1]
+                    px, py = path_a.route[customer_a_index-1].x, path_a.route[customer_a_index-1].y
+                    nx, ny = path_a.route[customer_a_index+1].x, path_a.route[customer_a_index+1].y
                     distance = abs( (y2-y1)*x0 + (x1-x2)*y0 + ( x1*y2 - x2*y1 ) )  / ( ( ( (y2-y1)**2 ) + ( (x1-x2)**2 ) )**0.5 )
-                    if distance <= reasonable_distance:
+                    # make a chance if (a) the segment is close, (b) the next point is far, (c) the prior point is far
+                    if distance <= reasonable_distance or ((px-x0)**2 + (py-y0)**2)**0.5 > max_radius_to_keep or ((nx-x0)**2 + (ny-y0)**2)**0.5 > max_radius_to_keep:
                         # hey, it's close to the line segment! remove the customer
                         # from it's original path and insert it after the customer at index j+1
                         path_a.route.remove( customer_a )
@@ -347,7 +354,29 @@ class State():
             if Distances.get_distance(0, path.route[customer_a].number) > Distances.get_distance(0, path.route[customer_a].number):
                 path.route[customer_a], path.route[customer_b] = path.route[customer_b], path.route[customer_a]
             children.append(new_paths)
-        return children
+        return children    
+    
+ #   @staticmethod #small move
+ #   def cargo_swap(paths, trucks):
+ #       children = []
+ #       for i in range( 15 ):
+ #           truck = trucks
+ #           print (truck)
+ #           new_paths = [copy.deepcopy(element) for element in paths]
+ #           ipdb.set_trace()
+ #           path_index = randint(0, len(paths)-1)
+ #           #this gets two random paths that are not the same path. There is definitely a better way to to do this.
+ #           #feel free to make this not suck
+ #           path_a = new_paths[path_index]
+ #           remaining_paths = new_paths.remove[path_a]
+ #           path_b = randint(0, len(remaining_paths)-1)
+ #           # gets two random customers, if the first is farther then the secondthen swap
+ #           if (path_a.cargo_used > trucks.cargo):
+ #               customer_a = randint(0, len(path_a.route) - 1)
+ #               customer_b = randint(0, len(path_b.route) - 1)
+ #               path.route[customer_a], path.route[customer_b] = path.route[customer_b], path.route[customer_a]
+ #           children.append(new_paths)
+ #       return children
 
     @staticmethod #medium move, 3 children
     def five_section_swap(paths):
@@ -366,7 +395,6 @@ class State():
                 for a in range(len(new_route)-1):
                     if n == new_route[a].number:
                         new_route.remove(new_route[a])
-
             to_insert = randint(0, len(new_route) - 1)
             for k in range(to_insert, to_insert+5):
                 new_route.insert(k, path.route[to_insert])
