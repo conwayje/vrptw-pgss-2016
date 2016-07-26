@@ -33,7 +33,7 @@ def init(filename):
     print "Calculating distances..."
     Distances.calculate_matrix(customers)
     print "Storing clusters..."
-    #ClusterStore.store_clusters(filename, customers)
+    ClusterStore.store_clusters(filename, customers)
 
     depot = Depot(0,0)
 
