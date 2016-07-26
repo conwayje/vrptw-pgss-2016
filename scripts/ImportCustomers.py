@@ -1,6 +1,4 @@
 from Customer import Customer
-from Visual import Visual
-from Depot import Depot
 #from ClusterSolution import ClusterSolution
 
 

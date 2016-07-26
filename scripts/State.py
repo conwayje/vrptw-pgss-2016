@@ -37,15 +37,14 @@ class State():
         return self.distance
 
     def plot(self):
-        colors = ['g', 'c', 'm', 'b', 'y', 'r']
+        Visual.clear()
+        colors = ['blue', 'red', 'green', 'orange', 'gold']
         for i in range(len(self.trucks)):
             Visual.plot_path(self.trucks[i].path, color = colors[i % len(colors)])
-        Visual.show()
 
     def plot_missed(self):
         for truck in self.trucks:
             Visual.plot_customers(Depot(0,0), truck.path.missed_customers())
-        Visual.show()
 
     def get_score(self):
         return score(self)
@@ -81,15 +80,12 @@ class State():
        
             children_paths += State.time_swap(paths)
             children_paths += State.reverse(paths)
-            children_paths += State.fix_intersections(paths)
-            children_paths += State.fix_inter_path_intersections(paths)
-            children_paths += State.sort_paths( paths )
             children_paths += State.line_segment_insertion( paths, int( n_customers / 5 ), 4.0 )
+            children_paths += State.fix_double_unreasonable( paths )
+            #children_paths += State.unreasonable_distance_before_after(paths)
             #children_paths += State.path_swap( paths, 15 )
             #children_paths += State.distance_swap( paths )
             children_paths += State.switch_between_paths( paths, 100 )
-            #children_paths += State.swap_neighbors( paths )
-            children_paths += State.move_customer( paths, 8 )
         # child_paths should be a list containing three paths per entry (as a list)
         for child_paths in children_paths:
             trucks = []
@@ -208,22 +204,6 @@ class State():
             children.append(new_paths)
         return children
 
-    @staticmethod
-    def fix_intersections(paths):
-        children = []
-        for i in range(len(paths)):
-            new_paths = copy.deepcopy(paths)
-            path = new_paths[i]
-            intersections = path.intersects_self()
-            if(len(intersections) > 0):
-                k = randint(0, len(intersections) - 1)
-                intersection = intersections[k]
-                i1 = path.route.index(intersection[1])
-                i2 = path.route.index(intersection[2])
-                path.route[i1], path.route[i2] = path.route[i2], path.route[i1]
-                children.append(new_paths)
-        return children
-
     @staticmethod #medium move
     # @TODO -- truck number dependency (entire function)
     def cycle(paths, times):
@@ -247,27 +227,7 @@ class State():
             children.append(new_paths)
             return children
     
-    @staticmethod
-    def move_customer(paths, numtimes):
-        children = []
-        new_paths = copy.deepcopy(paths)
-        for i in range(numtimes):
-            rp = randint(0, len(paths)-1)
-            path = new_paths[rp]
-            rstart = randint(0, len(path)-1)
-            rend = randint(0, len(path)-2)
-            while rend == rstart:
-                rend = randint(0, len(path))
-                
-            c = path.route[rstart]
-            path.route.pop(path.route.index(path.route[rstart]))
-            path.route.insert(rend, c)
-        
-            children.append(new_paths)
-        
-        return children
             
-        
     @staticmethod #small move
     def redistribute_more_evenly(paths):
         """ For ex, with 100 customers and 3 trucks, we expect 33 per truck.  Siphon off the
@@ -401,23 +361,114 @@ class State():
             for i in range(index, index+5):
                 section_to_swap.append(path.route[i])
                 cs.append(path.route[i].number)
-            
+
             for n in range(len(cs)-1):
                 for a in range(len(new_route)-1):
                     if n == new_route[a].number:
                         new_route.remove(new_route[a])
-                
 
             to_insert = randint(0, len(new_route) - 1)
-            for k in range(0, 5):
-                new_route.insert(to_insert+k, section_to_swap[k])
+            for k in range(to_insert, to_insert+5):
+                new_route.insert(k, path.route[to_insert])
 
             new_paths = copy.deepcopy(paths)
             new_paths[j] = Path(new_route)
             children.append(new_paths)
         return children
-            
-        
+
+    @staticmethod
+    def fix_double_unreasonable( paths ):
+        """If you travel an unreasonable distance both to and from a customer,
+            try moving it somewhere else closer???"""
+        children = []
+        threshold = max(Distances.matrix[0])/4.5
+
+        path_number = 0
+        for path in paths:
+            # check depot to first customer
+            if Distances.get_distance(0, path.route[0].number) > threshold and Distances.get_distance(path.route[0].number, path.route[1].number) > threshold:
+                children += State.remove_and_insert_closer( 0, paths, path_number )
+                
+            # check all regular customers to e/o
+            for i in range(0, len(path) - 2):
+                if Distances.get_distance(path.route[i].number, path.route[i+1].number) > threshold and Distances.get_distance(path.route[i+1].number, path.route[i+2].number) > threshold:
+                    children += State.remove_and_insert_closer( i+1, paths, path_number )
+
+            # check last customer to depot
+            if Distances.get_distance(path.route[-2].number, path.route[-1].number) > threshold and Distances.get_distance(path.route[-1].number, 0) > threshold:
+                children += State.remove_and_insert_closer( -1, paths, path_number )
+
+            path_number += 1
+
+        return children
+
+    @staticmethod
+    def remove_and_insert_closer( customer_index, paths, interesting_path_index ):
+        children = []
+        # find whoever is closest to it (should be four customers nearby-ish?)
+        customer = paths[interesting_path_index].route[customer_index]
+        closest_customers = Distances.get_closest_customers( customer )
+
+        for customer_id in closest_customers[1:5]:
+            # for each of those customer IDs, find the path where it is, and insert it
+            # either before or after (50/50) the close customer
+            new_paths = copy.deepcopy( paths )
+            new_path = new_paths[interesting_path_index]
+            customer = new_path.route.pop( customer_index )
+            containing_path = State.find_path_containing_customer( new_paths, customer_id )
+            close_customer_index = containing_path.get_customer_index( customer_id )
+            if random.random() > 0.5:
+                containing_path.route.insert( close_customer_index + 1, customer )
+            else:
+                containing_path.route.insert( close_customer_index, customer )
+            children.append( new_paths )
+
+        return children
+
+
+    # @staticmethod
+    # def unreasonable_distance_before_after(paths):
+    #     '''Moves a customer to a different point if the distances to and from it are
+    #     "unreasonable" (Radius divided by 3.5).'''
+    #     children = []
+    #     threshold = max(Distances.matrix[0])/3.5
+
+    #     for path in paths:
+    #         was_last_unreasonable = False
+    #         prev_customer = path.route[0]
+    #         if (Distances.get_distance(prev_customer.number, 0) > threshold):
+    #             was_last_unreasonable = True
+
+    #         for i in range(len(path.route[1:])):
+    #             c = path.route[i]
+    #             if (Distances.get_distance(prev_customer.number, c.number) > threshold):
+    #                 if(was_last_unreasonable):
+    #                     closest_custs = Distances.get_closest_customers(c)
+
+    #                     for cust_id in closest_custs[:4]:
+    #                         children.append(State.insert_by_cust_id(paths, c, closest_custs, path))
+    #                 was_last_unreasonable = True
+    #             else:
+    #                 was_last_unreasonable = False
+
+    #     return children
+
+    # @staticmethod
+    # def insert_by_cust_id(paths, to_insert, target, path):
+    #     new_set_of_paths = copy.deepcopy(paths)
+    #     for i in range(len(paths)):
+    #         p = paths[i]
+    #         if p != path:
+    #             for j in range(len(p.route)):
+    #                 if(p.route[j].number == target):
+    #                     new_set_of_paths[i].route.insert(to_insert, target)
+    #         elif p == path:
+    #             for j in range(len(p.route)):
+    #                 if(p.route[j].number == to_insert.number):
+    #                     new_set_of_paths[i].route.pop(j)
+
+    #     return new_set_of_paths
+
     #@FIXME
     @staticmethod #medium move? , takes random set of 10 and does nearest neighbors on it
     def random_nearest_neighbors(paths):
@@ -441,7 +492,7 @@ class State():
         children.append(new_paths)
         return children
             
-
+                
         
     @staticmethod #large move
     def alternating_shuffle_within_path(paths):
@@ -492,26 +543,6 @@ class State():
             children.append( new_paths )
 
         return children
-    
-    @staticmethod
-    def swap_neighbors(paths):
-        children = []
-        new_paths = []
-        for path in paths:
-            new_path = []
-            new_path = copy.deepcopy(path)
-            r = randint(0, len(new_path.route) - 2)
-
-            neighbor = new_path.route[r]
-            new_path.route[r] = new_path.route[r+1]
-            new_path.route[r+1] = neighbor
-            new_paths.append(new_path)
-        
-        children.append(new_paths)
-        
-        return children
-            
-        
 
     @staticmethod
     def switch_between_paths(paths, numtoswap):
@@ -586,11 +617,12 @@ class State():
                     children.append(new_paths)
         return children
 
-
-
     def __repr__(self):
         str = "\n<State: "
         for i in range(len(self.trucks)):
             str += "Truck {0}: {1}".format(i, self.trucks[i].path.route)
         str += ">"
         return str
+
+
+
