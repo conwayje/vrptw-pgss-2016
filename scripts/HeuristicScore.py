@@ -33,7 +33,7 @@ def score(state):
         score += 5000 * path.number_missed_by_cargo(cargo)
         # Total wait time
         score += 5 * path.get_wait_time()
-        ipdb.set_trace()
+        # ipdb.set_trace()
         # Excessive waiting
         score += 10 * path.get_number_of_excessive_waits()
         # extra penalty for large distance between two computers

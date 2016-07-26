@@ -77,7 +77,7 @@ class State():
             #not that good
             #children_paths += State.redistribute_more_evenly(paths)
             #good
-            children_paths += State.cargo_swap(paths, trucks)
+            # children_paths += State.cargo_swap(paths, trucks)
             children_paths += State.time_swap(paths)
             children_paths += State.reverse(paths)
             children_paths += State.sort_paths( paths )
@@ -337,27 +337,12 @@ class State():
             index = randint(0, len(new_route)-6)
             for i in range(index, index+5):
                 section_to_swap.append(path.route[i])
-<<<<<<< HEAD
-
-                new_route.remove(new_route[i]) #@FIXME
-
-=======
->>>>>>> 62aa3d86efd883f93e4b682395fb00339ea5ebeb
                 cs.append(path.route[i].number)
 
             for n in range(len(cs)-1):
                 for a in range(len(new_route)-1):
                     if n == new_route[a].number:
                         new_route.remove(new_route[a])
-<<<<<<< HEAD
-                
-=======
-<<<<<<< HEAD
-=======
->>>>>>> 62aa3d86efd883f93e4b682395fb00339ea5ebeb
->>>>>>> b1f2bf6604c3360cbbb83c90f1971fdbcf9c5c4c
-
->>>>>>> 62aa3d86efd883f93e4b682395fb00339ea5ebeb
             to_insert = randint(0, len(new_route) - 1)
             for k in range(to_insert, to_insert+5):
                 new_route.insert(k, path.route[to_insert])
