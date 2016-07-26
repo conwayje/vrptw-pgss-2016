@@ -67,7 +67,7 @@ class State():
             #not that good
             #children_paths += State.cycle(paths, 4)
             #might be good, never used
-            children_paths += State.five_section_swap(paths)
+            #children_paths += State.five_section_swap(paths)
             #children_paths += State.random_nearest_neighbors(paths)
             
             # @DEBUG
@@ -350,12 +350,17 @@ class State():
             path = paths[j]
             new_route = copy.deepcopy(path.route)
             section_to_swap = []
-            index = randint(0, len(path)-6)
+            cs = []
+            index = randint(0, len(new_route)-6)
             for i in range(index, index+5):
                 section_to_swap.append(path.route[i])
+                cs.append(path.route[i].number)
+            
+            for n in range(len(cs)-1):
                 for a in range(len(new_route)-1):
-                    if new_route[a].number == path.route[i].number:
+                    if n == new_route[a].number:
                         new_route.remove(new_route[a])
+                
 
             to_insert = randint(0, len(new_route) - 1)
             for k in range(0, 5):

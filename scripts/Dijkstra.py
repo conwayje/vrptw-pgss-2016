@@ -46,6 +46,13 @@ class Dijsktra():
                 next = customers[i]
                 min = Distances.get_distance(customers.index(source), i)
         return next
+        
+    @staticmethod
+    def get_next_random(source, customers, path):
+        closest = sorted(customers, key=lambda: Distances.get_distance(source.number, customer.number))
+        closest_few = closest[:3]
+        r = randint(0,len(closest_few))
+        return closest_few[r]
 
     @staticmethod
     def get_next_one_path(source, customers, path):
