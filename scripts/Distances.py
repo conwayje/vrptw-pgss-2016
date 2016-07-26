@@ -1,4 +1,5 @@
 from Customer import Customer
+from ImportCustomers import import_customers
 
 class Distances():
 
@@ -18,3 +19,13 @@ class Distances():
     @staticmethod
     def get_distance(c1, c2):
         return Distances.matrix[c1][c2]
+
+    @staticmethod
+    def get_closest_customers(customer):
+        return sorted(range(1, 101), key = lambda cust: Distances.matrix[customer.number][cust])
+
+#testing
+# customers = import_customers("RC208.txt", False)
+# print "Calculating distances..."
+# Distances.calculate_matrix(customers)
+# print Distances.get_closest_customers(customers[5])

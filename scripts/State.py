@@ -83,6 +83,7 @@ class State():
             children_paths += State.fix_intersections(paths)
             children_paths += State.fix_inter_path_intersections(paths)
             children_paths += State.sort_paths( paths )
+            children_paths += State.unreasonable_distance_before_after(paths)
             #children_paths += State.path_swap( paths, 15 )
             #children_paths += State.distance_swap( paths )
             children_paths += State.switch_between_paths( paths, 100 )
@@ -370,8 +371,53 @@ class State():
             new_paths[j] = Path(new_route)
             children.append(new_paths)
         return children
-            
-        
+
+    @staticmethod
+    def unreasonable_distance_before_after(paths):
+        '''Moves a customer to a different point if the distances to and from it are
+        "unreasonable" (Radius divided by 3.5).'''
+        children = []
+        threshold = max(Distances.matrix[0])/3.5
+
+
+        for path in paths:
+            was_last_unreasonable = False
+            prev_customer = path.route[0]
+            if (Distances.get_distance(prev_customer.number, 0) > threshold):
+                was_last_unreasonable = True
+
+            for i in range(len(path.route[1:])):
+                c = path.route[i]
+                if (Distances.get_distance(prev_customer.number, c.number) > threshold):
+                    if(was_last_unreasonable):
+                        closest_custs = Distances.get_closest_customers(c)
+
+                        for cust_id in closest_custs[:4]:
+                            children.append(State.insert_by_cust_id(paths, c, closest_custs, path))
+                    was_last_unreasonable = True
+                else:
+                    was_last_unreasonable = False
+
+
+        return children
+
+    @staticmethod
+    def insert_by_cust_id(paths, to_insert, target, path):
+
+        new_set_of_paths = copy.deepcopy(paths)
+        for i in range(len(paths)):
+            p = paths[i]
+            if p != path:
+                for j in range(len(p.route)):
+                    if(p.route[j].number == target):
+                        new_set_of_paths[i].route.insert(to_insert, target)
+            elif p == path:
+                for j in range(len(p.route)):
+                    if(p.route[j].number == to_insert.number):
+                        new_set_of_paths[i].route.pop(j)
+
+        return new_set_of_paths
+
     #@FIXME
     @staticmethod #medium move? , takes random set of 10 and does nearest neighbors on it
     def random_nearest_neighbors(paths):
