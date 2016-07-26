@@ -140,7 +140,6 @@ parser.add_argument("num_trucks")
 parser.add_argument("truck_capacity")
 parser.add_argument("world_record_score")
 parser.add_argument("--plot", help="plot the map before the main loop engages", action = "store_true")
-parser.add_argument("--plotkill", help="plot the map when you hit Ctrl+C", action = "store_true")
 parser.add_argument("--test", help="looks into the test directory rather than main directory", action = "store_true")
 args = parser.parse_args()
 problem_file = args.problem_file
@@ -150,7 +149,6 @@ do_plot = args.plot
 truck_capacity = int(args.truck_capacity)
 world_record_score = float( args.world_record_score )
 test_environment = args.test
-plotkill = args.plotkill
 
 init(problem_file)
-state = doAStar(initial_state(init_solution_file), do_plot, world_record_score, plotkill)
+state = doAStar(initial_state(init_solution_file), do_plot, world_record_score)
