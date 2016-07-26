@@ -37,15 +37,14 @@ class State():
         return self.distance
 
     def plot(self):
-        colors = ['g', 'c', 'm', 'b', 'y', 'r']
+        Visual.clear()
+        colors = ['blue', 'red', 'green', 'orange', 'gold']
         for i in range(len(self.trucks)):
             Visual.plot_path(self.trucks[i].path, color = colors[i % len(colors)])
-        Visual.show()
 
     def plot_missed(self):
         for truck in self.trucks:
             Visual.plot_customers(Depot(0,0), truck.path.missed_customers())
-        Visual.show()
 
     def get_score(self):
         return score(self)
@@ -81,6 +80,7 @@ class State():
             children_paths += State.time_swap(paths)
             children_paths += State.reverse(paths)
             children_paths += State.sort_paths( paths )
+            children_paths += State.unreasonable_distance_before_after(paths)
             #children_paths += State.path_swap( paths, 15 )
             #children_paths += State.distance_swap( paths )
             children_paths += State.switch_between_paths( paths, 100 )
@@ -314,16 +314,22 @@ class State():
             index = randint(0, len(new_route)-6)
             for i in range(index, index+5):
                 section_to_swap.append(path.route[i])
+<<<<<<< HEAD
 
                 new_route.remove(new_route[i]) #@FIXME
 
+=======
+>>>>>>> 62aa3d86efd883f93e4b682395fb00339ea5ebeb
                 cs.append(path.route[i].number)
-            
+
             for n in range(len(cs)-1):
                 for a in range(len(new_route)-1):
                     if n == new_route[a].number:
                         new_route.remove(new_route[a])
+<<<<<<< HEAD
                 
+=======
+>>>>>>> 62aa3d86efd883f93e4b682395fb00339ea5ebeb
 
             to_insert = randint(0, len(new_route) - 1)
             for k in range(to_insert, to_insert+5):
@@ -333,6 +339,52 @@ class State():
             new_paths[j] = Path(new_route)
             children.append(new_paths)
         return children
+
+    @staticmethod
+    def unreasonable_distance_before_after(paths):
+        '''Moves a customer to a different point if the distances to and from it are
+        "unreasonable" (Radius divided by 3.5).'''
+        children = []
+        threshold = max(Distances.matrix[0])/3.5
+
+
+        for path in paths:
+            was_last_unreasonable = False
+            prev_customer = path.route[0]
+            if (Distances.get_distance(prev_customer.number, 0) > threshold):
+                was_last_unreasonable = True
+
+            for i in range(len(path.route[1:])):
+                c = path.route[i]
+                if (Distances.get_distance(prev_customer.number, c.number) > threshold):
+                    if(was_last_unreasonable):
+                        closest_custs = Distances.get_closest_customers(c)
+
+                        for cust_id in closest_custs[:4]:
+                            children.append(State.insert_by_cust_id(paths, c, closest_custs, path))
+                    was_last_unreasonable = True
+                else:
+                    was_last_unreasonable = False
+
+
+        return children
+
+    @staticmethod
+    def insert_by_cust_id(paths, to_insert, target, path):
+
+        new_set_of_paths = copy.deepcopy(paths)
+        for i in range(len(paths)):
+            p = paths[i]
+            if p != path:
+                for j in range(len(p.route)):
+                    if(p.route[j].number == target):
+                        new_set_of_paths[i].route.insert(to_insert, target)
+            elif p == path:
+                for j in range(len(p.route)):
+                    if(p.route[j].number == to_insert.number):
+                        new_set_of_paths[i].route.pop(j)
+
+        return new_set_of_paths
 
     #@FIXME
     @staticmethod #medium move? , takes random set of 10 and does nearest neighbors on it
