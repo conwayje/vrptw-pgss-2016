@@ -54,6 +54,7 @@ class State():
         children = [] # list of states
         children_paths = []
         paths = self.paths
+        trucks = self.trucks
 
         if big:
             #good
@@ -76,7 +77,7 @@ class State():
             #not that good
             #children_paths += State.redistribute_more_evenly(paths)
             #good
-       
+            children_paths += State.cargo_swap(paths, trucks)
             children_paths += State.time_swap(paths)
             children_paths += State.reverse(paths)
             children_paths += State.sort_paths( paths )
@@ -301,7 +302,29 @@ class State():
             if Distances.get_distance(0, path.route[customer_a].number) > Distances.get_distance(0, path.route[customer_a].number):
                 path.route[customer_a], path.route[customer_b] = path.route[customer_b], path.route[customer_a]
             children.append(new_paths)
-        return children
+        return children    
+    
+ #   @staticmethod #small move
+ #   def cargo_swap(paths, trucks):
+ #       children = []
+ #       for i in range( 15 ):
+ #           truck = trucks
+ #           print (truck)
+ #           new_paths = [copy.deepcopy(element) for element in paths]
+ #           ipdb.set_trace()
+ #           path_index = randint(0, len(paths)-1)
+ #           #this gets two random paths that are not the same path. There is definitely a better way to to do this.
+ #           #feel free to make this not suck
+ #           path_a = new_paths[path_index]
+ #           remaining_paths = new_paths.remove[path_a]
+ #           path_b = randint(0, len(remaining_paths)-1)
+ #           # gets two random customers, if the first is farther then the secondthen swap
+ #           if (path_a.cargo_used > trucks.cargo):
+ #               customer_a = randint(0, len(path_a.route) - 1)
+ #               customer_b = randint(0, len(path_b.route) - 1)
+ #               path.route[customer_a], path.route[customer_b] = path.route[customer_b], path.route[customer_a]
+ #           children.append(new_paths)
+ #       return children
 
     @staticmethod #medium move, 3 children
     def five_section_swap(paths):
@@ -314,13 +337,27 @@ class State():
             index = randint(0, len(new_route)-6)
             for i in range(index, index+5):
                 section_to_swap.append(path.route[i])
+<<<<<<< HEAD
+
+                new_route.remove(new_route[i]) #@FIXME
+
+=======
+>>>>>>> 62aa3d86efd883f93e4b682395fb00339ea5ebeb
                 cs.append(path.route[i].number)
 
             for n in range(len(cs)-1):
                 for a in range(len(new_route)-1):
                     if n == new_route[a].number:
                         new_route.remove(new_route[a])
+<<<<<<< HEAD
+                
+=======
+<<<<<<< HEAD
+=======
+>>>>>>> 62aa3d86efd883f93e4b682395fb00339ea5ebeb
+>>>>>>> b1f2bf6604c3360cbbb83c90f1971fdbcf9c5c4c
 
+>>>>>>> 62aa3d86efd883f93e4b682395fb00339ea5ebeb
             to_insert = randint(0, len(new_route) - 1)
             for k in range(to_insert, to_insert+5):
                 new_route.insert(k, path.route[to_insert])

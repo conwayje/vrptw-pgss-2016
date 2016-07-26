@@ -6,6 +6,10 @@
 import math
 from Distances import Distances
 from Customer import Customer
+try:
+    import ipdb
+except:
+    print "Skipping ipdb import because Dan's school is full of jerks"
 
 class Path():
 
@@ -278,6 +282,39 @@ class Path():
                 if Path.lines_intersect(points_1[i], points_1[i+1], points_2[j], points_2[j+1]):
                     intersecting_segments.append([points_1[i][0], points_1[i+1][0], points_2[j][0], points_2[j+1][0]])
         return intersecting_segments
+
+    ## Calculates number of times the truck waits for a hella long time
+    def get_number_of_excessive_waits(self):
+        num_waits = 0
+
+        if len( self ) == 0:
+            return 0
+
+        wait_time = 0
+        prev_customer = self.route[0]
+        time = Distances.get_distance(prev_customer.number, 0)
+
+        if time < prev_customer.open_time:
+            wait_time += prev_customer.open_time - time
+            time = prev_customer.open_time
+
+        time += prev_customer.service_time
+
+        for c in self.route[1:]:
+
+            time += Distances.get_distance(prev_customer.number, c.number)
+            prev_customer = c
+
+            if time < c.open_time:
+                wait_time += prev_customer.open_time - time
+                time = c.open_time
+            ######## THE WAIT TIME VALUE IS ARBITRARILY PICKED, CAN CHANGE IF NECESSARY
+            if wait_time > 20:
+                num_waits += 1
+
+            time += c.service_time
+        
+        return num_waits
 
     def num_unreasonable_distances(self):
         threshhold = max(Distances.matrix[0])/3.5
