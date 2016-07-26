@@ -74,59 +74,6 @@ def initial_state(problem, filename):
         state.plot()
         print state
 
-    #doesn't work yet, don't use
-    elif filename == "split_nearest_neighbors":
-        print "Generating split nearest neighbors solution..."
-        paths = []
-        depot_c = Customer(0, 0, 0, 0, 0, 0, 0)
-        
-        ##################################################
-        ##################################################
-        ##################################################
-        ##################################################
-        ##################################################
-        ##################################################
-        ##################################################
-        ##################################################
-        # PLEASE DON'T MAKE ANY CHANGES TO THIS PART BELOW
-        # UNLESS YOU FIX THE TRUCK NUMBER DEPENDENCY
-        # WHILE YOU'RE DOING IT.  THANKS TEAM ;) ;) ;)
-        ##################################################
-        ##################################################
-        ##################################################
-        ##################################################
-        ##################################################
-        ##################################################
-        ##################################################
-        route1 = [depot_c]
-        route2 = [depot_c]
-        route3 = [depot_c]
-        customers_by_distance = sorted(customers, key=lambda customer: Distances.get_distance(depot_c.number, customer.number) * customer.timewindow())
-        for customer in customers_by_distance:
-                if customer.x < 0 and customer.y > -15:
-                    route1.append(customer)
-                elif customer.x >= 0 and customer.y > -15:
-                    route2.append(customer)
-                else:
-                    route3.append(customer)
-        ##################################################
-        ##################################################
-        ##################################################
-        ##################################################
-        ##################################################
-        ##################################################
-        ##################################################
-        ##################################################
-        ##################################################
-        ##################################################
-        ##################################################
-        ##################################################
-
-
-        # @TODO truck number dependency
-        routes = [ Dijsktra.get_nearest_neighbors( [depot_c], [depot_c][0] ) for x in range( num_trucks ) ]
-        state = State( [Truck( k + 1, 0, 0, truck_capacity, path=routes[k] ) for k in range( num_trucks ) ], parent = None)
-        state.plot()
     else:
         state = import_solution(problem + ".txt", filename  + ".txt")
 

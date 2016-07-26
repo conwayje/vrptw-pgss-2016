@@ -56,10 +56,10 @@ class State():
 
         if big:
             #good
-            #children_paths += State.shuffle( paths, 5 )
+            # children_paths += State.shuffle( paths, 5 ) 
             #might be good or not, we've never used it
-            #children_paths += State.alternating_shuffle_within_path( paths )
-            #children_paths += State.large_reconstruction( paths, 1000 if extra_big_move_children else 200 )
+            # children_paths += State.alternating_shuffle_within_path( paths ) 
+            # children_paths += State.large_reconstruction( paths, 1000 if extra_big_move_children else 200 )
             pass
         if medium:
             #not that good
@@ -504,25 +504,24 @@ class State():
 
         return children
 
-    #@FIXME
+    #works
     @staticmethod #medium move? , takes random set of 10 and does nearest neighbors on it
-    def random_nearest_neighbors(paths):
+    def random_nearest_neighbors(paths, num): #paths, number to do nearest neighbors on
         children = []
         new_paths = []
         for i in range(len(paths)):
             path = paths[i]
             new_path = copy.deepcopy(path.route)
             customers = [] #customers to do nearest neighbors
-            r = random.randint(0, len(path.route) - 10)
-            for l in range(r, r+10):
+            r = random.randint(0, len(new_path) - num)
+            for l in range(r, r+num):
                 customers.append(new_path[l])
+                
             customers = Dijsktra.get_nearest_neighbors(customers, customers[0])
-            #print customers
-            for x in range(r, r+10):
-                #print x-r
-                #print customers[0]
-                new_path[x] = customers.route[x - r]
-            new_paths.append(new_path)
+            for x in range(0, num):
+                new_path.insert(r+x, customers.route[x])
+
+            new_paths.append(Path(new_path))
     
         children.append(new_paths)
         return children
