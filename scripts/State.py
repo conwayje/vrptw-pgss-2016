@@ -5,7 +5,7 @@ from HeuristicScore import score
 from Dijkstra import Dijsktra
 from Path import Path
 from Depot import Depot
-##from ImportCustomers import ImportCustomers
+from ImportCustomers import import_customers
 from ClusterStore import ClusterStore
 from random import randint, randrange, choice
 from Distances import Distances
@@ -672,10 +672,14 @@ class State():
 
 
 
-"""
+
 
     ## helper method for wait_time_swap
+    ## gets 10? closest customers to the swapped customer
     def get_closest_customer (filename, customer):
+        distance = []
+        closest_custs = []
+
         with open(path + filename) as f:
         customers = import_customers(filename.split("_")[0] + ".txt", False)
         lines = f.readlines()
@@ -684,8 +688,21 @@ class State():
         for line in lines[5:]:
             ids.append(line.split()[3:])
 
+
+        for c in range (len(customers)):
+            new_cust = customer[c]
+            distance.append(Distances.get_distance(customer, new_cust))
+
+        for x in range (10):
+            new_min = distance.min()
+            min_cust = distance.pop(new_min)
+            closest_custs.append(min_cust)
+
+        return closest_custs
+
+
     @staticmethod
-    ## if the truck is being a little shit and waiting too long, change the path to include another customer in the meantime
+    ## if the truck is waiting too long, change the path to include another customer in the meantime
     def wait_time_swap (paths, n_children = 15):
         children = []
         for i in range (n_children):
@@ -734,6 +751,6 @@ class State():
 
         return children
 
-"""
+
 
 
