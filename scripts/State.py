@@ -78,13 +78,10 @@ class State():
             # good
             # @TODO -- check that they are right
             # children_paths += State.wait_time_swap(paths)
-<<<<<<< HEAD
 
             # children_paths += State.cargo_swap(paths, trucks)
 
-=======
             # children_paths += State.cargo_swap(paths, self.trucks[0].cargo)
->>>>>>> b05932a87fa9d05a13559ad93d837614be59e857
             children_paths += State.time_swap(paths)
 
             children_paths += State.reverse(paths)
