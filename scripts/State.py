@@ -51,7 +51,7 @@ class State():
         return score(self)
 
     # @TODO -- still lots to do here, of course ;)
-    def get_children(self, big = True, medium = True, small = True, extra_big_move_children = False ):
+    def get_children(self, big = True, medium = True, small = True, extra_big_move_children = False, near_valid = False ):
         children = [] # list of states
         children_paths = []
         paths = self.paths
@@ -88,6 +88,9 @@ class State():
             
             children_paths += State.missed_customer_time_swap (paths, 20)
 
+            if near_valid or random.random() > 0.9:
+                children_paths += State.swap_all_neighbor_pairs_on_some_path( paths )
+
             if random.random() > 0.8:
                 children_paths += State.path_swap( paths, 20 )
         # child_paths should be a list containing three paths per entry (as a list)
@@ -100,6 +103,19 @@ class State():
                 i += 1
 
             children.append(State(trucks, self))
+        return children
+
+    @staticmethod
+    def swap_all_neighbor_pairs_on_some_path( paths ):
+        children = []
+        path_index = randrange( len( paths ) )
+
+        for k in range( len(paths[path_index]) - 1 ):
+            new_paths = copy.deepcopy( paths )
+            path = new_paths[path_index]
+            path[k], path[k+1] = path[k+1], path[k]
+            children.append( new_paths )
+
         return children
 
     @staticmethod
