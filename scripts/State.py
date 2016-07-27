@@ -567,7 +567,6 @@ class State():
     @staticmethod
     def random_nn_limit(paths, n_touched):
         lens = [len(path) for path in paths]
-        print lens
         if min(lens) < n_touched:
             return min(lens)
         else:
