@@ -771,7 +771,6 @@ class State():
         
         customers = import_customers("RC208.txt", False)
 
-<<<<<<< HEAD
         ##intitialize distance
         for c in range (len(customers)):
 
@@ -834,7 +833,7 @@ class State():
                 replacement_customer = customers.pop(1)
                 ## adds replacement customer into path.route
                 path.route.append(replacement_customer)
-=======
+
     @staticmethod
     ## if the truck is being a little shit and waiting too long, change the path to include another customer in the meantime
     def fix_wait_time (paths):
@@ -847,13 +846,9 @@ class State():
                 for p in new_paths:
                     if p.get_customer_index(closest) != -1:
                         p.insert_customer(closest, c.number, customers)
->>>>>>> b05932a87fa9d05a13559ad93d837614be59e857
                 children.append(new_paths)
         return children
 
-<<<<<<< HEAD
 
-=======
->>>>>>> b05932a87fa9d05a13559ad93d837614be59e857
 
 
