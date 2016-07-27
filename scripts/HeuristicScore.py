@@ -17,6 +17,7 @@ FIX_INTERSECTIONS = 1
 FIX_UNREASONABLE_DISTANCES = 2
 
 def set_score_mode(mode = DEFAULT):
+    global penalty_weights
     if mode == 0:
         # base scoring mode
         penalty_weights["Distance"] = 3000
@@ -58,12 +59,8 @@ def set_score_mode(mode = DEFAULT):
         penalty_weights["Interintersections"] = 50
         penalty_weights["Intraintersections"] = 20
 
-
-
-
 ## STILL NEED PENALTIES FOR COMING OUT OF CLUSTERS AND OUTRAGEOUS ANGLE OF TURNING
 def score(state):
-
     paths = state.paths
     n_customers = len( Distances.matrix[0] ) - 1
     cargo = state.trucks[0].cargo
@@ -73,35 +70,36 @@ def score(state):
     # Add the distance (benchmark score) from paths
     score = state.calculate_distance() * penalty_weights["Distance"]
 
-
     for path in paths:
+        stats = path.combined_stats(cargo)
+
         # Missed customers by time
         ## The missed_cust_penalty variable is to avoid a number dependency in the AStar.py method handle_world_record
-        score += penalty_weights["Missed Time"] * path.number_missed_by_time()
+        score += penalty_weights["Missed Time"] * stats["Missed Time"] #DONE
 
         # Intersecting self
         path.intersects_self()
-        num_intersections += len( path.intersecting_segments )
+        num_intersections += path.number_intersections()
 
         # Missed customers by cargo
-        score += penalty_weights["Missed Cargo"] * path.number_missed_by_cargo(cargo)
+        score += penalty_weights["Missed Cargo"] * stats["Missed Cargo"] #DONE
 
         # Total wait time
-        score += penalty_weights["Wait Time"] * path.get_wait_time()
+        score += penalty_weights["Wait Time"] * stats["Wait Time"] #DONE
 
         # Excessive waiting
-        score += penalty_weights["Excessive Waits"] * path.get_number_of_excessive_waits()
+        score += penalty_weights["Excessive Waits"] * stats["Excessive Waits"] #DONE
 
         # extra penalty for large distance between two computers
-        score += penalty_weights["Unreasonable Distances"] * path.num_unreasonable_distances()
+        score += penalty_weights["Unreasonable Distances"] * stats["Unreasonable Distances"] #DONE
 
     # for every 8 customers, you get 1 intersection for free.  after that, it costs you.
     if (num_intersections > ( n_customers / 10 ) ):
         score += penalty_weights["Intraintersections"] * ( num_intersections - ( n_customers / 10 ) )
 
     for i in range(len(paths)):
-       for j in range(i+1, len(paths)):
-           score += penalty_weights["Interintersections"] * len(paths[i].intersects_with_other(paths[j]))
+        for j in range(i+1, len(paths)):
+            score += penalty_weights["Interintersections"] * len(paths[i].intersects_with_other(paths[j]))
 
     return score
 
@@ -113,23 +111,24 @@ def print_score_vals(state):
     num_intersections = 0
     num_unreasonable_distances = 0
     num_customers = 0
-
+    cargo = state.trucks[0].cargo
 
     for path in state.paths:
+        stats = path.combined_stats(cargo)
         # Number Customers
         num_customers += len(path.route)
         # Missed customers by time
-        missed_time += path.number_missed_by_time()
+        missed_time += stats["Missed Time"]
         # Intersecting self
         num_intersections += path.number_intersections()
         # Missed customers by cargo
-        missed_cargo +=  path.number_missed_by_cargo(state.trucks[0].cargo)
+        missed_cargo += stats["Missed Cargo"]
         # Total wait time
-        wait_time += path.get_wait_time()
+        wait_time += stats["Wait Time"]
         # Penalize excessive waiting
-        excessive_waits += path.get_number_of_excessive_waits()
+        excessive_waits += stats["Excessive Waits"]
         # extra penalty for large distance between two computers
-        num_unreasonable_distances +=  path.num_unreasonable_distances()
+        num_unreasonable_distances += stats["Unreasonable Distances"]
 
     for i in range(len(state.paths)):
         for j in range(i+1, len(state.paths)):
@@ -139,5 +138,3 @@ def print_score_vals(state):
     print "Missed customers (time):  {0:>4} \nMissed customers (cargo): {1:>4} \nNumIntersections:         {2:>4} \n" \
           "Wait time:                {3:>4} \nNumUnreasonable:          {0:>4} \nExcessive Waits:          {2:>4}"\
           .format(missed_time, missed_cargo, num_intersections, int(wait_time), num_unreasonable_distances)
-
-

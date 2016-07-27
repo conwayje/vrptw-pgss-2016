@@ -174,10 +174,9 @@ def doAStar(initial_state, do_plot, world_record):
 
                 break
 
-
-
             if (display_vals):
                 print_score_vals(state)
+
             if (display_customer_nums):
                 for truck in state.trucks:
                     for Customer in truck.path.route:

@@ -567,8 +567,6 @@ class State():
             return children
         except:
             return []
-            
-                
         
     @staticmethod #large move
     def alternating_shuffle_within_path(paths):
