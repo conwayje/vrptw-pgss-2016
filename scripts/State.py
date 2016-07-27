@@ -544,7 +544,7 @@ class State():
     @staticmethod #medium move? , takes random set and does nearest neighbors on it
     def random_nearest_neighbors(paths, n_children, n_touched): #paths, number to do nearest neighbors on
         children = []
-
+        n_touched = State.random_nn_limit(paths, n_touched)
         for k in range(n_children):
             new_paths = []
             for i in range(len(paths)):
@@ -564,6 +564,15 @@ class State():
             children.append(new_paths)
         return children
 
+    @staticmethod
+    def random_nn_limit(paths, n_touched):
+        lens = [len(path) for path in paths]
+        print lens
+        if min(lens) < n_touched:
+            return min(lens)
+        else:
+            return n_touched
+            
     @staticmethod #large move
     def alternating_shuffle_within_path(paths):
         children = []
