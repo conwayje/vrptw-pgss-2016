@@ -95,14 +95,15 @@ class State():
                 children_paths += State.path_swap( paths, 20 )
         # child_paths should be a list containing three paths per entry (as a list)
         for child_paths in children_paths:
-            trucks = []
-
-            i = 1
-            for child in child_paths:
-                trucks.append(Truck(i, 0, 0, self.trucks[0].cargo, child))
-                i += 1
-
-            children.append(State(trucks, self))
+            if child_paths:
+                trucks = []
+                
+                i = 1
+                for child in child_paths:
+                    trucks.append(Truck(i, 0, 0, self.trucks[0].cargo, child))
+                    i += 1
+                
+                children.append(State(trucks, self))
         return children
 
     @staticmethod
