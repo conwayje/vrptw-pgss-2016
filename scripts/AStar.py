@@ -80,14 +80,15 @@ def doAStar(initial_state, do_plot, world_record):
                 print "Gen {0:>6}: Score: {1:<25,} Distance: {2:<25}".format(generation, priority,
                                                                              state.calculate_distance(), grouping=True)
 
-                if state.calculate_distance() < world_record and score < 1000000:
-                    ## the score value is dependent on the value in heuristic score, change to 'missed_cust_penalty'
-                    ## if the score is less than the penalty for missing a customer, then the solution is valid
-                    ## the world record is broken and the solution is valid
-                    handle_world_record(state)
-                    world_record_not_broken = False
-                    queue = []
-                    break
+                if state.calculate_distance() < world_record:
+                    if len( [ 1 for path in state.paths if path.missed_customers == [] ] ) == len( state.paths ):
+                        ## the score value is dependent on the value in heuristic score, change to 'missed_cust_penalty'
+                        ## if the score is less than the penalty for missing a customer, then the solution is valid
+                        ## the world record is broken and the solution is valid
+                        handle_world_record(state)
+                        world_record_not_broken = False
+                        queue = []
+                        break
 
                 # logic for getting children...
                 # usually, get medium and small.  SOMETIMES get the big ones, too, but not too many of them
@@ -96,7 +97,7 @@ def doAStar(initial_state, do_plot, world_record):
                     if previous_scores[0] - previous_scores[-1] > RESET_TRIGGER_DIFFERENTIAL_SCORE_EARLY_GAME or len(
                             previous_scores) < QUEUE_LENGTH_EARLY_GAME:
                         # keep operating as usual
-                        children = state.get_children(False, True, True, random() > 0.9)
+                        children = state.get_children(False, True, True, False, priority < 5000000)
                     else:
                         # uh oh, fucked up and didn't make progress in 300 moves in the early game.
                         # time to clear the queues and start over from the current state.
@@ -110,7 +111,7 @@ def doAStar(initial_state, do_plot, world_record):
                 else:
                     if previous_scores[0] - previous_scores[-1] > RESET_TRIGGER_DIFFERENTIAL_SCORE_LATE_GAME or len(
                             previous_scores) < QUEUE_LENGTH_LATE_GAME:
-                        children = state.get_children(False, True, True, random() > 0.9)
+                        children = state.get_children(False, True, True, False, priority < 5000000)
                     else:
                         # uh oh, fucked up and didn't make progress in 1000 moves in the late game.
                         # time to clear the queues and start over from the current state.
