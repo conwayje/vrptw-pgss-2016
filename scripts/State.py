@@ -66,9 +66,9 @@ class State():
             children_paths += State.large_reconstruction( paths, 333 if extra_big_move_children else 50 )
         if medium:
             if random.random() > 0.8:
-                children_paths += State.random_nearest_neighbors(paths, 5, 20) #don't make n_touched bigger than 20 or else it won't work
+                children_paths += State.random_nearest_neighbors(paths, 5, 10) #don't make n_touched bigger than 20 or else it won't work
                 children_paths += State.use_clusters( paths, 10 )
-                children_paths += State.move_central_customers_to_path_starts_and_ends( paths, n_customers // 8 )
+                children_paths += State.move_central_customers_to_path_starts_and_ends( paths, n_customers // 5 )
         if small:
             # good
             # @TODO -- check that they are right
@@ -543,30 +543,27 @@ class State():
     #works
     @staticmethod #medium move? , takes random set and does nearest neighbors on it
     def random_nearest_neighbors(paths, n_children, n_touched): #paths, number to do nearest neighbors on
-        try:
-            children = []
+        children = []
+
+        for k in range(n_children):
             new_paths = []
+            for i in range(len(paths)):
+                path = paths[i]
+                new_path = copy.deepcopy(path.route)
+                customers = [] #customers to do nearest neighbors
+                r = random.randint(0, len(new_path) - n_touched)
+                customers = copy.deepcopy(new_path[r:r + n_touched])
+                for i in range(n_touched):
+                    new_path.pop(r)
 
-            for k in range(n_children):
-                for i in range(len(paths)):
-                    path = paths[i]
-                    new_path = copy.deepcopy(path.route)
-                    customers = [] #customers to do nearest neighbors
-                    r = random.randint(0, len(new_path) - n_touched)
-                    for l in range(r, r+n_touched):
-                        customers.append(new_path[l])
-                        
-                    customers = Dijsktra.get_nearest_neighbors(customers, customers[0])
-                    for x in range(0, n_touched):
-                        new_path.insert(r+x, customers.route[x])
+                customers = Dijsktra.get_nearest_neighbors(customers, customers[0])
+                for x in range(0, n_touched):
+                    new_path.insert(r+x, customers.route[x])
 
-                    new_paths.append(Path(new_path))
-        
+                new_paths.append(Path(new_path))
             children.append(new_paths)
-            return children
-        except:
-            return []
-        
+        return children
+
     @staticmethod #large move
     def alternating_shuffle_within_path(paths):
         children = []
