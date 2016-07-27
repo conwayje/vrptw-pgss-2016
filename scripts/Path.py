@@ -217,6 +217,7 @@ class Path():
         missed_customers = []
         distance_threshold = max(Distances.matrix[0]) / 3.5
         wait_time = 0
+        total_wait_time = 0
         cargo_index = 0
         cargo_used = 0
 
@@ -229,14 +230,18 @@ class Path():
         distance = d
 
         if time < prev_customer.open_time:
-            wait_time += prev_customer.open_time - time
+            wait_time = prev_customer.open_time - time
+            total_wait_time += wait_time
             time = prev_customer.open_time
+        if wait_time > 20:  # arbitrary, change if necessary
+            num_waits += 1
 
         if time > prev_customer.close_time:
             missed_customers.append(prev_customer)
 
         if distance > distance_threshold:
             num_unreasonable_distances += 1
+
 
         time += prev_customer.service_time
 
@@ -255,7 +260,8 @@ class Path():
             prev_customer = c
 
             if time < c.open_time:
-                wait_time += prev_customer.open_time - time
+                wait_time = prev_customer.open_time - time
+                total_wait_time += prev_customer.open_time - time
                 time = c.open_time
             if time > c.close_time:
                 missed_customers.append(c)
@@ -268,7 +274,7 @@ class Path():
 
         return { "Missed Time"           : num_time_missed,
                  "Missed Cargo"          : num_cargo_missed,
-                 "Wait Time"             : wait_time,
+                 "Wait Time"             : total_wait_time,
                  "Excessive Waits"       : num_waits,
                  "Unreasonable Distances": num_unreasonable_distances }
 
@@ -354,7 +360,7 @@ class Path():
     def get_number_of_excessive_waits(self):
         num_waits = 0
 
-        if len( self ) == 0:
+        if len(self) == 0:
             return 0
 
         wait_time = 0
@@ -362,7 +368,7 @@ class Path():
         time = Distances.get_distance(prev_customer.number, 0)
 
         if time < prev_customer.open_time:
-            wait_time += prev_customer.open_time - time
+            wait_time = prev_customer.open_time - time
             time = prev_customer.open_time
 
         time += prev_customer.service_time
@@ -373,15 +379,51 @@ class Path():
             prev_customer = c
 
             if time < c.open_time:
-                wait_time += prev_customer.open_time - time
+                wait_time = prev_customer.open_time - time
                 time = c.open_time
             ######## THE WAIT TIME VALUE IS ARBITRARILY PICKED, CAN CHANGE IF NECESSARY
             if wait_time > 20:
                 num_waits += 1
-                
+
             time += c.service_time
-        
+
         return num_waits
+
+    # Gets an array of customers that the truck waits an excessive amount of time at
+    def get_excessive_wait_custs(self):
+        waits = []
+
+        if len(self) == 0:
+            return None
+
+        wait_time = 0
+        prev_customer = self.route[0]
+        time = Distances.get_distance(prev_customer.number, 0)
+
+        if time < prev_customer.open_time:
+            wait_time = prev_customer.open_time - time
+            time = prev_customer.open_time
+
+        if wait_time > 20:
+            waits.append(prev_customer)
+
+        time += prev_customer.service_time
+
+        for c in self.route[1:]:
+
+            time += Distances.get_distance(prev_customer.number, c.number)
+            prev_customer = c
+
+            if time < c.open_time:
+                wait_time = prev_customer.open_time - time
+                time = c.open_time
+            ######## THE WAIT TIME VALUE IS ARBITRARILY PICKED, CAN CHANGE IF NECESSARY
+            if wait_time > 20:
+                waits.append(c)
+
+            time += c.service_time
+
+        return waits
 
     # Included in combined_stats()
     def num_unreasonable_distances(self):

@@ -5,7 +5,7 @@ from HeuristicScore import score
 from Dijkstra import Dijsktra
 from Path import Path
 from Depot import Depot
-##from ImportCustomers import ImportCustomers
+from ImportCustomers import customers
 from ClusterStore import ClusterStore
 from random import randint, randrange, choice
 from Distances import Distances
@@ -72,7 +72,7 @@ class State():
         if small:
             # good
             # @TODO -- check that they are right
-            # children_paths += State.wait_time_swap(paths)
+            # children_paths += State.fix_wait_time(paths)
             # children_paths += State.cargo_swap(paths, trucks)
             children_paths += State.time_swap(paths)
 
@@ -715,68 +715,21 @@ class State():
 
 
 
-"""
-
-    ## helper method for wait_time_swap
-    def get_closest_customer (filename, customer):
-        with open(path + filename) as f:
-        customers = import_customers(filename.split("_")[0] + ".txt", False)
-        lines = f.readlines()
-
-        ids = []
-        for line in lines[5:]:
-            ids.append(line.split()[3:])
-
     @staticmethod
     ## if the truck is being a little shit and waiting too long, change the path to include another customer in the meantime
-    def wait_time_swap (paths, n_children = 15):
+    def fix_wait_time (paths):
         children = []
-        for i in range (n_children):
-            customers = []
-            new_paths = copy.deepcopy(paths)
-            path = new_paths[i]
-
-            wait_time = 0
-            prev_customer = path.route[0]
-            time = Distances.get_distance(prev_customer.number, 0)
-
-            if time < prev_customer.open_time:
-             wait_time += prev_customer.open_time - time
-             time = prev_customer.open_time
-
-            time += prev_customer.service_time
-
-            for c in path.route:
-
-                time += Distances.get_distance(prev_customer.number, c.number)
-                prev_customer = c
-
-                if time < c.open_time:
-                    wait_time += prev_customer.open_time - time
-                    time = c.open_time
-
-                ## wait time is arbitrarily picked, can change
-                if wait_time > 20:
-                    customers = get_closest_customer(c)
-                    ## generates nearest customers
-                    for x in customers:
-                        ## if the truck has to wait long at some new customers too, forget em
-                        ## time+5 can be changed
-                        if (time+5) < x.open_time:
-                            customers = customers.remove(x)
-                        else:
-                            pass
-                time += c.service_time
-                if len (customers) != 0:
-                    ##choose the first customer (cause it doesn't really matter) as the add-in
-                    replacement_customer = customers.pop(0)
-                    ## adds replacement customer into path.route
-                    path.route.append(replacement_customer)
-
+        for path in paths:
+            customers_waited_at = path.get_excessive_wait_custs()
+            for c in customers_waited_at:
+                new_paths = copy.deepcopy(paths)
+                closest = Distances.get_closest_customers(c)[randint(1, 3)]
+                for p in new_paths:
+                    if p.get_customer_index(closest) != -1:
+                        p.insert_customer(closest, c.number, customers)
                 children.append(new_paths)
 
         return children
 
-"""
 
 
