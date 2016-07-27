@@ -85,6 +85,8 @@ class State():
             children_paths += State.fix_group_unreasonable( paths )
 
             children_paths += State.switch_between_paths( paths, 20 )
+            
+            children_paths += State.missed_customer_time_swap (paths, 20)
 
             if near_valid or random.random() > 0.9:
                 children_paths += State.swap_all_neighbor_pairs_on_some_path( paths )
@@ -560,7 +562,7 @@ class State():
     @staticmethod #medium move? , takes random set and does nearest neighbors on it
     def random_nearest_neighbors(paths, n_children, n_touched): #paths, number to do nearest neighbors on
         children = []
-
+        n_touched = State.random_nn_limit(paths, n_touched)
         for k in range(n_children):
             new_paths = []
             for i in range(len(paths)):
@@ -580,6 +582,14 @@ class State():
             children.append(new_paths)
         return children
 
+    @staticmethod
+    def random_nn_limit(paths, n_touched):
+        lens = [len(path) for path in paths]
+        if min(lens) < n_touched:
+            return min(lens)
+        else:
+            return n_touched
+            
     @staticmethod #large move
     def alternating_shuffle_within_path(paths):
         children = []
@@ -692,6 +702,26 @@ class State():
 
         return children
 
+    @staticmethod
+    def missed_customer_time_swap(paths, n_children):
+        children = []
+        for n in range(n_children):
+            new_paths = []
+            for path in paths:
+                new_path = copy.deepcopy(path)
+                missed_customers = new_path.missed_customers()
+                if missed_customers: #if there are missed customers
+                    r = randint(0, len(missed_customers) - 1) #pick a missed customer
+                    c,t = missed_customers[r], missed_customers[r].close_time
+                    for x in range(0, new_path.route.index(c)): #look through the customers before the missed customer since it should be earlier
+                        if new_path.get_arrival_time_of_customer(new_path.route[x]) < t: #find a spot in the path before the close time
+                            new_path.route.remove(c)
+                            new_path.route.insert(x-1, c)
+                            new_paths.append(new_path)
+            children.append(new_paths)
+        return children
+            
+        
     @staticmethod
     def fix_inter_path_intersections(paths):
         children = []
