@@ -26,8 +26,8 @@ def set_score_mode(mode = DEFAULT):
         penalty_weights["Wait Time"] = 10
         penalty_weights["Excessive Waits"] = 100
         penalty_weights["Unreasonable Distances"] = 500
-        penalty_weights["Intraintersections"] = 200
-        penalty_weights["Interintersections"] = 50
+        penalty_weights["Intraintersections"] = 50
+        penalty_weights["Interintersections"] = 200
     elif mode == 1:
         # focus a lot on intersections
         penalty_weights["Distance"] = 3000
@@ -36,8 +36,8 @@ def set_score_mode(mode = DEFAULT):
         penalty_weights["Excessive Waits"] = 100
         penalty_weights["Unreasonable Distances"] = 500
         penalty_weights["Missed Time"] = 10000
-        penalty_weights["Interintersections"] = 500
-        penalty_weights["Intraintersections"] = 2000
+        penalty_weights["Intraintersections"] = 500
+        penalty_weights["Interintersections"] = 2000
     elif mode == 2:
         # focus a lot on distance and nothing else
         penalty_weights["Distance"] = 3000

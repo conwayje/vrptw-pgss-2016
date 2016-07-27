@@ -74,12 +74,11 @@ class State():
             # @TODO -- check that they are right
             # children_paths += State.wait_time_swap(paths)
             # children_paths += State.cargo_swap(paths, trucks)
-
             children_paths += State.time_swap(paths)
 
             children_paths += State.reverse(paths)
 
-            children_paths += State.line_segment_insertion( paths, int( n_customers / 5 ), 4.0 )
+            children_paths += State.line_segment_insertion( paths, int( n_customers / 5 ), 10.0 )
 
             children_paths += State.fix_single_unreasonable( paths )
 
@@ -95,7 +94,7 @@ class State():
 
             i = 1
             for child in child_paths:
-                trucks.append(Truck(i, 0, 0, 700, child))
+                trucks.append(Truck(i, 0, 0, self.trucks[0].cargo, child))
                 i += 1
 
             children.append(State(trucks, self))
@@ -598,23 +597,21 @@ class State():
         n_paths = len(paths)
 
         for i in range( n_children ):
-            # print i
             new_paths = copy.deepcopy( paths )
 
             # choose a percentage between your min and max; multiply it and take it based on n_customers
             n_changes_to_make = int( n_customers * ( random.randint(min_percentage, max_percentage) / 100.0 ) )
-            # print n_changes_to_make
-            counter = 0
 
             removed_customers = []
             for k in range( n_changes_to_make ):
                 # remove #[n_changes_to_make] customers
                 path_a = new_paths[ randint( 0, n_paths - 1 ) ]
                 if len(path_a) > 1:
-                    cust_a = path_a.route.pop( randint( 0, len( path_a.route ) - 1 ) )
+                    cust_a = path_a.route.pop( randrange( len( path_a.route ) ) )
                     removed_customers.append( cust_a )
 
             num_removed = len(removed_customers)
+
             while len(removed_customers) > 0:
                 cust_a = removed_customers[0]
                 closest = Dijsktra.get_next_random(cust_a, customers, [removed_customers], 3)
@@ -622,7 +619,6 @@ class State():
                 for path in new_paths:
                     closest_index = path.get_customer_index(closest.number)
                     if closest_index != -1:
-                        counter += 1
                         path.route.insert(closest_index, cust_a)
 
             if sum( [len(path) for path in new_paths] ) == n_customers:

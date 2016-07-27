@@ -140,6 +140,7 @@ def doAStar(initial_state, do_plot, world_record):
                     if poll.isdigit():
                         set_score_mode(int(poll))
                         queue = []
+                        previous_scores.clear()
 
                     if poll == "n":
                         print "Nuking children"
