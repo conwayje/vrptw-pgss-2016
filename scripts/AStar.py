@@ -19,12 +19,17 @@ def doAStar(initial_state, do_plot, world_record):
     display_customer_nums = False
     display_vals = False
 
+    set_score_mode(DEFAULT)
 
     generation = 0
 
+    # if you see something with an identical score as before, 99% chance it's the same state.  keep a set
+    # of these guys and don't go in loops considering them again
+    SEEN_SCORES = set()
+
     STATE_QUEUE_MAX_LENGTH = 1000
 
-    QUEUE_LENGTH_EARLY_GAME = 500  # also acts as the # of generations before a reset is triggered
+    QUEUE_LENGTH_EARLY_GAME = 150  # also acts as the # of generations before a reset is triggered
     RESET_TRIGGER_DIFFERENTIAL_SCORE_EARLY_GAME = 1000000
 
     QUEUE_LENGTH_LATE_GAME = 500  # same; also acts as # of gen. before a reset
@@ -49,6 +54,9 @@ def doAStar(initial_state, do_plot, world_record):
 
                 # get the score and state from the heap
                 (priority, state) = heappop(queue)
+                while priority in SEEN_SCORES:
+                    del state
+                    (priority, state) = heappop(queue)
 
                 if priority < EARLY_GAME_SCORE_THRESHOLD and IS_EARLY_GAME:
                     # if we go from early game to late game, update some shit
@@ -63,6 +71,9 @@ def doAStar(initial_state, do_plot, world_record):
 
                 # shove the score into the FIFO queue
                 previous_scores.append(priority)
+
+                # also update the set of seen scores
+                SEEN_SCORES.add( priority )
 
                 print "Gen {0:>6}: Score: {1:<25,} Distance: {2:<25}".format(generation, priority,
                                                                              state.calculate_distance(), grouping=True)
@@ -104,6 +115,38 @@ def doAStar(initial_state, do_plot, world_record):
                         previous_scores.clear()
                         children = state.get_children(True, False, False, True)
 
+
+                poll = keyPoller.poll()
+                if not poll is None:
+                    if poll == "s":
+                        filename = datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
+                        print "Saving state to " + filename + ".txt"
+                        write_solution(state, filename)
+                    if poll == "v":
+                        display_vals = True
+                    if poll == "c":
+                        display_vals = False
+                    if poll == "z":
+                        display_customer_nums = True
+                    if poll == "x":
+                        display_customer_nums = False
+                    if poll == "p":
+                        raw_input("Hit Enter to continue")
+                    if poll == "q":
+                        print "Quitting due to q button press"
+                        import sys
+                        sys.exit(0)
+
+                    if poll.isdigit():
+                        set_score_mode(int(poll))
+                        queue = []
+
+                    if poll == "n":
+                        print "Nuking children"
+                        if (len(queue) > 100):
+                            queue = queue[-100:]
+
+
                 for c in children:
                     heappush(queue, (score(c), c))
 
@@ -129,37 +172,11 @@ def doAStar(initial_state, do_plot, world_record):
                         print Customer.number,
                     print
 
-                while state.parent != None:
-                    state.plot()
-                    state = state.parent
                 break
-
-
-            poll = keyPoller.poll()
-            if not poll is None:
-                if poll == "s":
-                    filename = datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
-                    print "Saving state to " + filename + ".txt"
-                    write_solution(state, filename)
-                if poll == "v":
-                    display_vals = True
-                if poll == "c":
-                    display_vals = False
-                if poll == "z":
-                    display_customer_nums = True
-                if poll == "x":
-                    display_customer_nums = False
-                if poll == "p":
-                    raw_input("Hit Enter to continue")
-
-                if poll == "n":
-                    print "Nuking children"
-                    if(len(queue) > 100):
-                        queue = queue[-100:]
-
 
             if (display_vals):
                 print_score_vals(state)
+
             if (display_customer_nums):
                 for truck in state.trucks:
                     for Customer in truck.path.route:

@@ -207,6 +207,68 @@ class Path():
         else:
             return Distances.get_distance(customer.number, 0)
 
+    def combined_stats(self, cargo):
+        num_waits = 0
+        num_unreasonable_distances = 0
+        num_cargo_missed = 0
+        missed_customers = []
+        distance_threshold = max(Distances.matrix[0]) / 3.5
+        wait_time = 0
+        cargo_index = 0
+        cargo_used = 0
+
+        if len(self) == 0:
+            return 0
+
+        prev_customer = self.route[0]
+        d = Distances.get_distance(prev_customer.number, 0)
+        time = d
+        distance = d
+
+        if time < prev_customer.open_time:
+            wait_time += prev_customer.open_time - time
+            time = prev_customer.open_time
+
+        if time > prev_customer.close_time:
+            missed_customers.append(prev_customer)
+
+        if distance > distance_threshold:
+            num_unreasonable_distances += 1
+
+        time += prev_customer.service_time
+
+        cargo_used += self.route[0].demand
+        cargo_index += 1
+
+        for c in self.route[1:]:
+            cargo_used += c.demand
+            if cargo_used > cargo:
+                num_cargo_missed = len(self.route) - cargo_index
+            cargo_index += 1
+            d = Distances.get_distance(prev_customer.number, c.number)
+            if (d > distance_threshold):
+                num_unreasonable_distances += 1
+            time += d
+            prev_customer = c
+
+            if time < c.open_time:
+                wait_time += prev_customer.open_time - time
+                time = c.open_time
+            if time > c.close_time:
+                missed_customers.append(c)
+            if wait_time > 20:  # arbitrary, change if necessary
+                num_waits += 1
+
+            time += c.service_time
+
+        num_time_missed = len(missed_customers)
+
+        return { "Missed Time"           : num_time_missed,
+                 "Missed Cargo"          : num_cargo_missed,
+                 "Wait Time"             : wait_time,
+                 "Excessive Waits"       : num_waits,
+                 "Unreasonable Distances": num_unreasonable_distances }
+
     def cargo_used(self, customer=None):
         result = 0
         for cust in self.route:
@@ -215,10 +277,11 @@ class Path():
                 return result
         return result
 
+    # Included in combined_stats()
     def number_missed_by_time(self):
         return len(self.missed_customers())
 
-    #@TODO -- Please check... was always return 0 before
+    # Included in combined_stats()
     def number_missed_by_cargo(self, cargo):
         '''Return the number of customers missed by cargo'''
         index = 0
@@ -238,6 +301,7 @@ class Path():
         """
         return {customer.number for customer in self.route}
 
+    # Included in combined_stats()
     def get_wait_time(self):
         if len( self ) == 0:
             return 0
@@ -283,7 +347,7 @@ class Path():
                     intersecting_segments.append([points_1[i][0], points_1[i+1][0], points_2[j][0], points_2[j+1][0]])
         return intersecting_segments
 
-    ## Calculates number of times the truck waits for a hella long time
+    # Included in combined_stats()
     def get_number_of_excessive_waits(self):
         num_waits = 0
 
@@ -316,21 +380,22 @@ class Path():
         
         return num_waits
 
+    # Included in combined_stats()
     def num_unreasonable_distances(self):
-        threshhold = max(Distances.matrix[0])/3.5
-        num = 0
+        distance_threshold = max(Distances.matrix[0])/3.5
+        num_unreasonable_distances = 0
 
         prev_customer = self.route[0]
         distance = Distances.get_distance(0, prev_customer.number)
 
-        if distance > threshhold:
-            num += 1
+        if distance > distance_threshold:
+            num_unreasonable_distances += 1
 
         for c in self.route[1:]:
-            if(Distances.get_distance(prev_customer.number, c.number) > threshhold):
-                num += 1
+            if(Distances.get_distance(prev_customer.number, c.number) > distance_threshold):
+                num_unreasonable_distances += 1
             prev_customer = c
-        return num
+        return num_unreasonable_distances
 
     def insert_customer( self, anchor_id, inserted_id, customer_list ):
         """ Args: ( ID of a customer; ID of a customer to be inserted onto the path after anchor; list of customers to choose from )"""
@@ -340,9 +405,11 @@ class Path():
 
     def get_customer_index( self, customer_id ):
         """ Finds the customer's index in the path's route given a customer's ID """
-        return self.route.index( filter( lambda c: c.number == customer_id, self.route )[0] )
+        for c in range(len(self.route)):
+            if self.route[c].number == customer_id:
+                return c
+        return -1
 
     def __repr__(self):
         # return "<Path: {0}>".format(self.route)
         return "<Path: {}>".format([customer.number for customer in self.route])
-
