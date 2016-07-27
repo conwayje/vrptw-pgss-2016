@@ -97,9 +97,9 @@ def score(state):
     if (num_intersections > ( n_customers / 10 ) ):
         score += penalty_weights["Intraintersections"] * ( num_intersections - ( n_customers / 10 ) )
 
-    for i in range(len(paths)):
-        for j in range(i+1, len(paths)):
-            score += penalty_weights["Interintersections"] * len(paths[i].intersects_with_other(paths[j]))
+    # for i in range(len(paths)):
+    #     for j in range(i+1, len(paths)):
+    #         score += penalty_weights["Interintersections"] * len(paths[i].intersects_with_other(paths[j]))
 
     return score
 

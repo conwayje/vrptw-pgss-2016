@@ -21,6 +21,9 @@ class Path():
     def __len__(self):
         return len( self.route )
 
+    def __getitem__(self, val):
+        return self.route[val]
+
     def calculate_distance(self):
         """Returns the total distance in the route"""
 

@@ -63,7 +63,7 @@ class State():
             #children_paths += State.shuffle( paths, 5 )
             #might be good or not, we've never used it
             #children_paths += State.alternating_shuffle_within_path( paths )
-            children_paths += State.large_reconstruction( paths, 333 if extra_big_move_children else 50 )
+            children_paths += State.large_reconstruction( paths, 1000 if extra_big_move_children else 50 )
         if medium:
             if random.random() > 0.8:
                 children_paths += State.random_nearest_neighbors(paths, 5, 10) #don't make n_touched bigger than 20 or else it won't work
@@ -611,10 +611,12 @@ class State():
 
             while len(removed_customers) > 0:
                 cust_a = removed_customers[0]
-                closest = Dijsktra.get_next_random(cust_a, customers, [removed_customers], 3)
+                closest_list = sorted(range(1, 101), key = lambda cust: Distances.matrix[cust_a.number][cust])
+                closest_list = [element for element in closest_list if element not in map(lambda c: c.number, removed_customers)][:3]
+                closest = choice( closest_list )
                 removed_customers.remove(cust_a)
                 for path in new_paths:
-                    closest_index = path.get_customer_index(closest.number)
+                    closest_index = path.get_customer_index(closest)
                     if closest_index != -1:
                         path.route.insert(closest_index, cust_a)
 

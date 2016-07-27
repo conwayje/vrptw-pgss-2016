@@ -61,13 +61,15 @@ def doAStar(initial_state, do_plot, world_record):
                 if priority < EARLY_GAME_SCORE_THRESHOLD and IS_EARLY_GAME:
                     # if we go from early game to late game, update some shit
                     IS_EARLY_GAME = False
-                    previous_scores.clear()
+                    QUEUE_LENGTH_EARLY_GAME += 20
                     previous_scores = deque([], QUEUE_LENGTH_LATE_GAME)
+                    SEEN_SCORES = set()
                 elif priority > EARLY_GAME_SCORE_THRESHOLD and not IS_EARLY_GAME:
                     # if we go from late game to early game, update some shit
                     IS_EARLY_GAME = True
-                    previous_scores.clear()
+                    QUEUE_LENGTH_EARLY_GAME += 20
                     previous_scores = deque([], QUEUE_LENGTH_EARLY_GAME)
+                    SEEN_SCORES = set()
 
                 # shove the score into the FIFO queue
                 previous_scores.append(priority)
@@ -100,7 +102,9 @@ def doAStar(initial_state, do_plot, world_record):
                         # time to clear the queues and start over from the current state.
                         print "Forcing early-game reset..."
                         queue = []
-                        previous_scores.clear()
+                        QUEUE_LENGTH_EARLY_GAME += 20
+                        previous_scores = deque([], QUEUE_LENGTH_EARLY_GAME)
+                        SEEN_SCORES = set()
                         children = state.get_children(True, False, False, True)
 
                 else:
@@ -112,7 +116,9 @@ def doAStar(initial_state, do_plot, world_record):
                         # time to clear the queues and start over from the current state.
                         print "Forcing late-game reset..."
                         queue = []
-                        previous_scores.clear()
+                        QUEUE_LENGTH_EARLY_GAME += 20
+                        previous_scores = deque([], QUEUE_LENGTH_EARLY_GAME)
+                        SEEN_SCORES = set()
                         children = state.get_children(True, False, False, True)
 
 
@@ -140,13 +146,14 @@ def doAStar(initial_state, do_plot, world_record):
                     if poll.isdigit():
                         set_score_mode(int(poll))
                         queue = []
-                        previous_scores.clear()
+                        QUEUE_LENGTH_EARLY_GAME += 20
+                        previous_scores = deque([], QUEUE_LENGTH_EARLY_GAME)
+                        SEEN_SCORES = set()
 
                     if poll == "n":
                         print "Nuking children"
                         if (len(queue) > 100):
                             queue = queue[-100:]
-
 
                 for c in children:
                     heappush(queue, (score(c), c))
