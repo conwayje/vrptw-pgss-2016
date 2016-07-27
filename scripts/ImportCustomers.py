@@ -24,3 +24,4 @@ def import_customers(filename, is_test):
             customers.append(temp)
 
     return customers
+

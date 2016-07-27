@@ -11,6 +11,7 @@ from random import randint, randrange, choice
 from Distances import Distances
 from Customer import Customer
 import random
+import numpy as np
 try:
     import ipdb
 except:
@@ -73,6 +74,7 @@ class State():
             # good
             # @TODO -- check that they are right
             # children_paths += State.wait_time_swap(paths)
+
             # children_paths += State.cargo_swap(paths, trucks)
 
             children_paths += State.time_swap(paths)
@@ -711,41 +713,40 @@ class State():
         return str
 
 
-
-
-
+    @staticmethod
     ## helper method for wait_time_swap
     ## gets 10? closest customers to the swapped customer
-    def get_closest_customer (filename, customer):
+    def get_closest_customer ( customer):
+        new_cust_arr = []
+        new_cust_arr2 = []
         distance = []
         closest_custs = []
+        same = False
+        
+        customers = import_customers("RC208.txt", False)
 
-        with open(path + filename) as f:
-        customers = import_customers(filename.split("_")[0] + ".txt", False)
-        lines = f.readlines()
-
-        ids = []
-        for line in lines[5:]:
-            ids.append(line.split()[3:])
-
-
+        ##intitialize distance
         for c in range (len(customers)):
-            new_cust = customer[c]
-            distance.append(Distances.get_distance(customer, new_cust))
 
-        for x in range (10):
-            new_min = distance.min()
-            min_cust = distance.pop(new_min)
-            closest_custs.append(min_cust)
-
+            new_cust_arr.append(customers[c])
+            new_cust = new_cust_arr.pop(0)
+            distance.append(Distances.get_distance(customer.number, new_cust.number))
+            
+            
+        for x in range (0,10):
+            
+            min_index = distance.index( min(distance) )
+            min_distance = distance.pop(min_index)
+            closest_custs.append(customers[min_index])
+            
         return closest_custs
 
 
     @staticmethod
     ## if the truck is waiting too long, change the path to include another customer in the meantime
-    def wait_time_swap (paths, n_children = 15):
+    def wait_time_swap (paths, n_children = 3):
         children = []
-        for i in range (n_children):
+        for i in range (0, n_children):
             customers = []
             new_paths = copy.deepcopy(paths)
             path = new_paths[i]
@@ -755,8 +756,8 @@ class State():
             time = Distances.get_distance(prev_customer.number, 0)
 
             if time < prev_customer.open_time:
-             wait_time += prev_customer.open_time - time
-             time = prev_customer.open_time
+                wait_time += prev_customer.open_time - time
+                time = prev_customer.open_time
 
             time += prev_customer.service_time
 
@@ -771,24 +772,22 @@ class State():
 
                 ## wait time is arbitrarily picked, can change
                 if wait_time > 20:
-                    customers = get_closest_customer(c)
+                    customers = State.get_closest_customer(c)
                     ## generates nearest customers
                     for x in customers:
                         ## if the truck has to wait long at some new customers too, forget em
                         ## time+5 can be changed
                         if (time+5) < x.open_time:
-                            customers = customers.remove(x)
+                            customers.remove(x)
                         else:
                             pass
                 time += c.service_time
-                if len (customers) != 0:
-                    ##choose the first customer (cause it doesn't really matter) as the add-in
-                    replacement_customer = customers.pop(0)
-                    ## adds replacement customer into path.route
-                    path.route.append(replacement_customer)
-
+            if len (customers) != 0:
+                ##choose the second customer (cause it doesn't really matter, and the first customer is itself) as the add-in
+                replacement_customer = customers.pop(1)
+                ## adds replacement customer into path.route
+                path.route.append(replacement_customer)
                 children.append(new_paths)
-
         return children
 
 
