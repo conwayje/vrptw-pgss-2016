@@ -705,7 +705,6 @@ class State():
             children.append(new_paths)
         return children
             
-        
     @staticmethod
     def fix_inter_path_intersections(paths):
         children = []
