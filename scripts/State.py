@@ -72,8 +72,8 @@ class State():
         if small:
             # good
             # @TODO -- check that they are right
-            # children_paths += State.fix_wait_time(paths)
-            # children_paths += State.cargo_swap(paths, trucks)
+            # children_paths += State.wait_time_swap(paths)
+            # children_paths += State.cargo_swap(paths, self.trucks[0].cargo)
             children_paths += State.time_swap(paths)
 
             children_paths += State.reverse(paths)
@@ -395,35 +395,31 @@ class State():
             new_paths = [copy.deepcopy(element) for element in paths]
             path_index = randint(0, len(paths)-1)
             path = new_paths[path_index]
-            # gets two random customers, if the first is farther then the secondthen swap
+            # gets two random customers, if the first is farther then the second then swap
             customer_a = randint(0, len(path.route) - 1)
             customer_b = randint(customer_a, len(path.route) - 1)
             if Distances.get_distance(0, path.route[customer_a].number) > Distances.get_distance(0, path.route[customer_a].number):
                 path.route[customer_a], path.route[customer_b] = path.route[customer_b], path.route[customer_a]
             children.append(new_paths)
-        return children    
-    
- #   @staticmethod #small move
- #   def cargo_swap(paths, trucks):
- #       children = []
- #       for i in range( 15 ):
- #           truck = trucks
- #           print (truck)
- #           new_paths = [copy.deepcopy(element) for element in paths]
- #           ipdb.set_trace()
- #           path_index = randint(0, len(paths)-1)
- #           #this gets two random paths that are not the same path. There is definitely a better way to to do this.
- #           #feel free to make this not suck
- #           path_a = new_paths[path_index]
- #           remaining_paths = new_paths.remove[path_a]
- #           path_b = randint(0, len(remaining_paths)-1)
- #           # gets two random customers, if the first is farther then the secondthen swap
- #           if (path_a.cargo_used > trucks.cargo):
- #               customer_a = randint(0, len(path_a.route) - 1)
- #               customer_b = randint(0, len(path_b.route) - 1)
- #               path.route[customer_a], path.route[customer_b] = path.route[customer_b], path.route[customer_a]
- #           children.append(new_paths)
- #       return children
+        return children
+
+    # still needs to be tested
+    @staticmethod #small move
+    # def cargo_swap(paths, cargo):
+    #     children = []
+    #     for i in range( 15 ):
+    #         new_paths = [copy.deepcopy(element) for element in paths]
+    #         path_a_index = randint(0, len(paths) - 1)
+    #         path_a = new_paths[path_a_index]
+    #         path_a_missed = path_a.number_missed_by_cargo(cargo)
+    #         if path_a_missed > 0:
+    #             customer_a = path_a.route.pop(randint(len(path_a.route) - path_a_missed, len(path_a.route) - 1))
+    #             closest = Distances.get_closest_customers(customer_a)[randint(1,3)]
+    #             for p in new_paths:
+    #                 if p.get_customer_index(closest) != -1:
+    #                     p.insert_customer(closest, customer_a.number, customers)
+    #         children.append(new_paths)
+    #     return children
 
     @staticmethod #medium move, 3 children
     def five_section_swap(paths):
