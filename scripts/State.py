@@ -51,7 +51,7 @@ class State():
         return score(self)
 
     # @TODO -- still lots to do here, of course ;)
-    def get_children(self, big = True, medium = True, small = True, extra_big_move_children = False ):
+    def get_children(self, big = True, medium = True, small = True, extra_big_move_children = False, near_valid = False ):
         children = [] # list of states
         children_paths = []
         paths = self.paths
@@ -85,6 +85,11 @@ class State():
             children_paths += State.fix_group_unreasonable( paths )
 
             children_paths += State.switch_between_paths( paths, 20 )
+            
+            children_paths += State.missed_customer_time_swap (paths, 20)
+
+            if near_valid or random.random() > 0.9:
+                children_paths += State.swap_all_neighbor_pairs_on_some_path( paths )
 
             if random.random() > 0.8:
                 children_paths += State.path_swap( paths, 20 )
@@ -98,6 +103,19 @@ class State():
                 i += 1
 
             children.append(State(trucks, self))
+        return children
+
+    @staticmethod
+    def swap_all_neighbor_pairs_on_some_path( paths ):
+        children = []
+        path_index = randrange( len( paths ) )
+
+        for k in range( len(paths[path_index]) - 1 ):
+            new_paths = copy.deepcopy( paths )
+            path = new_paths[path_index]
+            path[k], path[k+1] = path[k+1], path[k]
+            children.append( new_paths )
+
         return children
 
     @staticmethod
@@ -684,6 +702,25 @@ class State():
 
         return children
 
+    @staticmethod
+    def missed_customer_time_swap(paths, n_children):
+        children = []
+        for n in range(n_children):
+            new_paths = []
+            for path in paths:
+                new_path = copy.deepcopy(path)
+                missed_customers = new_path.missed_customers()
+                if missed_customers: #if there are missed customers
+                    r = randint(0, len(missed_customers) - 1) #pick a missed customer
+                    c,t = missed_customers[r], missed_customers[r].close_time
+                    for x in range(0, new_path.route.index(c)): #look through the customers before the missed customer since it should be earlier
+                        if new_path.get_arrival_time_of_customer(new_path.route[x]) < t: #find a spot in the path before the close time
+                            new_path.route.remove(c)
+                            new_path.route.insert(x-1, c)
+                            new_paths.append(new_path)
+            children.append(new_paths)
+        return children
+            
     @staticmethod
     def fix_inter_path_intersections(paths):
         children = []
