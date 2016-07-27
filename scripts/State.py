@@ -498,8 +498,8 @@ class State():
             # check all regular customers to e/o
             for i in range(0, len(path) - 1):
                 if Distances.get_distance(path.route[i].number, path.route[i+1].number) > threshold:
-                    for j in range( i + 1, len(path) - 1 ):
-                        if Distances.get_distance( path.route[j].number, path.route[j+1].number ) > threshold:
+                    for j in range( i + 1, len(path) ):
+                        if Distances.get_distance( path.route[j].number, path.route[j+1 if j < len(path)- 1 else 0].number ) > threshold:
                             children += State.remove_and_insert_closer_as_group( i+1, j, paths, path_number)
 
             path_number += 1
