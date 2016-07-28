@@ -491,15 +491,15 @@ class State():
         for path in paths:
             # check depot to first customer
             if Distances.get_distance(0, path.route[0].number) > threshold:
-                for j in range( 1, len(path) - 1 ):
+                for j in range( 1, 11 ): # max length of 10
                     if Distances.get_distance( path.route[j].number, path.route[j+1].number ) > threshold:
                         children += State.remove_and_insert_closer_as_group( 1, j, paths, path_number )
                 
             # check all regular customers to e/o
             for i in range(0, len(path) - 1):
                 if Distances.get_distance(path.route[i].number, path.route[i+1].number) > threshold:
-                    for j in range( i + 1, len(path) - 1 ):
-                        if Distances.get_distance( path.route[j].number, path.route[j+1].number ) > threshold:
+                    for j in range( i + 1, min(i+10, len(path)) ): #max length of 10
+                        if Distances.get_distance( path.route[j].number, path.route[j+1 if j < len(path)- 1 else 0].number ) > threshold:
                             children += State.remove_and_insert_closer_as_group( i+1, j, paths, path_number)
 
             path_number += 1
