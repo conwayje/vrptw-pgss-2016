@@ -417,7 +417,7 @@ class State():
         return children
 
     # still needs to be tested
-    # @staticmethod #small move
+    @staticmethod #small move
     # def cargo_swap(paths, cargo):
     #     children = []
     #     for i in range( 15 ):
