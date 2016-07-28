@@ -55,7 +55,7 @@ class State():
         children = [] # list of states
         children_paths = []
         paths = self.paths
-        n_customers = len( Distances.matrix[0] )
+        n_customers = len( Distances.matrix[0] ) - 1
         trucks = self.trucks
 
         if big:
@@ -63,7 +63,7 @@ class State():
             #children_paths += State.shuffle( paths, 5 )
             #might be good or not, we've never used it
             #children_paths += State.alternating_shuffle_within_path( paths )
-            children_paths += State.large_reconstruction( paths, 1000 if extra_big_move_children else 50 )
+            children_paths += State.large_reconstruction( paths, 100 if extra_big_move_children else 50 )
         if medium:
             if random.random() > 0.8:
                 children_paths += State.random_nearest_neighbors(paths, 5, 10) #don't make n_touched bigger than 20 or else it won't work
@@ -78,7 +78,7 @@ class State():
 
             children_paths += State.reverse(paths)
 
-            children_paths += State.line_segment_insertion( paths, int( n_customers / 5 ), 10.0 )
+            children_paths += State.line_segment_insertion( paths, int( n_customers / 5 ), 15.0 )
 
             children_paths += State.fix_single_unreasonable( paths )
 
@@ -103,7 +103,9 @@ class State():
                     trucks.append(Truck(i, 0, 0, self.trucks[0].cargo, child))
                     i += 1
                 
-                children.append(State(trucks, self))
+                if sum( [len(child) for child in child_paths] ) == n_customers:
+                    children.append(State(trucks, self))
+
         return children
 
     @staticmethod
@@ -200,53 +202,54 @@ class State():
     @staticmethod
     def use_clusters( paths, n_children ):
         children = []
+        if ClusterStore().clusters != []:
 
-        for k in range( n_children ):
-            new_paths = copy.deepcopy( paths )
+            for k in range( n_children ):
+                new_paths = copy.deepcopy( paths )
 
-            # get a customer to base the cluster on
-            cluster_base_customer_id = choice( ClusterStore().clustered_customer_ids )
-            # find the path that contains this customer
-            containing_path = State.find_path_containing_customer( new_paths, cluster_base_customer_id )
-            # separate out the paths aside from this one
-            non_containing_paths = [path for path in new_paths if path != containing_path]
-            # find the cluster which contains the chosen customer
-            containing_cluster = ClusterStore.find_cluster_containing_customer( cluster_base_customer_id )
+                # get a customer to base the cluster on
+                cluster_base_customer_id = choice( ClusterStore().clustered_customer_ids )
+                # find the path that contains this customer
+                containing_path = State.find_path_containing_customer( new_paths, cluster_base_customer_id )
+                # separate out the paths aside from this one
+                non_containing_paths = [path for path in new_paths if path != containing_path]
+                # find the cluster which contains the chosen customer
+                containing_cluster = ClusterStore.find_cluster_containing_customer( cluster_base_customer_id )
 
-            # remove the other customers from whatever paths they are on
-            customer_ids_to_handle = [c.number for c in containing_cluster.optimal_solution.route if c.number != cluster_base_customer_id]
-            customers_to_handle = []
-            indexes_for_removal = [[] for path in new_paths]
+                # remove the other customers from whatever paths they are on
+                customer_ids_to_handle = [c.number for c in containing_cluster.optimal_solution.route if c.number != cluster_base_customer_id]
+                customers_to_handle = []
+                indexes_for_removal = [[] for path in new_paths]
 
 
-            # store the customers you'll have to handle
-            # get the INDEXES of the customers you have to remove
-            i = 0
-            for path in new_paths:
-                j = 0
-                for customer in path.route:
-                    if customer.number in customer_ids_to_handle:
-                        indexes_for_removal[i].append(j)
-                        customers_to_handle.append( customer )
-                    j += 1
-                i += 1
+                # store the customers you'll have to handle
+                # get the INDEXES of the customers you have to remove
+                i = 0
+                for path in new_paths:
+                    j = 0
+                    for customer in path.route:
+                        if customer.number in customer_ids_to_handle:
+                            indexes_for_removal[i].append(j)
+                            customers_to_handle.append( customer )
+                        j += 1
+                    i += 1
 
-            # remove the customers at the desired indexes (backwards)
-            i = 0
-            for indexes in indexes_for_removal:
-                for index in indexes[::-1]:
-                    new_paths[i].route.pop( index )
-                i += 1
+                # remove the customers at the desired indexes (backwards)
+                i = 0
+                for indexes in indexes_for_removal:
+                    for index in indexes[::-1]:
+                        new_paths[i].route.pop( index )
+                    i += 1
 
-            # force customers [in cyclical right order] into the solution
-            id_to_insert_after = cluster_base_customer_id
-            id_to_be_inserted = None
-            for i in range( len( containing_cluster.optimal_solution ) - 1 ):
-                id_to_be_inserted = containing_cluster.next_to_visit_ids( id_to_insert_after )
-                containing_path.insert_customer( id_to_insert_after, id_to_be_inserted, customers_to_handle )
-                id_to_insert_after = id_to_be_inserted
+                # force customers [in cyclical right order] into the solution
+                id_to_insert_after = cluster_base_customer_id
+                id_to_be_inserted = None
+                for i in range( len( containing_cluster.optimal_solution ) - 1 ):
+                    id_to_be_inserted = containing_cluster.next_to_visit_ids( id_to_insert_after )
+                    containing_path.insert_customer( id_to_insert_after, id_to_be_inserted, customers_to_handle )
+                    id_to_insert_after = id_to_be_inserted
 
-            children.append( new_paths )
+                children.append( new_paths )
 
         return children
 
@@ -491,15 +494,15 @@ class State():
         for path in paths:
             # check depot to first customer
             if Distances.get_distance(0, path.route[0].number) > threshold:
-                for j in range( 1, len(path) - 1 ):
+                for j in range( 1, min( 15, len( path ) ) ): # max length of 14
                     if Distances.get_distance( path.route[j].number, path.route[j+1].number ) > threshold:
                         children += State.remove_and_insert_closer_as_group( 1, j, paths, path_number )
                 
             # check all regular customers to e/o
             for i in range(0, len(path) - 1):
                 if Distances.get_distance(path.route[i].number, path.route[i+1].number) > threshold:
-                    for j in range( i + 1, len(path) - 1 ):
-                        if Distances.get_distance( path.route[j].number, path.route[j+1].number ) > threshold:
+                    for j in range( i + 1, min(i+14, len(path)) ): #max length of 14
+                        if Distances.get_distance( path.route[j].number, path.route[j+1 if j < len(path)- 1 else 0].number ) > threshold:
                             children += State.remove_and_insert_closer_as_group( i+1, j, paths, path_number)
 
             path_number += 1
@@ -509,7 +512,7 @@ class State():
     def remove_and_insert_closer_as_group( first_removal_index, last_removal_index, paths, interesting_path_index ):
         children = []
 
-        for i in range(1, 5):
+        for i in range(1, 8):
             new_paths = copy.deepcopy(paths)
             path = new_paths[interesting_path_index]
             route = path.route
@@ -607,7 +610,7 @@ class State():
         return children
 
     @staticmethod
-    def large_reconstruction(paths, n_children = 200, min_percentage = 25, max_percentage = 75 ):
+    def large_reconstruction(paths, n_children = 200, min_percentage = 40, max_percentage = 80 ):
         children = []
         n_customers = sum([len(path.route) for path in paths])
         customers = []
@@ -764,6 +767,5 @@ class State():
                 children.append(new_paths)
 
         return children
-
 
 
