@@ -27,7 +27,7 @@ def set_score_mode(mode = DEFAULT):
         penalty_weights["Missed Cargo"] = 50000
         penalty_weights["Wait Time"] = 10
         penalty_weights["Excessive Waits"] = 100
-        penalty_weights["Unreasonable Distances"] = 500
+        penalty_weights["Unreasonable Distances"] = 5000
         penalty_weights["Intraintersections"] = 50
         penalty_weights["Interintersections"] = 200
     elif mode == FIX_INTERSECTIONS:
@@ -99,8 +99,8 @@ def score(state):
         score += penalty_weights["Unreasonable Distances"] * stats["Unreasonable Distances"] #DONE
 
     # for every 8 customers, you get 1 intersection for free.  after that, it costs you.
-    if (num_intersections > ( n_customers / 10 ) ):
-        score += penalty_weights["Intraintersections"] * ( num_intersections - ( n_customers / 10 ) )
+    if (num_intersections > ( n_customers / 25 ) ):
+        score += penalty_weights["Intraintersections"] * ( num_intersections - ( n_customers / 25 ) )
 
     # for i in range(len(paths)):
     #     for j in range(i+1, len(paths)):

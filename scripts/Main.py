@@ -21,6 +21,8 @@ import argparse
 # python Main.py C201 C201_wr_solution 3 700 591.56 --plot
 # python Main.py C202 nn_random 3 700 591.56 --plot
 # python Main.py RC208 RC208_wr_solution 3 1000 828.15 --plot
+# python Main.py R211 nn_random 2 1000 885.72 --plot
+# python Main.py R210 nn_random 3 1000 939.38 --plot
 
 customers = None
 depot = None
