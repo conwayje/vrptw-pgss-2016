@@ -14,12 +14,14 @@ penalty_weights = {}
 
 DEFAULT = 0
 FIX_INTERSECTIONS = 1
-FIX_UNREASONABLE_DISTANCES = 2
+FIX_DISTANCES = 2
+FIX_UNREASONABLE_DISTANCES = 3
 
 def set_score_mode(mode = DEFAULT):
     global penalty_weights
-    if mode == 0:
+    if mode == DEFAULT:
         # base scoring mode
+        print "Base Scoring Mode (Missed Time)"
         penalty_weights["Distance"] = 3000
         penalty_weights["Missed Time"] = 1000000
         penalty_weights["Missed Cargo"] = 5
@@ -28,8 +30,9 @@ def set_score_mode(mode = DEFAULT):
         penalty_weights["Unreasonable Distances"] = 500
         penalty_weights["Intraintersections"] = 50
         penalty_weights["Interintersections"] = 200
-    elif mode == 1:
+    elif mode == FIX_INTERSECTIONS:
         # focus a lot on intersections
+        print "Intersecting Segments Scoring Mode"
         penalty_weights["Distance"] = 3000
         penalty_weights["Missed Cargo"] = 5
         penalty_weights["Wait Time"] = 10
@@ -38,8 +41,9 @@ def set_score_mode(mode = DEFAULT):
         penalty_weights["Missed Time"] = 10000
         penalty_weights["Intraintersections"] = 500
         penalty_weights["Interintersections"] = 2000
-    elif mode == 2:
+    elif mode == FIX_DISTANCES:
         # focus a lot on distance and nothing else
+        print "Total Distance Scoring Mode"
         penalty_weights["Distance"] = 3000
         penalty_weights["Missed Cargo"] = 5
         penalty_weights["Wait Time"] = 10
@@ -48,8 +52,9 @@ def set_score_mode(mode = DEFAULT):
         penalty_weights["Missed Time"] = 1000
         penalty_weights["Interintersections"] = 50
         penalty_weights["Intraintersections"] = 20
-    elif mode == 3:
+    elif mode == FIX_UNREASONABLE_DISTANCES:
         # focus a lot on unreasonable distance and nothing else
+        print "Unreasonable Distance Scoring Mode"
         penalty_weights["Distance"] = 100
         penalty_weights["Missed Cargo"] = 5
         penalty_weights["Wait Time"] = 10

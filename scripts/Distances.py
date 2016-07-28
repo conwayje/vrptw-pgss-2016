@@ -2,7 +2,7 @@ from Customer import Customer
 from ImportCustomers import import_customers
 
 class Distances():
-
+    
     matrix = []
 
     @staticmethod
