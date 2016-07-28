@@ -93,6 +93,7 @@ class State():
 
             if random.random() > 0.8:
                 children_paths += State.path_swap( paths, 20 )
+                children_paths += State.random_insert(paths, 20)
         # child_paths should be a list containing three paths per entry (as a list)
         for child_paths in children_paths:
             if child_paths:
@@ -120,6 +121,19 @@ class State():
             children.append( new_paths )
 
         return children
+
+    @staticmethod
+    def random_insert(paths, n_children):
+        children = []
+        # find whoever is closest to it (should be four customers nearby-ish?)
+        for i in range(n_children):
+            new_paths = copy.deepcopy(paths)
+            path = new_paths[randint(0, len(new_paths)-1)]
+            cust_to_insert = path.route.pop(randint(0, len(path.route)-1))
+            path.route.insert(randint(0, len(path.route)-1), cust_to_insert)
+            children.append(new_paths)
+        return children
+
 
     @staticmethod
     def move_central_customers_to_path_starts_and_ends( paths, n_children ):
