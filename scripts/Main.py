@@ -7,10 +7,11 @@ from Path import Path
 from State import State
 from AStar import doAStar
 from ImportCustomers import import_customers
-from ImportSolution import import_solution
+from ImportSolution import *
 from Distances import Distances
 from Dijkstra import Dijsktra
 from ClusterStore import ClusterStore
+import datetime
 import copy
 import argparse
 # Filenames:    C201.txt, C201_wr_solution.txt
@@ -101,7 +102,11 @@ test_environment = args.test
 init(problem_file)
 state = doAStar(initial_state(problem_file, init_solution_file), do_plot, world_record_score)
 
+states = []
 while state.parent != None:
-    raw_input("\nEnter to see parent")
-    state.plot()
+    # raw_input("\nEnter to see parent")
+    # state.plot()
+    states.append(state)
     state = state.parent
+filename = "solution_path_" + datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
+write_solution_path(states, filename)
