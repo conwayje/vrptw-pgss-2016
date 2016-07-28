@@ -77,8 +77,14 @@ def doAStar(initial_state, do_plot, world_record):
                 # also update the set of seen scores
                 SEEN_SCORES.add( priority )
 
-                print "Gen {0:>6}: Score: {1:<25,} Distance: {2:<25}".format(generation, priority,
-                                                                             state.calculate_distance(), grouping=True)
+                n_missed_cargo = sum( [path.number_missed_by_cargo(state.trucks[0].cargo) for path in state.paths] )
+                n_missed_time = sum( [len( path.missed_customers() ) for path in state.paths] )
+
+                print "Gen {0:>7}: Score: {1:<17,} Distance: {2:<14} xT: {3:<3,} xC: {4:<3,}".format(generation, priority,
+                                                                             state.calculate_distance(), 
+                                                                             n_missed_time,
+                                                                             n_missed_cargo,
+                                                                             grouping=True)
 
                 if state.calculate_distance() < world_record:
                     if len( [ 1 for path in state.paths if path.missed_customers() == [] ] ) == len( state.paths ):
