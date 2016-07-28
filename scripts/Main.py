@@ -76,7 +76,7 @@ def initial_state(problem, filename):
         state.plot()
 
     else:
-        state = import_solution(problem + ".txt", filename  + ".txt")
+        state = import_solution(problem, filename)
 
     if do_plot:
         state.plot()
