@@ -24,7 +24,7 @@ def set_score_mode(mode = DEFAULT):
         print "Base Scoring Mode (Missed Time)"
         penalty_weights["Distance"] = 3000
         penalty_weights["Missed Time"] = 1000000
-        penalty_weights["Missed Cargo"] = 5
+        penalty_weights["Missed Cargo"] = 50000
         penalty_weights["Wait Time"] = 10
         penalty_weights["Excessive Waits"] = 100
         penalty_weights["Unreasonable Distances"] = 500

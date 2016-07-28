@@ -10,3 +10,6 @@
 # ignore the diff files
 diff.txt
 scripts/diff.txt
+
+# ignore saved solutions
+standard_instances/solution_path_20*

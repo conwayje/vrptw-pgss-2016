@@ -18,7 +18,8 @@ import argparse
 #               RC208.txt, RC208_wr_solution.txt
 
 # sample calls (made from inside the scripts directory):
-# python Main.py C201 C201_wr_solution 3 700 591.56
+# python Main.py C201 C201_wr_solution 3 700 591.56 --plot
+# python Main.py C202 nn_random 3 700 591.56 --plot
 # python Main.py RC208 RC208_wr_solution 3 1000 828.15 --plot
 
 customers = None
