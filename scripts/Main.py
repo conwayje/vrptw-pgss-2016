@@ -75,7 +75,7 @@ def initial_state(problem, filename):
         state.plot()
 
     else:
-        state = import_solution(problem, filename )
+        state = import_solution(problem, filename)
 
     if do_plot:
         state.plot()
