@@ -81,7 +81,7 @@ def doAStar(initial_state, do_plot, world_record):
                                                                              state.calculate_distance(), grouping=True)
 
                 if state.calculate_distance() < world_record:
-                    if len( [ 1 for path in state.paths if path.missed_customers == [] ] ) == len( state.paths ):
+                    if len( [ 1 for path in state.paths if path.missed_customers() == [] ] ) == len( state.paths ):
                         ## the score value is dependent on the value in heuristic score, change to 'missed_cust_penalty'
                         ## if the score is less than the penalty for missing a customer, then the solution is valid
                         ## the world record is broken and the solution is valid

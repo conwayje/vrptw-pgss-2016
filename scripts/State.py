@@ -55,7 +55,7 @@ class State():
         children = [] # list of states
         children_paths = []
         paths = self.paths
-        n_customers = len( Distances.matrix[0] )
+        n_customers = len( Distances.matrix[0] ) - 1
         trucks = self.trucks
 
         if big:
@@ -78,7 +78,7 @@ class State():
 
             children_paths += State.reverse(paths)
 
-            children_paths += State.line_segment_insertion( paths, int( n_customers / 5 ), 10.0 )
+            children_paths += State.line_segment_insertion( paths, int( n_customers / 5 ), 15.0 )
 
             children_paths += State.fix_single_unreasonable( paths )
 
@@ -103,7 +103,9 @@ class State():
                     trucks.append(Truck(i, 0, 0, self.trucks[0].cargo, child))
                     i += 1
                 
-                children.append(State(trucks, self))
+                if sum( [len(child) for child in child_paths] ) == n_customers:
+                    children.append(State(trucks, self))
+
         return children
 
     @staticmethod
@@ -509,7 +511,7 @@ class State():
     def remove_and_insert_closer_as_group( first_removal_index, last_removal_index, paths, interesting_path_index ):
         children = []
 
-        for i in range(1, 5):
+        for i in range(1, 8):
             new_paths = copy.deepcopy(paths)
             path = new_paths[interesting_path_index]
             route = path.route
@@ -764,6 +766,5 @@ class State():
                 children.append(new_paths)
 
         return children
-
 
 
