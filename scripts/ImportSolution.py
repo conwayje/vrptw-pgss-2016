@@ -6,8 +6,8 @@ from Depot import Depot
 from Path import Path
 from Truck import Truck
 from State import State
-from time import time
 from Distances import Distances
+import time
 
 from Visual import Visual
 import argparse
@@ -15,8 +15,9 @@ import argparse
 path = '../standard_instances/'
 
 def import_solution(problem, filename):
-    with open(path + filename) as f:
-        customers = import_customers(problem, False)
+    with open(path + filename + ".txt") as f:
+        customers = import_customers(problem + ".txt", False)
+        Distances.calculate_matrix(customers)
         lines = f.readlines()
 
         ids = []
@@ -49,7 +50,7 @@ def write_solution(state, filename):
 
 def write_solution_path(states, filename):
     with open(path + filename + ".txt", 'w') as f:
-        for s in states:
+        for state in states:
             for x in range(len(state.trucks)):
                 line = "Route {0} : ".format(x + 1)
                 for customer in state.trucks[x].path.route:
@@ -58,8 +59,9 @@ def write_solution_path(states, filename):
                 f.write(line + "\n")
 
 def animate(problem, filename, num_trucks):
-    with open(path + filename) as f:
-        customers = import_customers(problem, False)
+    with open(path + filename + ".txt") as f:
+        customers = import_customers(problem + ".txt", False)
+        Distances.calculate_matrix(customers)
         lines = f.readlines()
 
         ids = []
@@ -81,7 +83,7 @@ def animate(problem, filename, num_trucks):
 
     for trucks in truck_lists:
         State(trucks).plot()
-        time.delay(500)
+        time.sleep(.3)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -91,5 +93,5 @@ if __name__ == "__main__":
     args = parser.parse_args()
     problem = args.problem
     filename = args.filename
-    num_trucks = args.num_trucks
+    num_trucks = int(args.num_trucks)
     animate(problem, filename, num_trucks)
