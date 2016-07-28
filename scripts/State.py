@@ -729,8 +729,14 @@ class State():
                     c,t = missed_customers[r], missed_customers[r].close_time
                     for x in range(0, new_path.route.index(c)): #look through the customers before the missed customer since it should be earlier
                         if new_path.get_arrival_time_of_customer(new_path.route[x]) < t: #find a spot in the path before the close time
-                            new_path.route.remove(c)
-                            new_path.route.insert(x-1, c)
+                            short_path = new_path[:x]
+                            if len(short_path) > 1:
+                                rs = randint(0, len(short_path)-1)
+                                new_path.route.remove(c)
+                                new_path.route.insert(rs-1, c)
+                            else:
+                                new_path.route.remove(c)
+                                new_path.route.insert(x-1, c)
                             new_paths.append(new_path)
             children.append(new_paths)
         return children
