@@ -5,17 +5,12 @@ from HeuristicScore import score
 from Dijkstra import Dijsktra
 from Path import Path
 from Depot import Depot
-<<<<<<< HEAD
-from ImportCustomers import import_customers
-=======
 from ImportCustomers import customers
->>>>>>> b05932a87fa9d05a13559ad93d837614be59e857
 from ClusterStore import ClusterStore
 from random import randint, randrange, choice
 from Distances import Distances
 from Customer import Customer
 import random
-import numpy as np
 try:
     import ipdb
 except:
@@ -78,15 +73,12 @@ class State():
             # good
             # @TODO -- check that they are right
             # children_paths += State.wait_time_swap(paths)
-
-            # children_paths += State.cargo_swap(paths, trucks)
-
             # children_paths += State.cargo_swap(paths, self.trucks[0].cargo)
             children_paths += State.time_swap(paths)
 
             children_paths += State.reverse(paths)
 
-            children_paths += State.line_segment_insertion( paths, int( n_customers / 5 ), 15.0 )
+            children_paths += State.line_segment_insertion( paths, int( n_customers / 5 ), 10.0 )
 
             children_paths += State.fix_single_unreasonable( paths )
 
@@ -139,15 +131,14 @@ class State():
                     # first, copy the paths and get the customer from the path (pop out)
                     new_paths = copy.deepcopy( paths )
                     containing_path = State.find_path_containing_customer( new_paths, customer_id )
-                    if containing_path:
-                        customer_index_in_path = containing_path.get_customer_index( customer_id )
-                        customer = containing_path.route.pop( customer_index_in_path )
+                    customer_index_in_path = containing_path.get_customer_index( customer_id )
+                    customer = containing_path.route.pop( customer_index_in_path )
 
-                        # now that we've got the customer, push it into position on the current path
-                        path_to_insert_into = new_paths[path_number]
-                        path_to_insert_into.route.insert( index, customer )
+                    # now that we've got the customer, push it into position on the current path
+                    path_to_insert_into = new_paths[path_number]
+                    path_to_insert_into.route.insert( index, customer )
 
-                        children.append( new_paths )
+                    children.append( new_paths )
 
                 path_number += 1
 
@@ -211,54 +202,51 @@ class State():
         children = []
 
         for k in range( n_children ):
-            try:
-                new_paths = copy.deepcopy( paths )
+            new_paths = copy.deepcopy( paths )
 
-                # get a customer to base the cluster on
-                cluster_base_customer_id = choice( ClusterStore().clustered_customer_ids )
-                # find the path that contains this customer
-                containing_path = State.find_path_containing_customer( new_paths, cluster_base_customer_id )
-                # separate out the paths aside from this one
-                non_containing_paths = [path for path in new_paths if path != containing_path]
-                # find the cluster which contains the chosen customer
-                containing_cluster = ClusterStore.find_cluster_containing_customer( cluster_base_customer_id )
+            # get a customer to base the cluster on
+            cluster_base_customer_id = choice( ClusterStore().clustered_customer_ids )
+            # find the path that contains this customer
+            containing_path = State.find_path_containing_customer( new_paths, cluster_base_customer_id )
+            # separate out the paths aside from this one
+            non_containing_paths = [path for path in new_paths if path != containing_path]
+            # find the cluster which contains the chosen customer
+            containing_cluster = ClusterStore.find_cluster_containing_customer( cluster_base_customer_id )
 
-                # remove the other customers from whatever paths they are on
-                customer_ids_to_handle = [c.number for c in containing_cluster.optimal_solution.route if c.number != cluster_base_customer_id]
-                customers_to_handle = []
-                indexes_for_removal = [[] for path in new_paths]
+            # remove the other customers from whatever paths they are on
+            customer_ids_to_handle = [c.number for c in containing_cluster.optimal_solution.route if c.number != cluster_base_customer_id]
+            customers_to_handle = []
+            indexes_for_removal = [[] for path in new_paths]
 
 
-                # store the customers you'll have to handle
-                # get the INDEXES of the customers you have to remove
-                i = 0
-                for path in new_paths:
-                    j = 0
-                    for customer in path.route:
-                        if customer.number in customer_ids_to_handle:
-                            indexes_for_removal[i].append(j)
-                            customers_to_handle.append( customer )
-                        j += 1
-                    i += 1
+            # store the customers you'll have to handle
+            # get the INDEXES of the customers you have to remove
+            i = 0
+            for path in new_paths:
+                j = 0
+                for customer in path.route:
+                    if customer.number in customer_ids_to_handle:
+                        indexes_for_removal[i].append(j)
+                        customers_to_handle.append( customer )
+                    j += 1
+                i += 1
 
-                # remove the customers at the desired indexes (backwards)
-                i = 0
-                for indexes in indexes_for_removal:
-                    for index in indexes[::-1]:
-                        new_paths[i].route.pop( index )
-                    i += 1
+            # remove the customers at the desired indexes (backwards)
+            i = 0
+            for indexes in indexes_for_removal:
+                for index in indexes[::-1]:
+                    new_paths[i].route.pop( index )
+                i += 1
 
-                # force customers [in cyclical right order] into the solution
-                id_to_insert_after = cluster_base_customer_id
-                id_to_be_inserted = None
-                for i in range( len( containing_cluster.optimal_solution ) - 1 ):
-                    id_to_be_inserted = containing_cluster.next_to_visit_ids( id_to_insert_after )
-                    containing_path.insert_customer( id_to_insert_after, id_to_be_inserted, customers_to_handle )
-                    id_to_insert_after = id_to_be_inserted
+            # force customers [in cyclical right order] into the solution
+            id_to_insert_after = cluster_base_customer_id
+            id_to_be_inserted = None
+            for i in range( len( containing_cluster.optimal_solution ) - 1 ):
+                id_to_be_inserted = containing_cluster.next_to_visit_ids( id_to_insert_after )
+                containing_path.insert_customer( id_to_insert_after, id_to_be_inserted, customers_to_handle )
+                id_to_insert_after = id_to_be_inserted
 
-                children.append( new_paths )
-            except:
-                pass
+            children.append( new_paths )
 
         return children
 
@@ -760,80 +748,6 @@ class State():
         return str
 
 
-    @staticmethod
-    ## helper method for wait_time_swap
-    ## gets 10? closest customers to the swapped customer
-    def get_closest_customer ( customer):
-        new_cust_arr = []
-        new_cust_arr2 = []
-        distance = []
-        closest_custs = []
-        same = False
-        
-        customers = import_customers("RC208.txt", False)
-
-        ##intitialize distance
-        for c in range (len(customers)):
-
-            new_cust_arr.append(customers[c])
-            new_cust = new_cust_arr.pop(0)
-            distance.append(Distances.get_distance(customer.number, new_cust.number))
-            
-            
-        for x in range (0,10):
-            
-            min_index = distance.index( min(distance) )
-            min_distance = distance.pop(min_index)
-            closest_custs.append(customers[min_index])
-            
-        return closest_custs
-
-
-    @staticmethod
-    ## if the truck is waiting too long, change the path to include another customer in the meantime
-    def wait_time_swap (paths, n_children = 3):
-        children = []
-        for i in range (0, n_children):
-            customers = []
-            new_paths = copy.deepcopy(paths)
-            path = new_paths[i]
-
-            wait_time = 0
-            prev_customer = path.route[0]
-            time = Distances.get_distance(prev_customer.number, 0)
-
-            if time < prev_customer.open_time:
-                wait_time += prev_customer.open_time - time
-                time = prev_customer.open_time
-
-            time += prev_customer.service_time
-
-            for c in path.route:
-
-                time += Distances.get_distance(prev_customer.number, c.number)
-                prev_customer = c
-
-                if time < c.open_time:
-                    wait_time += prev_customer.open_time - time
-                    time = c.open_time
-
-                ## wait time is arbitrarily picked, can change
-                if wait_time > 20:
-                    customers = State.get_closest_customer(c)
-                    ## generates nearest customers
-                    for x in customers:
-                        ## if the truck has to wait long at some new customers too, forget em
-                        ## time+5 can be changed
-                        if (time+5) < x.open_time:
-                            customers.remove(x)
-                        else:
-                            pass
-                time += c.service_time
-            if len (customers) != 0:
-                ##choose the second customer (cause it doesn't really matter, and the first customer is itself) as the add-in
-                replacement_customer = customers.pop(1)
-                ## adds replacement customer into path.route
-                path.route.append(replacement_customer)
 
     @staticmethod
     ## if the truck is being a little shit and waiting too long, change the path to include another customer in the meantime
@@ -848,8 +762,8 @@ class State():
                     if p.get_customer_index(closest) != -1:
                         p.insert_customer(closest, c.number, customers)
                 children.append(new_paths)
-        return children
 
+        return children
 
 
 

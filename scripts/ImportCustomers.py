@@ -22,6 +22,4 @@ def import_customers(filename, is_test):
             temp = Customer(int(custList[0]), float(custList[1]) - depot_x, float(custList[2]) - depot_y, float(custList[4]),
                             float(custList[5]), float(custList[6]), float(custList[3]))
             customers.append(temp)
-
     return customers
-
