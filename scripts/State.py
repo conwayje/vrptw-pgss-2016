@@ -85,7 +85,7 @@ class State():
             children_paths += State.fix_group_unreasonable( paths )
 
             children_paths += State.switch_between_paths( paths, 20 )
-            
+
             children_paths += State.missed_customer_time_swap (paths, 20)
 
             if near_valid or random.random() > 0.9:
