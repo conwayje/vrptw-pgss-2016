@@ -15,8 +15,8 @@ import argparse
 path = '../standard_instances/'
 
 def import_solution(problem, filename):
-    with open(path + filename + ".txt") as f:
-        customers = import_customers(problem + ".txt", False)
+    with open(path + filename) as f:
+        customers = import_customers(problem, False)
         Distances.calculate_matrix(customers)
         lines = f.readlines()
 
