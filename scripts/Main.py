@@ -19,6 +19,7 @@ import argparse
 # sample calls (made from inside the scripts directory):
 # python Main.py C201 C201_wr_solution 3 700 591.55
 # python Main.py RC208 RC208_wr_solution 3 1000 891.65 --plot
+# python Main.py C2_2_5 nn_random 6 700 1878.85 --plot
 
 customers = None
 depot = None

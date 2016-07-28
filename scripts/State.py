@@ -78,7 +78,7 @@ class State():
 
             children_paths += State.reverse(paths)
 
-            children_paths += State.line_segment_insertion( paths, int( n_customers / 5 ), 10.0 )
+            children_paths += State.line_segment_insertion( paths, int( n_customers / 5 ), 15.0 )
 
             children_paths += State.fix_single_unreasonable( paths )
 
@@ -130,14 +130,15 @@ class State():
                     # first, copy the paths and get the customer from the path (pop out)
                     new_paths = copy.deepcopy( paths )
                     containing_path = State.find_path_containing_customer( new_paths, customer_id )
-                    customer_index_in_path = containing_path.get_customer_index( customer_id )
-                    customer = containing_path.route.pop( customer_index_in_path )
+                    if containing_path:
+                        customer_index_in_path = containing_path.get_customer_index( customer_id )
+                        customer = containing_path.route.pop( customer_index_in_path )
 
-                    # now that we've got the customer, push it into position on the current path
-                    path_to_insert_into = new_paths[path_number]
-                    path_to_insert_into.route.insert( index, customer )
+                        # now that we've got the customer, push it into position on the current path
+                        path_to_insert_into = new_paths[path_number]
+                        path_to_insert_into.route.insert( index, customer )
 
-                    children.append( new_paths )
+                        children.append( new_paths )
 
                 path_number += 1
 
@@ -201,51 +202,54 @@ class State():
         children = []
 
         for k in range( n_children ):
-            new_paths = copy.deepcopy( paths )
+            try:
+                new_paths = copy.deepcopy( paths )
 
-            # get a customer to base the cluster on
-            cluster_base_customer_id = choice( ClusterStore().clustered_customer_ids )
-            # find the path that contains this customer
-            containing_path = State.find_path_containing_customer( new_paths, cluster_base_customer_id )
-            # separate out the paths aside from this one
-            non_containing_paths = [path for path in new_paths if path != containing_path]
-            # find the cluster which contains the chosen customer
-            containing_cluster = ClusterStore.find_cluster_containing_customer( cluster_base_customer_id )
+                # get a customer to base the cluster on
+                cluster_base_customer_id = choice( ClusterStore().clustered_customer_ids )
+                # find the path that contains this customer
+                containing_path = State.find_path_containing_customer( new_paths, cluster_base_customer_id )
+                # separate out the paths aside from this one
+                non_containing_paths = [path for path in new_paths if path != containing_path]
+                # find the cluster which contains the chosen customer
+                containing_cluster = ClusterStore.find_cluster_containing_customer( cluster_base_customer_id )
 
-            # remove the other customers from whatever paths they are on
-            customer_ids_to_handle = [c.number for c in containing_cluster.optimal_solution.route if c.number != cluster_base_customer_id]
-            customers_to_handle = []
-            indexes_for_removal = [[] for path in new_paths]
+                # remove the other customers from whatever paths they are on
+                customer_ids_to_handle = [c.number for c in containing_cluster.optimal_solution.route if c.number != cluster_base_customer_id]
+                customers_to_handle = []
+                indexes_for_removal = [[] for path in new_paths]
 
 
-            # store the customers you'll have to handle
-            # get the INDEXES of the customers you have to remove
-            i = 0
-            for path in new_paths:
-                j = 0
-                for customer in path.route:
-                    if customer.number in customer_ids_to_handle:
-                        indexes_for_removal[i].append(j)
-                        customers_to_handle.append( customer )
-                    j += 1
-                i += 1
+                # store the customers you'll have to handle
+                # get the INDEXES of the customers you have to remove
+                i = 0
+                for path in new_paths:
+                    j = 0
+                    for customer in path.route:
+                        if customer.number in customer_ids_to_handle:
+                            indexes_for_removal[i].append(j)
+                            customers_to_handle.append( customer )
+                        j += 1
+                    i += 1
 
-            # remove the customers at the desired indexes (backwards)
-            i = 0
-            for indexes in indexes_for_removal:
-                for index in indexes[::-1]:
-                    new_paths[i].route.pop( index )
-                i += 1
+                # remove the customers at the desired indexes (backwards)
+                i = 0
+                for indexes in indexes_for_removal:
+                    for index in indexes[::-1]:
+                        new_paths[i].route.pop( index )
+                    i += 1
 
-            # force customers [in cyclical right order] into the solution
-            id_to_insert_after = cluster_base_customer_id
-            id_to_be_inserted = None
-            for i in range( len( containing_cluster.optimal_solution ) - 1 ):
-                id_to_be_inserted = containing_cluster.next_to_visit_ids( id_to_insert_after )
-                containing_path.insert_customer( id_to_insert_after, id_to_be_inserted, customers_to_handle )
-                id_to_insert_after = id_to_be_inserted
+                # force customers [in cyclical right order] into the solution
+                id_to_insert_after = cluster_base_customer_id
+                id_to_be_inserted = None
+                for i in range( len( containing_cluster.optimal_solution ) - 1 ):
+                    id_to_be_inserted = containing_cluster.next_to_visit_ids( id_to_insert_after )
+                    containing_path.insert_customer( id_to_insert_after, id_to_be_inserted, customers_to_handle )
+                    id_to_insert_after = id_to_be_inserted
 
-            children.append( new_paths )
+                children.append( new_paths )
+            except:
+                pass
 
         return children
 
