@@ -85,7 +85,7 @@ class State():
             children_paths += State.fix_group_unreasonable( paths )
 
             children_paths += State.switch_between_paths( paths, 20 )
-            
+
             children_paths += State.missed_customer_time_swap (paths, 20)
 
             if near_valid or random.random() > 0.9:
@@ -93,6 +93,7 @@ class State():
 
             if random.random() > 0.8:
                 children_paths += State.path_swap( paths, 20 )
+                children_paths += State.random_insert(paths, 20)
         # child_paths should be a list containing three paths per entry (as a list)
         for child_paths in children_paths:
             if child_paths:
@@ -120,6 +121,19 @@ class State():
             children.append( new_paths )
 
         return children
+
+    @staticmethod
+    def random_insert(paths, n_children):
+        children = []
+        # find whoever is closest to it (should be four customers nearby-ish?)
+        for i in range(n_children):
+            new_paths = copy.deepcopy(paths)
+            path = new_paths[randint(0, len(new_paths)-1)]
+            cust_to_insert = path.route.pop(randint(0, len(path.route)-1))
+            path.route.insert(randint(0, len(path.route)-1), cust_to_insert)
+            children.append(new_paths)
+        return children
+
 
     @staticmethod
     def move_central_customers_to_path_starts_and_ends( paths, n_children ):
@@ -715,8 +729,14 @@ class State():
                     c,t = missed_customers[r], missed_customers[r].close_time
                     for x in range(0, new_path.route.index(c)): #look through the customers before the missed customer since it should be earlier
                         if new_path.get_arrival_time_of_customer(new_path.route[x]) < t: #find a spot in the path before the close time
-                            new_path.route.remove(c)
-                            new_path.route.insert(x-1, c)
+                            short_path = new_path[:x]
+                            if len(short_path) > 1:
+                                rs = randint(0, len(short_path)-1)
+                                new_path.route.remove(c)
+                                new_path.route.insert(rs-1, c)
+                            else:
+                                new_path.route.remove(c)
+                                new_path.route.insert(x-1, c)
                             new_paths.append(new_path)
             children.append(new_paths)
         return children
